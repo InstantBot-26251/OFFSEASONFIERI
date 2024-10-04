@@ -6,13 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Arm;
-import org.firstinspires.ftc.teamcode.Chassis;
 import org.firstinspires.ftc.teamcode.Intake;
-import org.firstinspires.ftc.teamcode.pedroPathing.examples.TeleOpEnhancements;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.MathFunctions;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Vector;
 import org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants;
 
 @TeleOp(name = "TeleOp")
