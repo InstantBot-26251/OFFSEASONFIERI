@@ -17,6 +17,9 @@ public class Arm {
 
     public double output;
 
+    // Encoder ticks per revolution
+    public static final int TICKS_PER_REVOLUTION = 28 * 20;  // 28 ticks * 20:1 gear ratio = 560 ticks per revolution
+
 
     // Constructor
     public Arm(HardwareMap hardwareMap, double p, double i, double d, double f) {
@@ -69,6 +72,16 @@ public class Arm {
         rotationMotor.setPower(power);
     }
 
+    // Method to get the rotated arm position in degrees
+    public double getRotatedArmPosition() {
+        // Get the current encoder position from the rotation motor
+        int encoderPosition = rotationMotor.getCurrentPosition();
+
+        // Convert encoder ticks to degrees (assuming 360 degrees corresponds to TICKS_PER_REVOLUTION)
+        double degrees = (encoderPosition / (double) TICKS_PER_REVOLUTION) * 360.0;
+
+        return degrees; // Return the position in degrees
+    }
 
     public void toPoint(double position) {
         pidf.setTargetPosition(position);

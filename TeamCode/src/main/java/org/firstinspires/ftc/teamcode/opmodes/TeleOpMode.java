@@ -51,7 +51,7 @@ public class TeleOpMode extends OpMode {
         }
 
         // Rotation control using gamepad2
-        if (gamepad2.left_bumper) {
+        if (gamepad2.a) {
             arm.rotateArm(0.5);  // Rotate arm clockwise
         } else if (gamepad2.right_bumper) {
             arm.rotateArm(-0.5);  // Rotate arm counterclockwise
