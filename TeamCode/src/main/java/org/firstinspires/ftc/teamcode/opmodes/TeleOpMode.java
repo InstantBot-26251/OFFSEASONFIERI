@@ -10,12 +10,15 @@ import org.firstinspires.ftc.teamcode.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants;
+import org.firstinspires.ftc.teamcode.util.CollectSample;
 
 @TeleOp(name = "TeleOp")
 public class TeleOpMode extends OpMode {
     private Follower follower;
     Arm arm;
     Intake intake;
+    CollectSample collection;
+
 
     @Override
     public void init() {
