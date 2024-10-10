@@ -162,10 +162,10 @@ public class Follower {
         driveVectorScaler = new DriveVectorScaler(FollowerConstants.frontLeftVector);
         poseUpdater = new PoseUpdater(hardwareMap);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        leftRear = hardwareMap.get(DcMotorEx.class, "backLeft");
-        rightRear = hardwareMap.get(DcMotorEx.class, "backRight");
-        rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
+        leftFront = hardwareMap.get(DcMotorEx.class, leftFrontMotorName);
+        leftRear = hardwareMap.get(DcMotorEx.class, leftRearMotorName);
+        rightRear = hardwareMap.get(DcMotorEx.class, rightRearMotorName);
+        rightFront = hardwareMap.get(DcMotorEx.class, rightFrontMotorName);
 
         // TODO: Make sure that this is the direction your motors need to be reversed in.
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -498,7 +498,18 @@ public class Follower {
 
             calculateAveragedVelocityAndAcceleration();
 
-            drivePowers = driveVectorScaler.getDrivePowers(getCentripetalForceCorrection(), teleopHeadingVector, teleopDriveVector, poseUpdater.getPose().getHeading());
+            double[] wheelPowers = new double[4];
+            double fwd = teleopDriveVector.getXComponent();
+            double lat = teleopDriveVector.getYComponent();
+            double rot = teleopDriveValues[2];
+
+            double denominators = Math.max(Math.abs(fwd) + Math.abs(lat)+ Math.abs(rot), 1);
+            wheelPowers[0] = (fwd + lat + rot) / denominators;
+            wheelPowers[1] = (fwd - lat + rot) / denominators;
+            wheelPowers[2] = (fwd - lat - rot) / denominators;
+            wheelPowers[4] = (fwd + lat - rot) / denominators;
+
+            drivePowers = wheelPowers;
 
             limitDrivePowers();
 
