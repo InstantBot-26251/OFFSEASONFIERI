@@ -10,10 +10,18 @@ import org.firstinspires.ftc.teamcode.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants;
+import org.firstinspires.ftc.teamcode.util.ArmAndIntakeFunctions;
 import org.firstinspires.ftc.teamcode.util.CollectSample;
+import org.firstinspires.ftc.teamcode.util.LevelTwoAscent;
+import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
+
+import java.util.logging.Level;
 
 @TeleOp(name = "TeleOp")
 public class TeleOpMode extends OpMode {
+    public LevelTwoAscent ascent;
+    public ScoreHighBasket scorehighbasket;
+    public ArmAndIntakeFunctions functions;
     private Follower follower;
     Arm arm;
     Intake intake;
@@ -22,6 +30,14 @@ public class TeleOpMode extends OpMode {
 
     @Override
     public void init() {
+        // Initialize functions
+        collection = new CollectSample(arm, intake, functions);
+        functions = new ArmAndIntakeFunctions(arm, intake);
+        scorehighbasket = new ScoreHighBasket(arm, intake, functions);
+        ascent = new LevelTwoAscent(arm, intake, functions);
+        // scorelowbasket = new ScoreLowBasket(arm, intake, functions);
+
+
         follower = new Follower(hardwareMap);
         follower.setPose(new Pose());
         arm = new Arm(hardwareMap, 0.01, 0, 0.01, 0);  // Initialize arm system
@@ -46,6 +62,9 @@ public class TeleOpMode extends OpMode {
 
         follower.setTeleOpMovementVectors(applyResponseCurve(gamepad1.left_stick_y), -applyResponseCurve(gamepad1.left_stick_x) ,applyResponseCurve(gamepad1.right_stick_x), true);
 
+        if (gamepad2.a) {
+            collection.drive();
+        }
         // Arm control using gamepad2
         if (gamepad2.dpad_up) {
             arm.toPoint(-1000);  // target position
