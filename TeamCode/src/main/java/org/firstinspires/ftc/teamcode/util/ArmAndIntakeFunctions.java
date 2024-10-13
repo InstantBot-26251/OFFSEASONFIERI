@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Arm;
-import org.firstinspires.ftc.teamcode.Intake;
-
 
 /**
  * This is the Arm Functions class. It contains all the arm functions.
@@ -58,7 +55,6 @@ public class ArmAndIntakeFunctions {
     }
     public void scoreHighBasket() {
         arm.toPoint(-5000);
-        arm.rotateArm(-0.5);
         intake.setIntakePower(-1.0);
     }
     public void scoreLowBasket() {

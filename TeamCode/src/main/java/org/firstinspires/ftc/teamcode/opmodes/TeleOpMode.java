@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.Arm;
-import org.firstinspires.ftc.teamcode.Intake;
+import org.firstinspires.ftc.teamcode.util.Arm;
+import org.firstinspires.ftc.teamcode.util.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants;
@@ -14,8 +14,6 @@ import org.firstinspires.ftc.teamcode.util.ArmAndIntakeFunctions;
 import org.firstinspires.ftc.teamcode.util.CollectSample;
 import org.firstinspires.ftc.teamcode.util.LevelTwoAscent;
 import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
-
-import java.util.logging.Level;
 
 @TeleOp(name = "TeleOp")
 public class TeleOpMode extends OpMode {
@@ -65,6 +63,23 @@ public class TeleOpMode extends OpMode {
         if (gamepad2.a) {
             collection.drive();
         }
+
+        if (gamepad2.b) {
+            scorehighbasket.drive();
+        }
+
+        if (gamepad2.y) {
+            ascent.drive();
+        }
+
+        if (gamepad2.left_bumper) {
+            functions.armToDownPosition();
+        }
+
+        if (gamepad2.right_bumper) {
+            functions.armTo90Degrees();
+        }
+
         // Arm control using gamepad2
         if (gamepad2.dpad_up) {
             arm.toPoint(-1000);  // target position

@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import org.firstinspires.ftc.teamcode.Arm;
-import org.firstinspires.ftc.teamcode.Intake;
-
 public class LevelTwoAscent {
     Arm arm;
     ArmAndIntakeFunctions functions;
