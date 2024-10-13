@@ -19,10 +19,14 @@ public class BlueForwardAutoRight extends OpMode {
     private ArmAndIntakeFunctions functions;
     private Arm arm;
     private Intake intake;
+    private BezierCurve scoringCurve;
+    private PathChain scoringPath;
+
 
     enum AutoState {
         MOVE_TO_SCORING_ZONE,
         SCORE_HIGH_BASKET,
+        CHECK_SCORING_FINISHED,
         MOVE_TO_OBSERVATION_ZONE,
         COMPLETE
     }
@@ -32,6 +36,17 @@ public class BlueForwardAutoRight extends OpMode {
 
     @Override
     public void init() {
+        // Create a path to the scoring zone using the BezierCurve
+         scoringPath = new PathBuilder()
+                .addPath(scoringCurve) // Add BezierCurve as a path
+                .build();
+
+        scoringCurve = new BezierCurve(
+                new Point(0, 0, Point.CARTESIAN),      // Starting point
+                new Point(12, 0, Point.CARTESIAN),     // Control point (adjust as needed)
+                new Point(24, 0, Point.CARTESIAN)       // End point (24 inches forward)
+        );
+
         // Initialize hardware components
         arm = hardwareMap.get(Arm.class, "arm");
         intake = hardwareMap.get(Intake.class, "intake");
@@ -56,17 +71,6 @@ public class BlueForwardAutoRight extends OpMode {
         // Set the initial position of the robot
         follower.setStartingPose(new Pose(0, 0, 0)); // Starting position (x = 0, y = 0, heading = 0°)
 
-        // Create a BezierCurve for the scoring path (move to the high basket)
-        BezierCurve scoringCurve = new BezierCurve(
-                new Point(0, 0, Point.CARTESIAN),      // Starting point
-                new Point(12, 0, Point.CARTESIAN),     // Control point (adjust as needed)
-                new Point(24, 0, Point.CARTESIAN)       // End point (24 inches forward)
-        );
-
-        // Create a path to the scoring zone using the BezierCurve
-        PathChain scoringPath = new PathBuilder()
-                .addPath(scoringCurve) // Add BezierCurve as a path
-                .build();
 
         // Follow the path to the scoring zone
         follower.followPath(scoringPath);
@@ -94,14 +98,16 @@ public class BlueForwardAutoRight extends OpMode {
                 // Use ArmAndIntakeFunctions to score the preloaded game piece in the high basket
                 functions.armTo90Degrees();
                 functions.scoreHighBasket();
-                telemetry.addData("Action", "Scoring");
-                try {
-                    Thread.sleep(1000); // Wait for scoring to finish
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                currentState = AutoState.MOVE_TO_OBSERVATION_ZONE;
+                currentState = AutoState.CHECK_SCORING_FINISHED;
 
+            case CHECK_SCORING_FINISHED:
+            // Check if the high basket scoring is finished
+            if (functions.isHighBasketScoringFinished()) {
+                currentState = AutoState.MOVE_TO_OBSERVATION_ZONE; // Move to the next state
+            }
+            break;
+
+            case MOVE_TO_OBSERVATION_ZONE:
                 // Create a BezierCurve for the path to the observation zone
                 BezierCurve observationCurve = new BezierCurve(
                         new Point(24, 0, Point.CARTESIAN),     // Start from scoring position
@@ -116,14 +122,9 @@ public class BlueForwardAutoRight extends OpMode {
 
                 // Follow the path to the observation zone
                 follower.followPath(observationPath);
+                currentState = AutoState.COMPLETE; // Move to complete after following the path
                 break;
 
-            case MOVE_TO_OBSERVATION_ZONE:
-                // Check if the robot has reached the observation zone
-                if (!follower.isBusy()) {
-                    currentState = AutoState.COMPLETE;
-                }
-                break;
 
             case COMPLETE:
                 telemetry.addData("Path", "Complete");

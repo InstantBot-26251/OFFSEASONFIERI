@@ -13,9 +13,14 @@ public class Intake {
         pivotServo = hardwareMap.get(Servo.class, "pivotServo");  // Initialize the pivot servo
     }
 
-    // Method to control the intake motor
+    // Method to control the intake servo
     public void setIntakePower(double power) {
         intakeServo.setPosition(power);
+    }
+
+    // Method to get the current position of the intake servo
+    public double getIntakePosition() {
+        return intakeServo.getPosition(); // This returns the current power set for the intake motor
     }
 
     // Method to set the pivot servo position
