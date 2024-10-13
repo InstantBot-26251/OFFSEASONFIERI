@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Arm;
-import org.firstinspires.ftc.teamcode.Intake;
-
 
 /**
  * This is the Arm Functions class. It contains all the arm functions.
@@ -58,9 +55,9 @@ public class ArmAndIntakeFunctions {
     }
     public void scoreHighBasket() {
         arm.toPoint(-5000);
-        arm.rotateArm(-0.5);
         intake.setIntakePower(-1.0);
     }
+
     public void scoreLowBasket() {
         arm.toPoint(-1000);
         arm.rotateArm(-0.5);
@@ -74,5 +71,20 @@ public class ArmAndIntakeFunctions {
         arm.rotateArm(-0.5);
         arm.toPoint(-1250);
         arm.toPoint(0);
+    }
+
+    // Method to check if scoring in the high basket is finished
+    public boolean isHighBasketScoringFinished() {
+        // Check if the arm has reached the target position for scoring
+        double targetPosition = -5000; // The position for high basket scoring
+        double currentArmPosition = arm.getRotatedArmPosition();
+
+        // Check if the arm is close enough to the target position
+        boolean isArmAtPosition = Math.abs(currentArmPosition - targetPosition) < 50; // Adjust tolerance as necessary
+
+        // Check if the intake servo is in the closed position (e.g., 0.0)
+        boolean isIntakeClosed = Math.abs(intake.getIntakePosition() - 0.0) < 0.1; // Assuming a closed position of 0.0
+
+        return isArmAtPosition && isIntakeClosed; // Return true if both conditions are met
     }
 }
