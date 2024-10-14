@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.util.Arm;
 import org.firstinspires.ftc.teamcode.util.ArmAndIntakeFunctions;
 import org.firstinspires.ftc.teamcode.util.Intake;
+import org.firstinspires.ftc.teamcode.opmodes.util.AutoState;
+
 
 @Autonomous(name = "Red Forward Autonomous", group = "Autonomous")
 public class RedForwardAutoPosition2 extends OpMode {
@@ -23,14 +25,6 @@ public class RedForwardAutoPosition2 extends OpMode {
     private PathChain scoringPath;
     private BezierCurve observationCurve;
     private PathChain observationPath;
-
-    enum AutoState {
-        MOVE_TO_SCORING_ZONE,
-        SCORE_HIGH_BASKET,
-        CHECK_IF_SCORING_FINISHED,
-        MOVE_TO_OBSERVATION_ZONE,
-        COMPLETE
-    }
 
     private AutoState currentState = AutoState.MOVE_TO_SCORING_ZONE;
     private long startTime;
@@ -66,7 +60,7 @@ public class RedForwardAutoPosition2 extends OpMode {
 
         // Initialize Follower and ArmAndIntakeFunctions with hardware components
         follower = new Follower(hardwareMap);
-        functions = new ArmAndIntakeFunctions(arm, intake);
+        functions = new ArmAndIntakeFunctions(arm, intake, gamepad2);
 
         telemetry.addData("Status", "Initialized");
 
@@ -118,13 +112,13 @@ public class RedForwardAutoPosition2 extends OpMode {
                 telemetry.addData("Arm Position", arm.getRotatedArmPosition());
                 functions.armTo90Degrees();
                 functions.scoreHighBasket();
-                currentState = AutoState.CHECK_IF_SCORING_FINISHED;
+                currentState = AutoState.CHECK_SCORING_FINISHED;
                 break;
 
-            case CHECK_IF_SCORING_FINISHED:
+            case CHECK_SCORING_FINISHED:
                 // Check if the high basket scoring is finished
                 if (functions.isFinished()) {
-                    currentState = RedForwardAutoPosition2.AutoState.MOVE_TO_OBSERVATION_ZONE; // Move to the next state
+                    currentState = AutoState.MOVE_TO_OBSERVATION_ZONE; // Move to the next state
                 }
                 break;
 

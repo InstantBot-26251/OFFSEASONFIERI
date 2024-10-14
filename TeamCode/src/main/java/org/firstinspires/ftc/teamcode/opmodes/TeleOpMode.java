@@ -33,7 +33,7 @@ public class TeleOpMode extends OpMode {
         intake = new Intake(hardwareMap);  // Initialize intake system
 
         // Initialize functions
-        functions = new ArmAndIntakeFunctions(arm, intake);
+        functions = new ArmAndIntakeFunctions(arm, intake, gamepad2);
         collection = new CollectSample(arm, intake, functions);
         scorehighbasket = new ScoreHighBasket(arm, intake, functions);
         ascent = new LevelTwoAscent(arm, intake, functions);
@@ -57,7 +57,7 @@ public class TeleOpMode extends OpMode {
     @Override
     public void loop() {
 
-        follower.setTeleOpMovementVectors(applyResponseCurve(gamepad1.left_stick_y), -applyResponseCurve(gamepad1.left_stick_x) ,applyResponseCurve(gamepad1.right_stick_x), true);
+        follower.setTeleOpMovementVectors(-applyResponseCurve(gamepad1.left_stick_y), applyResponseCurve(gamepad1.left_stick_x), applyResponseCurve(gamepad1.right_stick_x), true);
 
         if (gamepad2.a) {
             collection.drive();
@@ -116,7 +116,7 @@ public class TeleOpMode extends OpMode {
         telemetry.addData("Right stick y", gamepad1.right_stick_y);
         telemetry.addData("Left stick x", gamepad1.left_stick_x);
         telemetry.addData("Right stick x", gamepad1.right_stick_x);
-        telemetry.addData("Servo Position", gamepad2.a ? "Open" : gamepad2.b ? "Closed" : "Neutral");
+     //   telemetry.addData("Servo Position", gamepad2.a ? "Open" : gamepad2.b ? "Closed" : "Neutral");
         telemetry.update();
     }
 

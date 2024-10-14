@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.opmodes.blueAlliance;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
+import org.firstinspires.ftc.teamcode.opmodes.util.AutoState;
 import org.firstinspires.ftc.teamcode.util.ArmAndIntakeFunctions;
 import org.firstinspires.ftc.teamcode.util.Arm;
 import org.firstinspires.ftc.teamcode.util.Intake;
@@ -23,15 +25,6 @@ public class BlueForwardAutoPosition1 extends OpMode {
     private PathChain scoringPath;
     private BezierCurve observationCurve;
     private PathChain observationPath;
-
-
-    enum AutoState {
-        MOVE_TO_SCORING_ZONE,
-        SCORE_HIGH_BASKET,
-        CHECK_SCORING_FINISHED,
-        MOVE_TO_OBSERVATION_ZONE,
-        COMPLETE
-    }
 
     private AutoState currentState = AutoState.MOVE_TO_SCORING_ZONE;
     private long startTime;
@@ -67,7 +60,7 @@ public class BlueForwardAutoPosition1 extends OpMode {
 
         // Initialize Follower and ArmAndIntakeFunctions with hardware components
         follower = new Follower(hardwareMap);
-        functions = new ArmAndIntakeFunctions(arm, intake);
+        functions = new ArmAndIntakeFunctions(arm, intake, gamepad2);
 
         telemetry.addData("Status", "Initialized");
     }
@@ -75,6 +68,7 @@ public class BlueForwardAutoPosition1 extends OpMode {
     @Override
     public void init_loop() {
         telemetry.addData("State", currentState);
+        telemetry.addData("Time", System.currentTimeMillis() - startTime);
     }
 
     @Override
@@ -113,6 +107,7 @@ public class BlueForwardAutoPosition1 extends OpMode {
                 functions.armTo90Degrees();
                 functions.scoreHighBasket();
                 currentState = AutoState.CHECK_SCORING_FINISHED;
+                break;
 
             case CHECK_SCORING_FINISHED:
                 // Check if the high basket scoring is finished

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.redAlliance;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import org.firstinspires.ftc.teamcode.opmodes.util.AutoState;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.util.ArmAndIntakeFunctions;
 import org.firstinspires.ftc.teamcode.util.Arm;
@@ -23,14 +24,6 @@ public class RedForwardAutoPosition1 extends OpMode {
     private PathChain scoringPath;
     private BezierCurve observationCurve;
     private PathChain observationPath;
-
-    enum AutoState {
-        MOVE_TO_SCORING_ZONE,
-        SCORE_HIGH_BASKET,
-        CHECK_SCORING_FINISHED,
-        MOVE_TO_OBSERVATION_ZONE,
-        COMPLETE
-    }
 
     private AutoState currentState = AutoState.MOVE_TO_SCORING_ZONE;
     private long startTime;
@@ -66,7 +59,7 @@ public class RedForwardAutoPosition1 extends OpMode {
 
         // Initialize Follower and ArmAndIntakeFunctions with hardware components
         follower = new Follower(hardwareMap);
-        functions = new ArmAndIntakeFunctions(arm, intake);
+        functions = new ArmAndIntakeFunctions(arm, intake, gamepad2);
 
         telemetry.addData("Status", "Initialized");
     }
