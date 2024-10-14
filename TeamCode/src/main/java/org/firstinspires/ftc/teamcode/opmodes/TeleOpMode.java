@@ -28,18 +28,18 @@ public class TeleOpMode extends OpMode {
 
     @Override
     public void init() {
+        // Initialize arm and intake systems first
+        arm = new Arm(hardwareMap, 0.01, 0, 0.01, 0);  // Initialize arm system
+        intake = new Intake(hardwareMap);  // Initialize intake system
+
         // Initialize functions
-        collection = new CollectSample(arm, intake, functions);
         functions = new ArmAndIntakeFunctions(arm, intake);
+        collection = new CollectSample(arm, intake, functions);
         scorehighbasket = new ScoreHighBasket(arm, intake, functions);
         ascent = new LevelTwoAscent(arm, intake, functions);
-        // scorelowbasket = new ScoreLowBasket(arm, intake, functions);
-
 
         follower = new Follower(hardwareMap);
         follower.setPose(new Pose());
-        arm = new Arm(hardwareMap, 0.01, 0, 0.01, 0);  // Initialize arm system
-        intake = new Intake(hardwareMap);  // Initialize intake system
 
         DcMotorEx leftFront = hardwareMap.get(DcMotorEx.class, FollowerConstants.leftFrontMotorName);
         DcMotorEx leftRear = hardwareMap.get(DcMotorEx.class, FollowerConstants.leftRearMotorName);
@@ -52,7 +52,6 @@ public class TeleOpMode extends OpMode {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         follower.startTeleopDrive();
-
     }
 
     @Override

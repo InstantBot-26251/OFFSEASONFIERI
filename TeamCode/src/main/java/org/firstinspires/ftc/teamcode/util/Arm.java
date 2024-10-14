@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.util;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import org.firstinspires.ftc.teamcode.pedroPathing.util.CustomPIDFCoefficients;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.PIDFController;
 
@@ -15,6 +14,7 @@ public class Arm {
     public PIDFController pidf;
     public CustomPIDFCoefficients coefficients;
 
+    public double armTolerance = 90; // 90-degree limit for scoring
     public double output;
 
     // Encoder ticks per revolution
@@ -42,9 +42,8 @@ public class Arm {
         pidf.setTargetPosition(0);  // Start at encoder position 0
     }
 
-    // Method to set the arm position
+    // Method to set the arm power using PIDF control
     public void setThePower() {
-
         double encoderValue = getEncoderValue();
 
         // Update the PIDF controller with the current encoder value
@@ -53,23 +52,31 @@ public class Arm {
         // Calculate the output using the PIDF controller
         output = pidf.runPIDF();
 
-        // Get the current position from the encoder
-        int currentPosition = armMotor.getCurrentPosition();
-
-        // Update the PIDF controller with the current position
-        pidf.updatePosition(currentPosition);
-
-        // Calculate the PID output
-        double power = pidf.runPIDF();
-
         // Set the motor's velocity to the calculated output
         armMotor.setVelocity(output);
     }
 
-    // Method to rotate the arm
+    // Method to rotate the arm within the allowed range (e.g., for scoring)
     public void rotateArm(double power) {
-        power = 1;
+        double currentDegrees = getRotatedArmPosition();
+
+        // Limit rotation to a maximum of 90 degrees
+        if (currentDegrees >= armTolerance) {
+            // Stop the rotation if it reaches 90 degrees
+            power = 0;
+        }
+
+        // Set motor power (only if under the limit)
         rotationMotor.setPower(power);
+    }
+
+    // Method to set arm tolerance for scoring (ensures arm doesn't exceed 90 degrees)
+    public void setArmTolerance() {
+        double rotatedPosition = getRotatedArmPosition();
+        if (rotatedPosition > armTolerance) {
+            // If the arm exceeds 90 degrees, stop it
+            rotateArm(0);  // Stop rotation
+        }
     }
 
     // Method to get the rotated arm position in degrees
@@ -78,9 +85,7 @@ public class Arm {
         int encoderPosition = rotationMotor.getCurrentPosition();
 
         // Convert encoder ticks to degrees (assuming 360 degrees corresponds to TICKS_PER_REVOLUTION)
-        double degrees = (encoderPosition / (double) TICKS_PER_REVOLUTION) * 360.0;
-
-        return degrees; // Return the position in degrees
+        return (encoderPosition / (double) TICKS_PER_REVOLUTION) * 360.0;
     }
 
     public void toPoint(double position) {
@@ -91,16 +96,17 @@ public class Arm {
         return pidf.getTargetPosition();
     }
 
-    // Method to get the encoder value
+    // Method to get the encoder value for the arm motor
     public double getEncoderValue() {
         return armMotor.getCurrentPosition();
     }
 
-    // Method to stop the arm
+    // Method to stop the arm motor
     public void stopArmMotor() {
         armMotor.setVelocity(0);
     }
 
+    // Method to stop the rotation motor
     public void stopRotationMotor() {
         rotationMotor.setPower(0);
     }
