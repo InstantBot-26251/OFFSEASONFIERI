@@ -28,18 +28,18 @@ public class TeleOpMode extends OpMode {
 
     @Override
     public void init() {
+        // Initialize arm and intake systems first
+        arm = new Arm(hardwareMap, 0.01, 0, 0.01, 0);  // Initialize arm system
+        intake = new Intake(hardwareMap);  // Initialize intake system
+
         // Initialize functions
+        functions = new ArmAndIntakeFunctions(arm, intake, gamepad2);
         collection = new CollectSample(arm, intake, functions);
-        functions = new ArmAndIntakeFunctions(arm, intake);
         scorehighbasket = new ScoreHighBasket(arm, intake, functions);
         ascent = new LevelTwoAscent(arm, intake, functions);
-        // scorelowbasket = new ScoreLowBasket(arm, intake, functions);
-
 
         follower = new Follower(hardwareMap);
         follower.setPose(new Pose());
-        arm = new Arm(hardwareMap, 0.01, 0, 0.01, 0);  // Initialize arm system
-        intake = new Intake(hardwareMap);  // Initialize intake system
 
         DcMotorEx leftFront = hardwareMap.get(DcMotorEx.class, FollowerConstants.leftFrontMotorName);
         DcMotorEx leftRear = hardwareMap.get(DcMotorEx.class, FollowerConstants.leftRearMotorName);
@@ -52,13 +52,12 @@ public class TeleOpMode extends OpMode {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         follower.startTeleopDrive();
-
     }
 
     @Override
     public void loop() {
 
-        follower.setTeleOpMovementVectors(applyResponseCurve(gamepad1.left_stick_y), -applyResponseCurve(gamepad1.left_stick_x) ,applyResponseCurve(gamepad1.right_stick_x), true);
+        follower.setTeleOpMovementVectors(-applyResponseCurve(gamepad1.left_stick_y), applyResponseCurve(gamepad1.left_stick_x), applyResponseCurve(gamepad1.right_stick_x), true);
 
         if (gamepad2.a) {
             collection.drive();
@@ -117,7 +116,7 @@ public class TeleOpMode extends OpMode {
         telemetry.addData("Right stick y", gamepad1.right_stick_y);
         telemetry.addData("Left stick x", gamepad1.left_stick_x);
         telemetry.addData("Right stick x", gamepad1.right_stick_x);
-        telemetry.addData("Servo Position", gamepad2.a ? "Open" : gamepad2.b ? "Closed" : "Neutral");
+     //   telemetry.addData("Servo Position", gamepad2.a ? "Open" : gamepad2.b ? "Closed" : "Neutral");
         telemetry.update();
     }
 
