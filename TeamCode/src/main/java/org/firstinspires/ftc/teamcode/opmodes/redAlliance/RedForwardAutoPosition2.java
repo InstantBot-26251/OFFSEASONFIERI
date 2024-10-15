@@ -12,11 +12,13 @@ import org.firstinspires.ftc.teamcode.util.Arm;
 import org.firstinspires.ftc.teamcode.util.ArmAndIntakeFunctions;
 import org.firstinspires.ftc.teamcode.util.Intake;
 import org.firstinspires.ftc.teamcode.opmodes.util.AutoState;
+import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
 
 
 @Autonomous(name = "Red Forward Autonomous", group = "Autonomous")
 public class RedForwardAutoPosition2 extends OpMode {
 
+    private ScoreHighBasket score;
     private Follower follower;
     private ArmAndIntakeFunctions functions;
     private Arm arm;
@@ -53,6 +55,9 @@ public class RedForwardAutoPosition2 extends OpMode {
                 new Point(128, 50, Point.CARTESIAN),     // Control point (adjust as needed)
                 new Point(127.4, 15.18, Point.CARTESIAN)       // End point (24 inches forward)
         );
+
+        //Initialize score
+        score = new ScoreHighBasket(arm, intake, gamepad2, functions);
 
         // Initialize hardware components
         arm = hardwareMap.get(Arm.class, "arm");
@@ -110,8 +115,7 @@ public class RedForwardAutoPosition2 extends OpMode {
             case SCORE_HIGH_BASKET:
                 // Use ArmAndIntakeFunctions to score the preloaded game piece in the high basket
                 telemetry.addData("Arm Position", arm.getRotatedArmPosition());
-                functions.armTo90Degrees();
-                functions.scoreHighBasket();
+                score.execute();
                 currentState = AutoState.CHECK_SCORING_FINISHED;
                 break;
 

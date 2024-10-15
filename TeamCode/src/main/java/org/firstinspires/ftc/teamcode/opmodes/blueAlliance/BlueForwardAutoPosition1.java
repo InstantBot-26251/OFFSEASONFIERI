@@ -13,10 +13,12 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
+import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
 
 @Autonomous(name = "Blue Alliance Auto Position 1", group = "Blue Alliance Autos")
 public class BlueForwardAutoPosition1 extends OpMode {
 
+    private ScoreHighBasket score;
     private Follower follower;
     private ArmAndIntakeFunctions functions;
     private Arm arm;
@@ -53,6 +55,9 @@ public class BlueForwardAutoPosition1 extends OpMode {
                 new Point(12, -12, Point.CARTESIAN),     // Control point (adjust)
                 new Point(19, 125.5, Point.CARTESIAN)       // End point
         );
+
+        //Initialize score
+        score = new ScoreHighBasket(arm, intake, gamepad2, functions);
 
         // Initialize hardware components
         arm = hardwareMap.get(Arm.class, "arm");
@@ -103,9 +108,7 @@ public class BlueForwardAutoPosition1 extends OpMode {
                 break;
 
             case SCORE_HIGH_BASKET:
-                // Use ArmAndIntakeFunctions to score the preloaded game piece in the high basket
-                functions.armTo90Degrees();
-                functions.scoreHighBasket();
+                score.execute();
                 currentState = AutoState.CHECK_SCORING_FINISHED;
                 break;
 
