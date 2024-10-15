@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
 
 @Autonomous(name = "Blue Alliance Auto Position 1", group = "Blue Alliance Autos")
-public class BlueForwardAutoPosition1 extends OpMode {
+public class BlueForwardAutoTile3IN extends OpMode {
 
     private ScoreHighBasket score;
     private Follower follower;
@@ -41,7 +41,7 @@ public class BlueForwardAutoPosition1 extends OpMode {
         // Create a BezierCurve for the path to the observation zone
         observationCurve = new BezierCurve(
                 new Point(19, 125.5, Point.CARTESIAN),     // Start from scoring position
-                new Point(12, 0, Point.CARTESIAN),   // Control point (adjust)
+                new Point(14, 60, Point.CARTESIAN),   // Control point
                 new Point(7.6, 16.13, Point.CARTESIAN)     // End point
         );
 
@@ -51,8 +51,8 @@ public class BlueForwardAutoPosition1 extends OpMode {
                 .build();
 
         scoringCurve = new BezierCurve(
-                new Point(0, 60, Point.CARTESIAN),      // Starting point
-                new Point(12, -12, Point.CARTESIAN),     // Control point (adjust)
+                new Point(0, 85, Point.CARTESIAN),      // Starting point
+                new Point(10, 110, Point.CARTESIAN),     // Control point
                 new Point(19, 125.5, Point.CARTESIAN)       // End point
         );
 
@@ -73,7 +73,6 @@ public class BlueForwardAutoPosition1 extends OpMode {
     @Override
     public void init_loop() {
         telemetry.addData("State", currentState);
-        telemetry.addData("Time", System.currentTimeMillis() - startTime);
     }
 
     @Override
@@ -82,7 +81,7 @@ public class BlueForwardAutoPosition1 extends OpMode {
         startTime = System.currentTimeMillis(); // Record the start time
 
         // Set the initial position of the robot
-        follower.setStartingPose(new Pose(0, 60, 0)); // Starting position (x = 0, y = 0, heading = 0°)
+        follower.setStartingPose(new Pose(0, 85, 0)); // Starting position (x = 0, y = 85, heading = 0°)
 
 
         // Follow the path to the scoring zone
@@ -108,9 +107,10 @@ public class BlueForwardAutoPosition1 extends OpMode {
                 break;
 
             case SCORE_HIGH_BASKET:
+                telemetry.addData("Arm Position", arm.getRotatedArmPosition());
+                telemetry.addData("Lift Position", arm.getEncoderValue());
                 score.execute();
                 currentState = AutoState.CHECK_SCORING_FINISHED;
-                break;
 
             case CHECK_SCORING_FINISHED:
                 // Check if the high basket scoring is finished

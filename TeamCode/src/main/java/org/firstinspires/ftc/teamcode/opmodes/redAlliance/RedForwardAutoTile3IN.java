@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
 
-@Autonomous(name = "Blue Alliance Auto Position 1", group = "Blue Alliance Autos")
-public class RedForwardAutoPosition1 extends OpMode {
+@Autonomous(name = "Blue Alliance Auto Position 1", group = "Red Alliance Autos")
+public class RedForwardAutoTile3IN extends OpMode {
 
     private ScoreHighBasket score;
     private Follower follower;
@@ -39,9 +39,9 @@ public class RedForwardAutoPosition1 extends OpMode {
 
         // Create a BezierCurve for the path to the observation zone
         observationCurve = new BezierCurve(
-                new Point(19, 125.5, Point.CARTESIAN),     // Start from scoring position
-                new Point(12, 0, Point.CARTESIAN),   // Control point (adjust)
-                new Point(7.6, 16.13, Point.CARTESIAN)     // End point
+                new Point(19, 125.5, Point.CARTESIAN),     // Start point
+                new Point(130.5, 95, Point.CARTESIAN),   // Control point
+                new Point(134.22, 125.22, Point.CARTESIAN)     // End point
         );
 
         // Create a path to the scoring zone using the BezierCurve
@@ -50,8 +50,8 @@ public class RedForwardAutoPosition1 extends OpMode {
                 .build();
 
         scoringCurve = new BezierCurve(
-                new Point(138, 85, Point.CARTESIAN),      // Starting point
-                new Point(130, 65, Point.CARTESIAN),     // Control point (adjust)
+                new Point(138, 85, Point.CARTESIAN),      // Start point
+                new Point(130, 65, Point.CARTESIAN),     // Control point
                 new Point(128.58, 16.13, Point.CARTESIAN)       // End point
         );
 
@@ -80,7 +80,7 @@ public class RedForwardAutoPosition1 extends OpMode {
         startTime = System.currentTimeMillis(); // Record the start time
 
         // Set the initial position of the robot
-        follower.setStartingPose(new Pose(138, 85, 0)); // Starting position (x = 0, y = 0, heading = 0°)
+        follower.setStartingPose(new Pose(138, 60, 0)); // Starting position (x = 138, y = 60, heading = 0°)
 
 
         // Follow the path to the scoring zone
@@ -106,9 +106,9 @@ public class RedForwardAutoPosition1 extends OpMode {
                 break;
 
             case SCORE_HIGH_BASKET:
-                // Use ArmAndIntakeFunctions to score the preloaded game piece in the high basket
-                functions.armTo90Degrees();
-                functions.scoreHighBasket();
+                telemetry.addData("Arm Position", arm.getRotatedArmPosition());
+                telemetry.addData("Lift Position", arm.getEncoderValue());
+                score.execute();
                 currentState = AutoState.CHECK_SCORING_FINISHED;
 
             case CHECK_SCORING_FINISHED:
