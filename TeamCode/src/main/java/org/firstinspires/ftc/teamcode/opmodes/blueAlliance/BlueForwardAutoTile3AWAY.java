@@ -13,10 +13,12 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
+import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
 
 @Autonomous(name = "Blue Alliance Auto Position 1", group = "Blue Alliance Autos")
-public class BlueForwardAutoPosition2 extends OpMode {
+public class BlueForwardAutoTile3AWAY extends OpMode {
 
+    private ScoreHighBasket score;
     private Follower follower;
     private ArmAndIntakeFunctions functions;
     private Arm arm;
@@ -39,7 +41,7 @@ public class BlueForwardAutoPosition2 extends OpMode {
         // Create a BezierCurve for the path to the observation zone
         observationCurve = new BezierCurve(
                 new Point(19, 125.5, Point.CARTESIAN),     // Start from scoring position
-                new Point(12, 0, Point.CARTESIAN),   // Control point (adjust)
+                new Point(14, 60, Point.CARTESIAN),   // Control point
                 new Point(7.6, 16.13, Point.CARTESIAN)     // End point
         );
 
@@ -49,10 +51,13 @@ public class BlueForwardAutoPosition2 extends OpMode {
                 .build();
 
         scoringCurve = new BezierCurve(
-                new Point(0, 85, Point.CARTESIAN),      // Starting point
-                new Point(12, -12, Point.CARTESIAN),     // Control point (adjust)
+                new Point(0, 60, Point.CARTESIAN),      // Starting point
+                new Point(8, 85, Point.CARTESIAN),     // Control point
                 new Point(19, 125.5, Point.CARTESIAN)       // End point
         );
+
+        //Initialize score
+        score = new ScoreHighBasket(arm, intake, gamepad2, functions);
 
         // Initialize hardware components
         arm = hardwareMap.get(Arm.class, "arm");
@@ -68,6 +73,7 @@ public class BlueForwardAutoPosition2 extends OpMode {
     @Override
     public void init_loop() {
         telemetry.addData("State", currentState);
+        telemetry.addData("Time", System.currentTimeMillis() - startTime);
     }
 
     @Override
@@ -76,7 +82,7 @@ public class BlueForwardAutoPosition2 extends OpMode {
         startTime = System.currentTimeMillis(); // Record the start time
 
         // Set the initial position of the robot
-        follower.setStartingPose(new Pose(0, 60, 0)); // Starting position (x = 0, y = 0, heading = 0°)
+        follower.setStartingPose(new Pose(0, 60, 0)); // Starting position (x = 0, y = 60, heading = 0°)
 
 
         // Follow the path to the scoring zone
@@ -102,10 +108,11 @@ public class BlueForwardAutoPosition2 extends OpMode {
                 break;
 
             case SCORE_HIGH_BASKET:
-                // Use ArmAndIntakeFunctions to score the preloaded game piece in the high basket
-                functions.armTo90Degrees();
-                functions.scoreHighBasket();
+                telemetry.addData("Arm Position", arm.getRotatedArmPosition());
+                telemetry.addData("Lift Position", arm.getEncoderValue());
+                score.execute();
                 currentState = AutoState.CHECK_SCORING_FINISHED;
+                break;
 
             case CHECK_SCORING_FINISHED:
                 // Check if the high basket scoring is finished

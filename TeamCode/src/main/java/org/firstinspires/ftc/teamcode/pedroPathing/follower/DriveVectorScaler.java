@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Vector;
  */
 public class DriveVectorScaler {
     // This is ordered left front, left back, right front, right back. These are also normalized.
-    private Vector[] mecanumVectors;
+    private final Vector[] mecanumVectors;
 
     /**
      * This creates a new DriveVectorScaler, which takes in various movement vectors and outputs
