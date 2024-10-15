@@ -38,9 +38,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Vector;
  * @version 1.0, 7/20/2024
  */
 public class OTOSLocalizer extends Localizer {
-    private HardwareMap hardwareMap;
+    private final HardwareMap hardwareMap;
     private Pose startPose;
-    private SparkFunOTOS otos;
+    private final SparkFunOTOS otos;
     private double previousHeading;
     private double totalHeading;
 

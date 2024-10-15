@@ -16,15 +16,17 @@ import org.firstinspires.ftc.teamcode.util.LevelTwoAscent;
 import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
 
 @TeleOp(name = "TeleOp")
-public class TeleOpMode extends OpMode {
-    public LevelTwoAscent ascent;
-    public ScoreHighBasket scorehighbasket;
-    public ArmAndIntakeFunctions functions;
+public class TestingTeleOp extends OpMode {
     private Follower follower;
-    Arm arm;
-    Intake intake;
-    CollectSample collection;
+    private Arm arm;
+    private Intake intake;
+    private ArmAndIntakeFunctions functions;
+    private CollectSample collection;
+    private LevelTwoAscent ascent;
+    private ScoreHighBasket scorehighbasket;
 
+    // Flag to track if scoreHighBasket has been initiated
+    private boolean scoreHighBasketInitiated = false;
 
     @Override
     public void init() {
@@ -35,7 +37,7 @@ public class TeleOpMode extends OpMode {
         // Initialize functions
         functions = new ArmAndIntakeFunctions(arm, intake, gamepad2);
         collection = new CollectSample(arm, intake, functions);
-        scorehighbasket = new ScoreHighBasket(arm, intake, gamepad2);
+        scorehighbasket = new ScoreHighBasket(arm, intake, gamepad2, functions);
         ascent = new LevelTwoAscent(arm, intake, functions);
 
         follower = new Follower(hardwareMap);
@@ -56,21 +58,40 @@ public class TeleOpMode extends OpMode {
 
     @Override
     public void loop() {
+        // Teleop movement with response curves
+        follower.setTeleOpMovementVectors(
+                -applyResponseCurve(gamepad1.left_stick_y),
+                applyResponseCurve(gamepad1.left_stick_x),
+                applyResponseCurve(gamepad1.right_stick_x),
+                true
+        );
 
-        follower.setTeleOpMovementVectors(-applyResponseCurve(gamepad1.left_stick_y), applyResponseCurve(gamepad1.left_stick_x), applyResponseCurve(gamepad1.right_stick_x), true);
-
+        // Handle collection with 'a' button
         if (gamepad2.a) {
-            collection.drive();
+            collection.drive(); // Assuming collectSample is non-blocking
         }
 
-        if (gamepad2.b) {
-            scorehighbasket.execute();
+
+        // Handle scoring in the high basket with the 'b' button
+        if (gamepad2.b && !scorehighbasket.isScoringInProgress()) {
+            scorehighbasket.execute(); // Initiate scoring high basket
         }
 
+        // Continuously check if scoring has finished
+        if (scorehighbasket.isScoringInProgress()) {
+            scorehighbasket.execute(); // Keep executing if scoring is in progress
+            if (scorehighbasket.isFinished()) {
+                // Scoring completed, handle any post-scoring logic here if needed
+            }
+        }
+
+
+        // Handle level two ascent with 'y' button
         if (gamepad2.y) {
             ascent.drive();
         }
 
+        // Arm positioning with D-pad
         if (gamepad2.dpad_down) {
             functions.armToDownPosition();
         }
@@ -79,15 +100,9 @@ public class TeleOpMode extends OpMode {
             functions.armTo90Degrees();
         }
 
-        // Arm control using gamepad2
-        if (gamepad2.dpad_up) {
-            arm.toPoint(-1000);  // target position
-        } else if (gamepad2.dpad_down) {
-            arm.toPoint(-0);  // Lower position
-        }
-
         // Rotation control using gamepad2
-        if (gamepad2.a) {
+        // Note: This is separate from scoreHighBasket's rotation
+        if (gamepad2.left_bumper) {
             arm.rotateArm(0.5);  // Rotate arm clockwise
         } else if (gamepad2.right_bumper) {
             arm.rotateArm(-0.5);  // Rotate arm counterclockwise
@@ -116,7 +131,6 @@ public class TeleOpMode extends OpMode {
         telemetry.addData("Right stick y", gamepad1.right_stick_y);
         telemetry.addData("Left stick x", gamepad1.left_stick_x);
         telemetry.addData("Right stick x", gamepad1.right_stick_x);
-     //   telemetry.addData("Servo Position", gamepad2.a ? "Open" : gamepad2.b ? "Closed" : "Neutral");
         telemetry.update();
     }
 

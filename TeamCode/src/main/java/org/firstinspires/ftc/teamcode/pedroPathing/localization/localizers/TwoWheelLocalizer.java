@@ -44,18 +44,18 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.NanoTimer;
  */
 @Config
 public class TwoWheelLocalizer extends Localizer { // todo: make two wheel odo work
-    private HardwareMap hardwareMap;
-    private IMU imu;
+    private final HardwareMap hardwareMap;
+    private final IMU imu;
     private Pose startPose;
     private Pose displacementPose;
     private Pose currentVelocity;
     private Matrix prevRotationMatrix;
-    private NanoTimer timer;
+    private final NanoTimer timer;
     private long deltaTimeNano;
-    private Encoder forwardEncoder;
-    private Encoder strafeEncoder;
-    private Pose forwardEncoderPose;
-    private Pose strafeEncoderPose;
+    private final Encoder forwardEncoder;
+    private final Encoder strafeEncoder;
+    private final Pose forwardEncoderPose;
+    private final Pose strafeEncoderPose;
     private double previousIMUOrientation;
     private double deltaRadians;
     private double totalHeading;

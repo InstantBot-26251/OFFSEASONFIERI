@@ -16,6 +16,10 @@ public class ArmAndIntakeFunctions {
     private final Gamepad gamepad2;
     private final Arm arm;
     private final Intake intake;
+
+    // Encoder counts corresponding to the rotation angles (60 and 75 degrees)
+    private static final int ROTATE_60 = 600; // Example value, adjust based on testing
+    private static final int ROTATE_75 = 750; // Example value, adjust based on testing
     private final double ARM_POSITION_TOLERANCE = 2.0; // Tolerance for arm position (in degrees)
     private final double LIFT_POSITION_TOLERANCE = 1.0; // Tolerance for lift position
 
@@ -23,6 +27,21 @@ public class ArmAndIntakeFunctions {
         this.arm = arm;
         this.intake = intake;
         this.gamepad2 = gamepad2;
+    }
+    // Method to rotate arm to a target angle (between 60 and 75 degrees)
+    public void rotateArmToTargetAngle(int targetDegrees) {
+        int targetPosition;
+
+        // Ensure the target is between 60 and 75 degrees
+        if (targetDegrees >= 60 && targetDegrees <= 75) {
+            targetPosition = (int) (ROTATE_60 + ((targetDegrees - 60) / 15.0) * (ROTATE_75 - ROTATE_60));
+            arm.rotationMotor.setTargetPosition(targetPosition);
+            arm.rotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.rotationMotor.setPower(1.0); // Set the motor power
+        } else {
+            // Target degrees are out of bounds, handle accordingly
+            System.out.println("Target degrees out of range (60-75)");
+        }
     }
 
     // Helper method to stop and reset the arm motor encoder
@@ -66,16 +85,27 @@ public class ArmAndIntakeFunctions {
                 telemetry.update();
             }
 
-            // Stop the intake when 'B' button on gamepad2 is pressed
+            // Stop the intake when 'Right bumper' button on gamepad2 is pressed
             intake.setIntakePower(0.0); // Stop intake
         }
     }
 
     public void scoreHighBasket() {
-        armTo90Degrees(); // Move arm to 90° for scoring
-        if (isArmAtTarget(90)) {
-            arm.toPoint(-5000); // Lower arm
-            intake.setIntakePower(-1.0); // Outtake for scoring
+        arm.toPoint(-3750); // Move arm to the highest position
+        if (isLiftAtTarget(-3750)) {
+            rotateArmToTargetAngle(ROTATE_60); // Lower arm
+            if (isArmAtTarget(ROTATE_60)) {
+                // Wait for the right trigger press to start the outtake
+                telemetry.addData("Status", "Press right trigger to start outtake");
+                telemetry.update();
+
+                // Check if the right trigger is pressed on gamepad2
+                if (gamepad2.right_trigger > 0) {
+                    intake.setIntakePower(-1.0); // Outtake for scoring
+                    telemetry.addData("Status", "Outtaking...");
+                    telemetry.update();
+                }
+            }
         }
     }
 
@@ -85,10 +115,10 @@ public class ArmAndIntakeFunctions {
         intake.setIntakePower(-1.0); // Outtake
     }
 
-    public void scoreSpecimen() {
-        arm.rotateArm(-0.5); // Fine adjustment
-        intake.setPivotPosition(0.5); // Position intake pivot
-    }
+    // public void scoreSpecimen() {
+      //  arm.rotateArm(-0.5); // Fine adjustment
+        // intake.setPivotPosition(0.5); // Position intake pivot
+    // }
 
     public void levelTwoAscent() {
         arm.rotateArm(-0.5); // Fine adjustment

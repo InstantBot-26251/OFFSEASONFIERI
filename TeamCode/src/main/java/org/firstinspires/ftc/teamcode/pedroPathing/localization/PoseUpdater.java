@@ -21,11 +21,11 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Vector;
  * @version 1.0, 3/4/2024
  */
 public class PoseUpdater {
-    private HardwareMap hardwareMap;
+    private final HardwareMap hardwareMap;
 
     private IMU imu;
 
-    private Localizer localizer;
+    private final Localizer localizer;
 
     private Pose startingPose = new Pose(0,0,0);
 

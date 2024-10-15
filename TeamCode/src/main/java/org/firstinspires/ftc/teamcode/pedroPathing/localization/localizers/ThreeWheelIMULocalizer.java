@@ -45,19 +45,19 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.NanoTimer;
  */
 @Config
 public class ThreeWheelIMULocalizer extends Localizer {
-    private HardwareMap hardwareMap;
+    private final HardwareMap hardwareMap;
     private Pose startPose;
     private Pose displacementPose;
     private Pose currentVelocity;
     private Matrix prevRotationMatrix;
-    private NanoTimer timer;
+    private final NanoTimer timer;
     private long deltaTimeNano;
-    private Encoder leftEncoder;
-    private Encoder rightEncoder;
-    private Encoder strafeEncoder;
-    private Pose leftEncoderPose;
-    private Pose rightEncoderPose;
-    private Pose strafeEncoderPose;
+    private final Encoder leftEncoder;
+    private final Encoder rightEncoder;
+    private final Encoder strafeEncoder;
+    private final Pose leftEncoderPose;
+    private final Pose rightEncoderPose;
+    private final Pose strafeEncoderPose;
 
     public final IMU imu;
     private double previousIMUOrientation;

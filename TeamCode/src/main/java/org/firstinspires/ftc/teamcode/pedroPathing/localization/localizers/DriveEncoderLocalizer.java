@@ -26,17 +26,17 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.NanoTimer;
  */
 @Config
 public class DriveEncoderLocalizer extends Localizer {
-    private HardwareMap hardwareMap;
+    private final HardwareMap hardwareMap;
     private Pose startPose;
     private Pose displacementPose;
     private Pose currentVelocity;
     private Matrix prevRotationMatrix;
-    private NanoTimer timer;
+    private final NanoTimer timer;
     private long deltaTimeNano;
-    private Encoder leftFront;
-    private Encoder rightFront;
-    private Encoder leftRear;
-    private Encoder rightRear;
+    private final Encoder leftFront;
+    private final Encoder rightFront;
+    private final Encoder leftRear;
+    private final Encoder rightRear;
     private double totalHeading;
     public static double FORWARD_TICKS_TO_INCHES = 1;
     public static double STRAFE_TICKS_TO_INCHES = 1;
