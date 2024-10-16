@@ -55,7 +55,7 @@ public class Arm {
 
     // Method to set the arm power using PIDF control
     public void setArmPower() {
-        double encoderValue = getEncoderValue();
+        double encoderValue = getArmEncoderValue();
 
         // Update the PIDF controller with the current encoder value
         armPidf.updatePosition(encoderValue);
