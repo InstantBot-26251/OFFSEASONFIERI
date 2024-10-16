@@ -11,9 +11,10 @@ public class Arm {
     public DcMotorEx rotationMotor;
     public DcMotorEx armMotor;
 
-    public PIDFController pidf;
-    public CustomPIDFCoefficients coefficients;
-
+    public PIDFController armPidf;
+    public PIDFController rotationPidf;
+    public CustomPIDFCoefficients armCoefficients;
+    public CustomPIDFCoefficients rotationCoefficients;
     public double armTolerance = 90; // 90-degree limit for scoring
     public double output;
 
@@ -22,7 +23,8 @@ public class Arm {
 
 
     // Constructor
-    public Arm(HardwareMap hardwareMap, double p, double i, double d, double f) {
+    public Arm(HardwareMap hardwareMap,double armP, double armI, double armD, double armF,
+               double rotationP, double rotationI, double rotationD, double rotationF) {
         // Initialize motor
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
         armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -32,25 +34,34 @@ public class Arm {
         rotationMotor = hardwareMap.get(DcMotorEx.class, "rotationMotor");
         rotationMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        // Set the ZeroPowerBehavior for the rotation motor
+        rotationMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // Use BRAKE behavior
+
         // Initialize PIDF coefficients
-        coefficients = new CustomPIDFCoefficients(p, i, d, f);
+        armCoefficients = new CustomPIDFCoefficients(armP, armI, armD, armF);
+        rotationCoefficients = new CustomPIDFCoefficients(rotationP, rotationI, rotationD, rotationF);
+
 
         // Initialize PIDF controller with the coefficients
-        pidf = new PIDFController(coefficients);
+        armPidf = new PIDFController(armCoefficients);
+        rotationPidf = new PIDFController(rotationCoefficients);
 
-        // Set an initial target position for the arm
-        pidf.setTargetPosition(0);  // Start at encoder position 0
+
+        // Set an initial target position for the lift & arm(rotated)
+        armPidf.setTargetPosition(0);  // Start at encoder position 0
+        rotationPidf.setTargetPosition(0); // Start at encoder position 0 for rotation
+
     }
 
     // Method to set the arm power using PIDF control
-    public void setThePower() {
+    public void setArmPower() {
         double encoderValue = getEncoderValue();
 
         // Update the PIDF controller with the current encoder value
-        pidf.updatePosition(encoderValue);
+        armPidf.updatePosition(encoderValue);
 
         // Calculate the output using the PIDF controller
-        output = pidf.runPIDF();
+        output = armPidf.runPIDF();
 
         // Set the motor's velocity to the calculated output
         armMotor.setVelocity(output);
@@ -58,16 +69,24 @@ public class Arm {
 
     // Method to rotate the arm within the allowed range (e.g., for scoring)
     public void rotateArm(double power) {
-        double currentDegrees = getRotatedArmPosition();
+        double encoderValue = getRotatedArmPosition();
+
+        // Update the PIDF controller with the current encoder value
+        rotationPidf.updatePosition(encoderValue);
+
+        // Calculate the output using the PIDF controller
+        double rotationOutput = rotationPidf.runPIDF();
 
         // Limit rotation to a maximum of 90 degrees
-        if (currentDegrees >= armTolerance) {
+        if (getRotatedArmPosition() >= armTolerance) {
             // Stop the rotation if it reaches 90 degrees
-            power = 0;
+            rotationOutput = 0; // Stop if at limit
+        } else {
+            rotationOutput += power; // Add the provided power to the PIDF output
         }
 
-        // Set motor power (only if under the limit)
-        rotationMotor.setPower(power);
+        // Set the rotation motor's power to the calculated output
+        rotationMotor.setPower(rotationOutput);
     }
 
     // Method to set arm tolerance for scoring (ensures arm doesn't exceed 90 degrees)
@@ -89,15 +108,19 @@ public class Arm {
     }
 
     public void toPoint(double position) {
-        pidf.setTargetPosition(position);
+        armPidf.setTargetPosition(position);
     }
 
     public double getSetPoint() {
-        return pidf.getTargetPosition();
+        return armMotor.getTargetPosition();
     }
 
     // Method to get the encoder value for the arm motor
-    public double getEncoderValue() {
+    public double getArmEncoderValue() {
+        return armMotor.getCurrentPosition();
+    }
+    // Method to get the encoder value for the rotation motor
+    public double getRotationEncoderValue() {
         return armMotor.getCurrentPosition();
     }
 

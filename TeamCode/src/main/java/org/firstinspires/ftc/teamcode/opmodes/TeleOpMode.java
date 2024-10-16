@@ -29,7 +29,7 @@ public class TeleOpMode extends OpMode {
     @Override
     public void init() {
         // Initialize arm and intake systems first
-        arm = new Arm(hardwareMap, 1, 0, 0, 1);  // Initialize arm system
+        arm = new Arm(hardwareMap, 1, 0, 0, 1, 1, 0, 0, 1);  // Initialize arm system
         intake = new Intake(hardwareMap);  // Initialize intake system
 
         // Initialize functions
@@ -116,7 +116,8 @@ public class TeleOpMode extends OpMode {
         telemetry.addData("Right stick y", gamepad1.right_stick_y);
         telemetry.addData("Left stick x", gamepad1.left_stick_x);
         telemetry.addData("Right stick x", gamepad1.right_stick_x);
-     //   telemetry.addData("Servo Position", gamepad2.a ? "Open" : gamepad2.b ? "Closed" : "Neutral");
+        telemetry.addData("Servo Position", gamepad2.a ? "Open" : gamepad2.b ? "Closed" : "Neutral");
+        telemetry.addData("Arm Set Point", arm.getSetPoint());
         telemetry.update();
     }
 
