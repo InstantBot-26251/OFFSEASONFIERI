@@ -35,7 +35,7 @@ public class TeleOpMode extends OpMode {
         // Initialize functions
         functions = new ArmAndIntakeFunctions(arm, intake, gamepad2);
         collection = new CollectSample(arm, intake, functions);
-        scorehighbasket = new ScoreHighBasket(arm, intake, gamepad2, functions);
+        scorehighbasket = new ScoreHighBasket(arm, intake, gamepad2);
         ascent = new LevelTwoAscent(arm, intake, functions);
 
         follower = new Follower(hardwareMap);
@@ -84,15 +84,17 @@ public class TeleOpMode extends OpMode {
             arm.toPoint(-1000);  // target position
         } else if (gamepad2.dpad_down) {
             arm.toPoint(-0);  // Lower position
+        } else {
+            arm.stopArmMotor();
         }
 
         // Rotation control using gamepad2
         if (gamepad2.a) {
-            arm.rotateArm(0.5);  // Rotate arm clockwise
+            arm.rotateArm(60);  // Rotate arm clockwise
         } else if (gamepad2.right_bumper) {
-            arm.rotateArm(-0.5);  // Rotate arm counterclockwise
+            arm.rotateArm(-60);  // Rotate arm counterclockwise
         } else {
-            arm.rotateArm(0);  // Stop rotation
+            arm.stopRotationMotor();  // Stop rotation
         }
 
         // Intake control using gamepad2
@@ -118,6 +120,8 @@ public class TeleOpMode extends OpMode {
         telemetry.addData("Right stick x", gamepad1.right_stick_x);
         telemetry.addData("Servo Position", gamepad2.a ? "Open" : gamepad2.b ? "Closed" : "Neutral");
         telemetry.addData("Arm Set Point", arm.getSetPoint());
+        telemetry.addData("Lift Encoder Value", arm.getArmEncoderValue());
+        telemetry.addData("Rotated Arm Encoder Value", arm.getRotationEncoderValue());
         telemetry.update();
     }
 

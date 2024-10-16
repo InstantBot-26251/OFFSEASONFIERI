@@ -21,6 +21,11 @@ public class Arm {
     // Encoder ticks per revolution
     public static final int TICKS_PER_REVOLUTION = 28 * 20;  // 28 ticks * 20:1 gear ratio = 560 ticks per revolution
 
+    private static final double MAX_POWER = 1.0; // Maximum power to apply
+
+    // Encoder counts corresponding to the rotation angles (60 and 75 degrees)
+    public static final int ROTATE_60 = 600; // Example value, adjust based on testing
+    public static final int ROTATE_75 = 750; // Example value, adjust based on testing
 
     // Constructor
     public Arm(HardwareMap hardwareMap,double armP, double armI, double armD, double armF,
@@ -67,28 +72,37 @@ public class Arm {
         armMotor.setVelocity(output);
     }
 
-    // Method to rotate the arm within the allowed range (e.g., for scoring)
-    public void rotateArm(double power) {
-        double encoderValue = getRotatedArmPosition();
+    private double calculateRotationPower(int targetPosition) {
+        double currentPosition = getRotatedArmPosition();
+        double error = targetPosition - currentPosition;
 
-        // Update the PIDF controller with the current encoder value
-        rotationPidf.updatePosition(encoderValue);
+        // Simple proportional control for power calculation
+        double power = error * 0.01; // Adjust gain as needed
+        return Math.max(-MAX_POWER, Math.min(MAX_POWER, power)); // Limit power to range [-MAX_POWER, MAX_POWER]
+    }
 
-        // Calculate the output using the PIDF controller
-        double rotationOutput = rotationPidf.runPIDF();
+    // Method to rotate arm to a target angle with calculated power
+    public void rotateArm(double targetDegrees) {
+        if (targetDegrees < 60 || targetDegrees > 75) {
+            System.out.println("Target degrees out of range (60-75)");
+            return; // Exit if out of bounds
+        }
+
+        int targetPosition = (int) (ROTATE_60 + ((targetDegrees - 60) / 15.0) * (ROTATE_75 - ROTATE_60));
+        rotationMotor.setTargetPosition(targetPosition);
+        rotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // Calculate the power to apply
+        double rotationOutput = calculateRotationPower(targetPosition);
 
         // Limit rotation to a maximum of 90 degrees
         if (getRotatedArmPosition() >= armTolerance) {
-            // Stop the rotation if it reaches 90 degrees
             rotationOutput = 0; // Stop if at limit
-        } else {
-            rotationOutput += power; // Add the provided power to the PIDF output
         }
 
         // Set the rotation motor's power to the calculated output
         rotationMotor.setPower(rotationOutput);
     }
-
     // Method to set arm tolerance for scoring (ensures arm doesn't exceed 90 degrees)
     public void setArmTolerance() {
         double rotatedPosition = getRotatedArmPosition();
