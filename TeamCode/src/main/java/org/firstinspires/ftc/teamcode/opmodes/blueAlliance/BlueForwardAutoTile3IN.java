@@ -2,6 +2,10 @@ package org.firstinspires.ftc.teamcode.opmodes.blueAlliance;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.opmodes.util.AutoState;
 import org.firstinspires.ftc.teamcode.util.ArmAndIntakeFunctions;
@@ -15,7 +19,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
 
-@Autonomous(name = "Blue Alliance Auto Position 1", group = "Blue Alliance Autos")
+@Autonomous(name = "Blue Alliance Auto Position 1")
 public class BlueForwardAutoTile3IN extends OpMode {
 
     private ScoreHighBasket score;
@@ -56,16 +60,15 @@ public class BlueForwardAutoTile3IN extends OpMode {
                 new Point(19, 125.5, Point.CARTESIAN)       // End point
         );
 
-        //Initialize score
-        score = new ScoreHighBasket(arm, intake, gamepad2, functions);
-
-        // Initialize hardware components
-        arm = hardwareMap.get(Arm.class, "arm");
-        intake = hardwareMap.get(Intake.class, "intake");
+        arm = new Arm(hardwareMap, 1, 0, 0, 1);
+        intake = new Intake(hardwareMap);
 
         // Initialize Follower and ArmAndIntakeFunctions with hardware components
         follower = new Follower(hardwareMap);
         functions = new ArmAndIntakeFunctions(arm, intake, gamepad2);
+
+        //Initialize score
+        score = new ScoreHighBasket(arm, intake, gamepad2, functions);
 
         telemetry.addData("Status", "Initialized");
     }

@@ -507,7 +507,7 @@ public class Follower {
             wheelPowers[0] = (fwd + lat + rot) / denominators;
             wheelPowers[1] = (fwd - lat + rot) / denominators;
             wheelPowers[2] = (fwd - lat - rot) / denominators;
-            wheelPowers[4] = (fwd + lat - rot) / denominators;
+            wheelPowers[3] = (fwd + lat - rot) / denominators;
 
             drivePowers = wheelPowers;
 

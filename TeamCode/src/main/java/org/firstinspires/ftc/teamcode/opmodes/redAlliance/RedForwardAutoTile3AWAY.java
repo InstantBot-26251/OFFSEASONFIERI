@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.opmodes.util.AutoState;
 import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
 
 
-@Autonomous(name = "Red Forward Autonomous", group = "Red Alliance Autos")
+@Autonomous(name = "Red Forward Autonomous")
 public class RedForwardAutoTile3AWAY extends OpMode {
 
     private ScoreHighBasket score;
@@ -56,16 +56,15 @@ public class RedForwardAutoTile3AWAY extends OpMode {
                 new Point(125.5, 19, Point.CARTESIAN)       // End point
         );
 
-        //Initialize score
-        score = new ScoreHighBasket(arm, intake, gamepad2, functions);
-
-        // Initialize hardware components
-        arm = hardwareMap.get(Arm.class, "arm");
-        intake = hardwareMap.get(Intake.class, "intake");
+        arm = new Arm(hardwareMap, 1, 0, 0, 1);
+        intake = new Intake(hardwareMap);
 
         // Initialize Follower and ArmAndIntakeFunctions with hardware components
         follower = new Follower(hardwareMap);
         functions = new ArmAndIntakeFunctions(arm, intake, gamepad2);
+
+        //Initialize score
+        score = new ScoreHighBasket(arm, intake, gamepad2, functions);
 
         telemetry.addData("Status", "Initialized");
 

@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.PIDFController;
 
 public class Arm {
 
-    public DcMotor rotationMotor;
+    public DcMotorEx rotationMotor;
     public DcMotorEx armMotor;
 
     public PIDFController pidf;
@@ -29,7 +29,7 @@ public class Arm {
         armMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         // Initialize rotation motor
-        rotationMotor = hardwareMap.get(DcMotor.class, "rotationMotor");
+        rotationMotor = hardwareMap.get(DcMotorEx.class, "rotationMotor");
         rotationMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Initialize PIDF coefficients

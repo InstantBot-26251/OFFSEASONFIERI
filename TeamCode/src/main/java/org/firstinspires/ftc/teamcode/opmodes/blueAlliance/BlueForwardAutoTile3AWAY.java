@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
 
-@Autonomous(name = "Blue Alliance Auto Position 1", group = "Blue Alliance Autos")
+@Autonomous(name = "Blue Alliance Auto Position 1")
 public class BlueForwardAutoTile3AWAY extends OpMode {
 
     private ScoreHighBasket score;
@@ -60,8 +60,8 @@ public class BlueForwardAutoTile3AWAY extends OpMode {
         score = new ScoreHighBasket(arm, intake, gamepad2, functions);
 
         // Initialize hardware components
-        arm = hardwareMap.get(Arm.class, "arm");
-        intake = hardwareMap.get(Intake.class, "intake");
+        arm = hardwareMap.get(Arm.class, "armMotor");
+        intake = hardwareMap.get(Intake.class, "intakeServo");
 
         // Initialize Follower and ArmAndIntakeFunctions with hardware components
         follower = new Follower(hardwareMap);
