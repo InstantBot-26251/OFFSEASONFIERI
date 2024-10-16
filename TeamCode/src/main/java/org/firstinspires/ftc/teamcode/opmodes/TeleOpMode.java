@@ -29,7 +29,7 @@ public class TeleOpMode extends OpMode {
     @Override
     public void init() {
         // Initialize arm and intake systems first
-        arm = new Arm(hardwareMap, 0.01, 0, 0.01, 0);  // Initialize arm system
+        arm = new Arm(hardwareMap, 1, 0, 0, 1);  // Initialize arm system
         intake = new Intake(hardwareMap);  // Initialize intake system
 
         // Initialize functions
@@ -56,7 +56,7 @@ public class TeleOpMode extends OpMode {
 
     @Override
     public void loop() {
-
+        follower.update();
         follower.setTeleOpMovementVectors(-applyResponseCurve(gamepad1.left_stick_y), applyResponseCurve(gamepad1.left_stick_x), applyResponseCurve(gamepad1.right_stick_x), true);
 
         if (gamepad2.a) {

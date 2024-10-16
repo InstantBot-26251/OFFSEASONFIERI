@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Intake {
-    CRServo intakeServo; // Servo to control in the intake(for blocks)
+    public CRServo intakeServo; // Servo to control in the intake(for blocks)
     // Servo pivotServo;  // Servo to control the pivot(for specimens)
 
     // Constructor to initialize intake motor and pivot servo
