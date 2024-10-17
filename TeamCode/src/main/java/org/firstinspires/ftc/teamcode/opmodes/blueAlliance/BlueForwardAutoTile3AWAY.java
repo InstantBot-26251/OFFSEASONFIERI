@@ -33,10 +33,6 @@ public class BlueForwardAutoTile3AWAY extends OpMode {
 
     @Override
     public void init() {
-        // Create a path to the observation zone using the BezierCurve
-        observationPath = new PathBuilder()
-                .addPath(observationCurve) // Add BezierCurve as a path
-                .build();
 
         // Create a BezierCurve for the path to the observation zone
         observationCurve = new BezierCurve(
@@ -45,16 +41,23 @@ public class BlueForwardAutoTile3AWAY extends OpMode {
                 new Point(7.6, 16.13, Point.CARTESIAN)     // End point
         );
 
-        // Create a path to the scoring zone using the BezierCurve
-        scoringPath = new PathBuilder()
-                .addPath(scoringCurve) // Add BezierCurve as a path
-                .build();
-
+        // Create a BezierCurve for the path to the observation zone
         scoringCurve = new BezierCurve(
                 new Point(0, 60, Point.CARTESIAN),      // Starting point
                 new Point(8, 85, Point.CARTESIAN),     // Control point
                 new Point(19, 125.5, Point.CARTESIAN)       // End point
         );
+
+        // Create a path to the observation zone using the BezierCurve
+        observationPath = new PathBuilder()
+                .addPath(observationCurve) // Add BezierCurve as a path
+                .build();
+
+        // Create a path to the scoring zone using the BezierCurve
+        scoringPath = new PathBuilder()
+                .addPath(scoringCurve) // Add BezierCurve as a path
+                .build();
+
 
 
         // Initialize hardware components

@@ -15,9 +15,10 @@ import org.firstinspires.ftc.teamcode.util.CollectSample;
 import org.firstinspires.ftc.teamcode.util.LevelTwoAscent;
 import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
 
-@TeleOp(name = "TeleOp")
+@TeleOp(name = "TestingTeleOp")
 public class TestingTeleOp extends OpMode {
     private Follower follower;
+
     private Arm arm;
     private Intake intake;
     private ArmAndIntakeFunctions functions;
