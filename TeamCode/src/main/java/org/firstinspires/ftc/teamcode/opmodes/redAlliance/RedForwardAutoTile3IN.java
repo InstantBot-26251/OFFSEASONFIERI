@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.opmodes.redAlliance;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.opmodes.util.AutoState;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.teamcode.util.ArmAndIntakeFunctions;
 import org.firstinspires.ftc.teamcode.util.Arm;
 import org.firstinspires.ftc.teamcode.util.Intake;
@@ -55,16 +57,16 @@ public class RedForwardAutoTile3IN extends OpMode {
                 new Point(128.58, 16.13, Point.CARTESIAN)       // End point
         );
 
-        //Initialize score
-        score = new ScoreHighBasket(arm, intake, gamepad2, functions);
 
         // Initialize hardware components
-        arm = hardwareMap.get(Arm.class, "armMotor");
-        intake = hardwareMap.get(Intake.class, "intakeServo");
-
+        arm = new Arm(hardwareMap, 1, 0, 0,1,1,0,0,1);
+        intake = new Intake(hardwareMap);
         // Initialize Follower and ArmAndIntakeFunctions with hardware components
         follower = new Follower(hardwareMap);
         functions = new ArmAndIntakeFunctions(arm, intake, gamepad2);
+
+        //Initialize score
+        score = new ScoreHighBasket(arm, intake, gamepad2);
 
         telemetry.addData("Status", "Initialized");
     }
@@ -107,7 +109,7 @@ public class RedForwardAutoTile3IN extends OpMode {
 
             case SCORE_HIGH_BASKET:
                 telemetry.addData("Arm Position", arm.getRotatedArmPosition());
-                telemetry.addData("Lift Position", arm.getEncoderValue());
+                telemetry.addData("Lift Position", arm.getArmEncoderValue());
                 score.execute();
                 currentState = AutoState.CHECK_SCORING_FINISHED;
 

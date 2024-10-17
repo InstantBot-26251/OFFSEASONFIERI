@@ -12,7 +12,7 @@ public class CollectSample {
         this.functions = functions;
     }
 
-    public void drive() {
+    public void drive()  {
         functions.collectSample();
     }
 }

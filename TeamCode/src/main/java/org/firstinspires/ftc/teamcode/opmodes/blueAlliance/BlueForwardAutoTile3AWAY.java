@@ -56,16 +56,18 @@ public class BlueForwardAutoTile3AWAY extends OpMode {
                 new Point(19, 125.5, Point.CARTESIAN)       // End point
         );
 
-        //Initialize score
-        score = new ScoreHighBasket(arm, intake, gamepad2, functions);
 
         // Initialize hardware components
-        arm = hardwareMap.get(Arm.class, "armMotor");
-        intake = hardwareMap.get(Intake.class, "intakeServo");
+        arm = new Arm(hardwareMap,1 , 0, 0, 1,1, 0, 0, 1);
+        intake = new Intake(hardwareMap);
 
         // Initialize Follower and ArmAndIntakeFunctions with hardware components
         follower = new Follower(hardwareMap);
         functions = new ArmAndIntakeFunctions(arm, intake, gamepad2);
+
+
+        //Initialize score
+        score = new ScoreHighBasket(arm, intake, gamepad2);
 
         telemetry.addData("Status", "Initialized");
     }
@@ -109,7 +111,7 @@ public class BlueForwardAutoTile3AWAY extends OpMode {
 
             case SCORE_HIGH_BASKET:
                 telemetry.addData("Arm Position", arm.getRotatedArmPosition());
-                telemetry.addData("Lift Position", arm.getEncoderValue());
+                telemetry.addData("Lift Position", arm.getArmEncoderValue());
                 score.execute();
                 currentState = AutoState.CHECK_SCORING_FINISHED;
                 break;
