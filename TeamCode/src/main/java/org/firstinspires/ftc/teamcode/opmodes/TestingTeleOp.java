@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.opmodes.util.AutoState;
 import org.firstinspires.ftc.teamcode.util.Arm;
 import org.firstinspires.ftc.teamcode.util.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
@@ -25,20 +26,20 @@ public class TestingTeleOp extends OpMode {
     private CollectSample collection;
     private LevelTwoAscent ascent;
     private ScoreHighBasket scorehighbasket;
-
+    
     // Flag to track if scoreHighBasket has been initiated
     private final boolean scoreHighBasketInitiated = false;
 
     @Override
     public void init() {
         // Initialize arm and intake systems first
-        arm = new Arm(hardwareMap, 1, 0, 0, 1, 1, 0,0,1);  // Initialize arm system
+        arm = new Arm(hardwareMap, 1, 0, 0, 1, 1, 0, 0, 1);  // Initialize arm system
         intake = new Intake(hardwareMap);  // Initialize intake system
 
         // Initialize functions
         functions = new ArmAndIntakeFunctions(arm, intake, gamepad2);
         collection = new CollectSample(arm, intake, functions);
-        scorehighbasket = new ScoreHighBasket(arm, intake, gamepad2);
+        scorehighbasket = new ScoreHighBasket(arm, intake, gamepad2, functions);
         ascent = new LevelTwoAscent(arm, intake, functions);
 
         follower = new Follower(hardwareMap);
@@ -61,7 +62,7 @@ public class TestingTeleOp extends OpMode {
     public void loop() {
         follower.update();
 
-        // Teleop movement with response curves
+        // TeleOp movement with response curves
         follower.setTeleOpMovementVectors(
                 -applyResponseCurve(gamepad1.left_stick_y),
                 applyResponseCurve(gamepad1.left_stick_x),
@@ -71,23 +72,14 @@ public class TestingTeleOp extends OpMode {
 
         // Handle collection with 'a' button
         if (gamepad2.a) {
-            collection.drive(); // Assuming collectSample is non-blocking
+            collection.drive();
         }
-
 
         // Handle scoring in the high basket with the 'b' button
         if (gamepad2.b && !scorehighbasket.isScoringInProgress()) {
             scorehighbasket.execute(); // Initiate scoring high basket
-        }
 
-        // Continuously check if scoring has finished
-        if (scorehighbasket.isScoringInProgress()) {
-            scorehighbasket.execute(); // Keep executing if scoring is in progress
-            if (scorehighbasket.isFinished()) {
-                // Scoring completed, handle any post-scoring logic here if needed
-            }
-        }
-
+    }
 
         // Handle level two ascent with 'y' button
         if (gamepad2.y) {

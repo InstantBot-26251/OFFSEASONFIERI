@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathBuilder;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
-@Autonomous(name = "Blue Observation Zone Auto", group = "Blue Alliance Autos")
+@Autonomous(name = "Blue Observation Zone Auto")
 public class BlueToObservationAuto extends OpMode {
 
     private Follower follower;

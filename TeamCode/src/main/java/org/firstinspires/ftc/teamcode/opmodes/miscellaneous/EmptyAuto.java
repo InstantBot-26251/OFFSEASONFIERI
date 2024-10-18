@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.opmodes.util.AutoStateM;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-@Autonomous(name = "Empty Auto", group = "Miscellaneous Autos")
+@Autonomous(name = "Empty Auto")
 public class EmptyAuto extends OpMode {
     private long startTime;
 

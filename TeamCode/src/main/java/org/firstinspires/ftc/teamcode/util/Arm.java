@@ -18,6 +18,17 @@ public class Arm {
     public double armTolerance = 90; // 90-degree limit for scoring
     public double output;
 
+    final double ARM_TICKS_PER_DEGREE = 7.7778;
+
+    // Arm positions
+    final double ARM_COLLAPSED_INTO_ROBOT = 0;
+    final double ARM_COLLECT = 250 * ARM_TICKS_PER_DEGREE;
+    final double ARM_CLEAR_BARRIER = 230 * ARM_TICKS_PER_DEGREE;
+    final double ARM_SCORE_SAMPLE_IN_HIGH = 170 * ARM_TICKS_PER_DEGREE;
+    final double ARM_SCORE_SPECIMEN = 160 * ARM_TICKS_PER_DEGREE;
+
+    private double armPosition = ARM_COLLAPSED_INTO_ROBOT;
+
     // Encoder ticks per revolution
     public static final int TICKS_PER_REVOLUTION = 28 * 20;  // 28 ticks * 20:1 gear ratio = 560 ticks per revolution
 
@@ -56,6 +67,19 @@ public class Arm {
         armPidf.setTargetPosition(0);  // Start at encoder position 0
         rotationPidf.setTargetPosition(0); // Start at encoder position 0 for rotation
 
+        resetArm();
+    }
+
+    public void resetArm() {
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setTargetPosition(0);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void moveArmToPosition(double position) {
+        armPosition = position;
+        rotationMotor.setTargetPosition((int) position);
+        rotationMotor.setPower(1.0); // Set power to move to position
     }
 
     // Method to set the arm power using PIDF control

@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
 
-@Autonomous(name = "Blue Alliance Auto Position 1")
+@Autonomous(name = "Blue Alliance Auto Tile 3 Away")
 public class BlueForwardAutoTile3AWAY extends OpMode {
 
     private ScoreHighBasket score;
@@ -70,7 +70,7 @@ public class BlueForwardAutoTile3AWAY extends OpMode {
 
 
         //Initialize score
-        score = new ScoreHighBasket(arm, intake, gamepad2);
+        score = new ScoreHighBasket(arm, intake, gamepad2, functions);
 
         telemetry.addData("Status", "Initialized");
     }

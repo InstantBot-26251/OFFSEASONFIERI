@@ -35,7 +35,7 @@ public class TeleOpMode extends OpMode {
         // Initialize functions
         functions = new ArmAndIntakeFunctions(arm, intake, gamepad2);
         collection = new CollectSample(arm, intake, functions);
-        scorehighbasket = new ScoreHighBasket(arm, intake, gamepad2);
+        scorehighbasket = new ScoreHighBasket(arm, intake, gamepad2, functions);
         ascent = new LevelTwoAscent(arm, intake, functions);
 
         follower = new Follower(hardwareMap);

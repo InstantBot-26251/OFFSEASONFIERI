@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.opmodes.util.AutoState;
 import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
 
 
-@Autonomous(name = "Red Forward Autonomous")
+@Autonomous(name = "Red Forward Autonomous Tile 3 Away")
 public class RedForwardAutoTile3AWAY extends OpMode {
 
     private ScoreHighBasket score;
@@ -64,7 +64,7 @@ public class RedForwardAutoTile3AWAY extends OpMode {
         functions = new ArmAndIntakeFunctions(arm, intake, gamepad2);
 
         //Initialize score
-        score = new ScoreHighBasket(arm, intake, gamepad2);
+        score = new ScoreHighBasket(arm, intake, gamepad2, functions);
 
         telemetry.addData("Status", "Initialized");
 
