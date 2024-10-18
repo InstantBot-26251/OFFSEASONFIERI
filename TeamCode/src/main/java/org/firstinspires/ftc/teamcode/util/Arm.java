@@ -145,6 +145,12 @@ public class Arm {
         return (encoderPosition / (double) TICKS_PER_REVOLUTION) * 360.0;
     }
 
+    public void setPower() {
+        armPidf.updatePosition(getArmEncoderValue());  // Update the current position (encoder value)
+        output = armPidf.runPIDF();       // Calculate the output using the PIDF
+        armMotor.setVelocity(output);            // Set the motor velocity based on the PIDF output
+    }
+
     public void toPoint(double position) {
         armPidf.setTargetPosition(position);
     }
