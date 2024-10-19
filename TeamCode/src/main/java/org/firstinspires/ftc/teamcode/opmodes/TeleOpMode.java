@@ -84,7 +84,7 @@ public class TeleOpMode extends OpMode {
             arm.toPoint(-1000);  // target position
         }
         if (gamepad2.dpad_down) {
-            arm.toPoint(-0);  // Lower position
+            arm.toPoint(0);  // Lower position
         }
 
         arm.setPower();
