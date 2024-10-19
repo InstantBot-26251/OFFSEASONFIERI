@@ -71,31 +71,32 @@ public class TeleOpMode extends OpMode {
             ascent.drive();
         }
 
-        if (gamepad2.dpad_down) {
-            functions.armToDownPosition();
-        }
+        // if (gamepad2.dpad_down) {
+            // functions.armToDownPosition();
+        // }
 
-        if (gamepad2.dpad_up) {
-            functions.armTo90Degrees();
-        }
+        // if (gamepad2.dpad_up) {
+            // functions.armTo90Degrees();
+        // }
 
         // Arm control using gamepad2
         if (gamepad2.dpad_up) {
             arm.toPoint(-1000);  // target position
-        } else if (gamepad2.dpad_down) {
-            arm.toPoint(-0);  // Lower position
-        } else {
-            arm.stopArmMotor();
         }
+        if (gamepad2.dpad_down) {
+            arm.toPoint(-0);  // Lower position
+        }
+
+        arm.setPower();
 
         // Rotation control using gamepad2
         if (gamepad2.a) {
             arm.rotateArm(60);  // Rotate arm clockwise
-        } else if (gamepad2.right_bumper) {
-            arm.rotateArm(-60);  // Rotate arm counterclockwise
-        } else {
-            arm.stopRotationMotor();  // Stop rotation
         }
+        if (gamepad2.right_bumper) {
+            arm.rotateArm(-60);  // Rotate arm counterclockwise
+        }
+
 
         // Intake control using gamepad2
         if (gamepad2.right_trigger > 0.1) {
