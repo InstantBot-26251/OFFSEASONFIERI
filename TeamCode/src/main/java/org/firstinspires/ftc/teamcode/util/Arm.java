@@ -17,7 +17,7 @@ public class Arm {
     public CustomPIDFCoefficients rotationCoefficients;
     public double armTolerance = 90; // 90-degree limit for scoring
     public double output;
-    public static double kPArm = 1;
+    public static double kPArm = 1; // constants
     public static double kIArm = 0;
     public static double kDArm = 0;
     public static double kFArm = 1;
