@@ -56,7 +56,7 @@ public class RedForwardAutoTile3AWAY extends OpMode {
                 new Point(125.5, 19, Point.CARTESIAN)       // End point
         );
 
-        arm = new Arm(hardwareMap, 1, 0, 0, 1, 1, 0, 0, 1);
+        arm = new Arm(hardwareMap);
         intake = new Intake(hardwareMap);
 
         // Initialize Follower and ArmAndIntakeFunctions with hardware components

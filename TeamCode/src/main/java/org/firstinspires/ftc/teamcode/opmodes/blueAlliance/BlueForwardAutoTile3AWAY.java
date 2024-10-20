@@ -61,7 +61,7 @@ public class BlueForwardAutoTile3AWAY extends OpMode {
 
 
         // Initialize hardware components
-        arm = new Arm(hardwareMap,1 , 0, 0, 1,1, 0, 0, 1);
+        arm = new Arm(hardwareMap);
         intake = new Intake(hardwareMap);
 
         // Initialize Follower and ArmAndIntakeFunctions with hardware components

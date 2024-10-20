@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.CustomPIDFCoefficients;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.PIDFController;
 
+@Config
 public class Arm {
 
     public DcMotorEx rotationMotor;
@@ -17,6 +19,7 @@ public class Arm {
     public CustomPIDFCoefficients rotationCoefficients;
     public double armTolerance = 90; // 90-degree limit for scoring
     public double output;
+
     public static double kPArm = 1; // constants
     public static double kIArm = 0;
     public static double kDArm = 0;
@@ -102,7 +105,7 @@ public class Arm {
         armMotor.setVelocity(output);
     }
 
-    private double calculateRotationPower(int targetPosition) {
+    private double calculateRotationPower(double targetPosition) {
         double currentPosition = getRotatedArmPosition();
         double error = targetPosition - currentPosition;
 
@@ -113,17 +116,11 @@ public class Arm {
 
     // Method to rotate arm to a target angle with calculated power
     public void rotateArm(double targetDegrees) {
-        if (targetDegrees < 60 || targetDegrees > 75) {
-            System.out.println("Target degrees out of range (60-75)");
-            return; // Exit if out of bounds
-        }
-
-        int targetPosition = (int) (ROTATE_60 + ((targetDegrees - 60) / 15.0) * (ROTATE_75 - ROTATE_60));
-        rotationMotor.setTargetPosition(targetPosition);
+        rotationPidf.setTargetPosition(targetDegrees);
         rotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Calculate the power to apply
-        double rotationOutput = calculateRotationPower(targetPosition);
+        double rotationOutput = calculateRotationPower(targetDegrees);
 
         // Limit rotation to a maximum of 90 degrees
         if (getRotatedArmPosition() >= armTolerance) {
