@@ -17,6 +17,14 @@ public class Arm {
     public CustomPIDFCoefficients rotationCoefficients;
     public double armTolerance = 90; // 90-degree limit for scoring
     public double output;
+    public static double kPArm = 1;
+    public static double kIArm = 0;
+    public static double kDArm = 0;
+    public static double kFArm = 1;
+    public static double kPPivot = 1;
+    public static double kIPivot = 0;
+    public static double kDPivot = 0;
+    public static double kFPivot = 1;
 
     final double ARM_TICKS_PER_DEGREE = 7.7778;
 
@@ -39,12 +47,11 @@ public class Arm {
     public static final int ROTATE_75 = 750; // Example value, adjust based on testing
 
     // Constructor
-    public Arm(HardwareMap hardwareMap,double armP, double armI, double armD, double armF,
-               double rotationP, double rotationI, double rotationD, double rotationF) {
+    public Arm(HardwareMap hardwareMap) {
         // Initialize motor
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
         armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        armMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         // Initialize rotation motor
         rotationMotor = hardwareMap.get(DcMotorEx.class, "rotationMotor");
@@ -54,8 +61,8 @@ public class Arm {
         rotationMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // Use BRAKE behavior
 
         // Initialize PIDF coefficients
-        armCoefficients = new CustomPIDFCoefficients(armP, armI, armD, armF);
-        rotationCoefficients = new CustomPIDFCoefficients(rotationP, rotationI, rotationD, rotationF);
+        armCoefficients = new CustomPIDFCoefficients(kPArm, kIArm, kDArm, kFArm);
+        rotationCoefficients = new CustomPIDFCoefficients(kPPivot, kIPivot, kDPivot, kFPivot);
 
 
         // Initialize PIDF controller with the coefficients
@@ -72,8 +79,7 @@ public class Arm {
 
     public void resetArm() {
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armMotor.setTargetPosition(0);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void moveArmToPosition(double position) {
@@ -122,7 +128,7 @@ public class Arm {
         // Limit rotation to a maximum of 90 degrees
         if (getRotatedArmPosition() >= armTolerance) {
             rotationOutput = 0; // Stop if at limit
-        }
+        }   
 
         // Set the rotation motor's power to the calculated output
         rotationMotor.setPower(rotationOutput);

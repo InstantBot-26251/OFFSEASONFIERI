@@ -15,7 +15,7 @@ public class ArmAndIntakeFunctions {
     // Encoder counts corresponding to the rotation angles (60 and 75 degrees)
     private static final int ROTATE_60 = 600; // Example value, adjust based on testing
     private static final int ROTATE_75 = 750; // Example value, adjust based on testing
-    private final double ARM_POSITION_TOLERANCE = 2.0; // Tolerance for arm position (in degrees)
+    private final double ARM_POSITION_TOLERANCE = 15.0; // Tolerance for arm position (in degrees)
     private final double LIFT_POSITION_TOLERANCE = 1.0; // Tolerance for lift position
 
     private static final double ARM_TICKS_PER_DEGREE = 7.7778;
@@ -141,7 +141,7 @@ public class ArmAndIntakeFunctions {
     public boolean isFinished() {
         double targetPosition = -5000; // High basket scoring position
         double currentArmPosition = arm.getRotatedArmPosition();
-        boolean isArmAtPosition = Math.abs(currentArmPosition - targetPosition) < 50; // Adjust tolerance
+        boolean isArmAtPosition = Math.abs(currentArmPosition - targetPosition) < 15; // Adjust tolerance
 
         boolean isIntakeClosed = Math.abs(intake.getIntakePosition() - 0.0) < 0.1; // Check intake closed
 
