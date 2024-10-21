@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.util;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.CustomPIDFCoefficients;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.PIDFController;
@@ -29,19 +30,17 @@ public class Arm {
     public static double kDPivot = 0;
     public static double kFPivot = 1;
 
-    final double ARM_TICKS_PER_DEGREE = 7.7778;
+    final double ARM_TICKS_PER_DEGREE = 7.7777777778;
 
     // Arm positions
     final double ARM_COLLAPSED_INTO_ROBOT = 0;
     final double ARM_COLLECT = 250 * ARM_TICKS_PER_DEGREE;
     final double ARM_CLEAR_BARRIER = 230 * ARM_TICKS_PER_DEGREE;
-    final double ARM_SCORE_SAMPLE_IN_HIGH = 170 * ARM_TICKS_PER_DEGREE;
+    public final double ARM_SCORE_SAMPLE_IN_HIGH = 170 * ARM_TICKS_PER_DEGREE;
     final double ARM_SCORE_SPECIMEN = 160 * ARM_TICKS_PER_DEGREE;
 
-    private double armPosition = ARM_COLLAPSED_INTO_ROBOT;
-
     // Encoder ticks per revolution
-    public static final int TICKS_PER_REVOLUTION = 28 * 20;  // 28 ticks * 20:1 gear ratio = 560 ticks per revolution
+    public static final int TICKS_PER_REVOLUTION = 28 * 60;  // 28 ticks * 20:1 gear ratio = 560 ticks per revolution
 
     private static final double MAX_POWER = 1.0; // Maximum power to apply
 
@@ -85,25 +84,6 @@ public class Arm {
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void moveArmToPosition(double position) {
-        armPosition = position;
-        rotationMotor.setTargetPosition((int) position);
-        rotationMotor.setPower(1.0); // Set power to move to position
-    }
-
-    // Method to set the arm power using PIDF control
-    public void setArmPower() {
-        double encoderValue = getArmEncoderValue();
-
-        // Update the PIDF controller with the current encoder value
-        armPidf.updatePosition(encoderValue);
-
-        // Calculate the output using the PIDF controller
-        output = armPidf.runPIDF();
-
-        // Set the motor's velocity to the calculated output
-        armMotor.setVelocity(output);
-    }
 
     private double calculateRotationPower(double targetPosition) {
         double currentPosition = getRotatedArmPosition();
@@ -114,29 +94,28 @@ public class Arm {
         return Math.max(-MAX_POWER, Math.min(MAX_POWER, power)); // Limit power to range [-MAX_POWER, MAX_POWER]
     }
 
-    // Method to rotate arm to a target angle with calculated power
-    public void rotateArm(double targetDegrees) {
-        rotationPidf.setTargetPosition(targetDegrees);
-        rotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    // Method to rotate arm to a target angle
+    public void rotateArm(double targetAngle) {
+        // Convert target angle to ticks based on the new ticks per degree value
+        double targetTicks = targetAngle * 0.9778;  // Updated based on 88 ticks for full rotation
+        rotationPidf.setTargetPosition(targetTicks); // Set the target position in the PIDF controller
 
-        // Calculate the power to apply
-        double rotationOutput = calculateRotationPower(targetDegrees);
+        // Get the current encoder value of the rotation motor
+        double currentTicks = rotationMotor.getCurrentPosition();
 
-        // Limit rotation to a maximum of 90 degrees
-        if (getRotatedArmPosition() >= armTolerance) {
-            rotationOutput = 0; // Stop if at limit
-        }   
+        // Update the PIDF controller with the current encoder position
+        rotationPidf.updatePosition(currentTicks);
 
-        // Set the rotation motor's power to the calculated output
-        rotationMotor.setPower(rotationOutput);
-    }
-    // Method to set arm tolerance for scoring (ensures arm doesn't exceed 90 degrees)
-    public void setArmTolerance() {
-        double rotatedPosition = getRotatedArmPosition();
-        if (rotatedPosition > armTolerance) {
-            // If the arm exceeds 90 degrees, stop it
-            rotateArm(0);  // Stop rotation
+        // Calculate the power output using the PIDF controller
+        double powerOutput = rotationPidf.runPIDF();
+
+        // Set the motor power to the PIDF controller's output
+        rotationMotor.setPower(powerOutput);
+        // Stop the motor when it reaches the target position
+        if (Math.abs(rotationMotor.getCurrentPosition() - targetTicks) < 88) {
+            stopRotationMotor();
         }
+
     }
 
     // Method to get the rotated arm position in degrees
@@ -144,7 +123,7 @@ public class Arm {
         // Get the current encoder position from the rotation motor
         int encoderPosition = rotationMotor.getCurrentPosition();
 
-        // Convert encoder ticks to degrees (assuming 360 degrees corresponds to TICKS_PER_REVOLUTION)
+        // Convert encoder ticks to degrees
         return (encoderPosition / (double) TICKS_PER_REVOLUTION) * 360.0;
     }
 
@@ -155,7 +134,7 @@ public class Arm {
     }
 
     public void toPoint(double position) {
-        armPidf.setTargetPosition(position);
+        armMotor.setVelocity(position);
     }
 
     public double getSetPoint() {

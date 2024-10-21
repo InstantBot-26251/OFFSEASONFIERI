@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.util.Arm;
+import org.firstinspires.ftc.teamcode.util.Arm2;
 import org.firstinspires.ftc.teamcode.util.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
@@ -22,6 +23,7 @@ public class TeleOpMode extends OpMode {
     public ArmAndIntakeFunctions functions;
     private Follower follower;
     Arm arm;
+    Arm2 arm2;
     Intake intake;
     CollectSample collection;
 
@@ -29,6 +31,7 @@ public class TeleOpMode extends OpMode {
     @Override
     public void init() {
         // Initialize arm and intake systems first
+        arm2 = new Arm2(hardwareMap);  // Initialize arm system
         arm = new Arm(hardwareMap);  // Initialize arm system
         intake = new Intake(hardwareMap);  // Initialize intake system
 
@@ -59,7 +62,7 @@ public class TeleOpMode extends OpMode {
         follower.update();
         follower.setTeleOpMovementVectors(-applyResponseCurve(gamepad1.left_stick_y), applyResponseCurve(gamepad1.left_stick_x), applyResponseCurve(gamepad1.right_stick_x), true);
 
-        if (gamepad2.a) {
+        /*** if (gamepad2.a) {
             collection.drive();
         }
 
@@ -78,16 +81,26 @@ public class TeleOpMode extends OpMode {
         // if (gamepad2.dpad_up) {
             // functions.armTo90Degrees();
         // }
-
+        ***/
         // Arm control using gamepad2
-        if (gamepad2.dpad_up) {
-            arm.toPoint(-1000);  // target position
-        }
         if (gamepad2.dpad_down) {
-            arm.toPoint(0);  // Lower position
+            arm2.toPoint(0);  // target position
         }
+        if (gamepad2.dpad_up) {
+            arm2.toPoint(-1000); // Use arm position constant for scoring
+        }
+        arm2.setPower();
 
-        arm.setPower();
+        // Control for the pivot motor using gamepad2
+        if (gamepad2.dpad_left) {
+            arm2.toPivotPoint(300);  // Set target position for pivot left
+            arm2.setPivotPower();  // Set power for the pivot motor
+
+        }
+        if (gamepad2.dpad_right) {
+            arm2.toPivotPoint(-300); // Set target position for pivot right
+            arm2.setPivotPower();  // Set power for the pivot motor
+        }
 
         // Rotation control using gamepad2
         if (gamepad2.a) {
@@ -107,12 +120,6 @@ public class TeleOpMode extends OpMode {
             intake.setIntakePower(0);  // Stop intake
         }
 
-        // Pivot control for intake
-        if (gamepad2.dpad_left) {
-            intake.setPivotPosition(0.0);  // Pivot intake to a certain position
-        } else if (gamepad2.dpad_right) {
-            intake.setPivotPosition(1.0);  // Pivot intake to another position
-        }
 
         // Telemetry for diagnostics
         telemetry.addData("Left stick y", gamepad1.left_stick_y);
@@ -123,6 +130,7 @@ public class TeleOpMode extends OpMode {
         telemetry.addData("Arm Set Point", arm.getSetPoint());
         telemetry.addData("Lift Encoder Value", arm.getArmEncoderValue());
         telemetry.addData("Rotated Arm Encoder Value", arm.getRotationEncoderValue());
+        telemetry.addData("Ticks", arm.rotationMotor.getCurrentPosition());
         telemetry.update();
     }
 

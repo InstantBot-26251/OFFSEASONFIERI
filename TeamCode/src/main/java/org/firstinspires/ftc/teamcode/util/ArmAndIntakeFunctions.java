@@ -74,9 +74,9 @@ public class ArmAndIntakeFunctions {
 
     public void collectSample() {
         if (isArmAtTarget(arm.ARM_COLLECT)) {
-            arm.moveArmToPosition(arm.ARM_COLLECT);
+            arm.rotateArm(arm.ARM_COLLECT);
         } else {
-            arm.moveArmToPosition(arm.ARM_COLLECT);
+            arm.rotateArm(arm.ARM_COLLECT);
             if (isArmAtTarget(arm.ARM_COLLECT)) {
                 intake.collect();
             }
@@ -86,7 +86,7 @@ public class ArmAndIntakeFunctions {
         if (isArmAtTarget(arm.ARM_SCORE_SAMPLE_IN_HIGH)) {
             intake.deposit();
         } else {
-            arm.moveArmToPosition(arm.ARM_SCORE_SAMPLE_IN_HIGH); // Move arm to scoring position
+            arm.rotateArm(arm.ARM_SCORE_SAMPLE_IN_HIGH); // Move arm to scoring position
             if (isArmAtTarget(arm.ARM_SCORE_SAMPLE_IN_HIGH)) {
                 intake.deposit(); // Activate deposit
             }
