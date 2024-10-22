@@ -100,7 +100,7 @@ public class Arm2 {
     }
     // Method to get the encoder value for the rotation motor
     public double getPivotEncoderValue() {
-        return armMotor.getCurrentPosition();
+        return pivotMotor.getCurrentPosition();
     }
 
 }
