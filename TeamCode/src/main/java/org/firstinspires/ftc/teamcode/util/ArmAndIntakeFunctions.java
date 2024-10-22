@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 public class ArmAndIntakeFunctions {
 
     private final Gamepad gamepad2;
-    private final Arm arm;
+    private final Arm2 arm2;
     private final Intake intake;
 
     // Encoder counts corresponding to the rotation angles (60 and 75 degrees)
@@ -21,8 +21,8 @@ public class ArmAndIntakeFunctions {
     private static final double ARM_TICKS_PER_DEGREE = 7.7778;
 
 
-    public ArmAndIntakeFunctions(Arm arm, Intake intake, Gamepad gamepad2) {
-        this.arm = arm;
+    public ArmAndIntakeFunctions(Arm2 arm2, Intake intake, Gamepad gamepad2) {
+        this.arm2 = arm2;
         this.intake = intake;
         this.gamepad2 = gamepad2;
     }
@@ -34,9 +34,9 @@ public class ArmAndIntakeFunctions {
         // Ensure the target is between 60 and 75 degrees
         if (targetDegrees >= 60 && targetDegrees <= 75) {
             targetPosition = (int) (ROTATE_60 + ((targetDegrees - 60) / 15.0) * (ROTATE_75 - ROTATE_60));
-            arm.rotationMotor.setTargetPosition(targetPosition);
-            arm.rotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            arm.rotationMotor.setPower(1.0); // Set the motor power
+            arm2.pivotMotor.setTargetPosition(targetPosition);
+            arm2.pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm2.pivotMotor.setPower(1.0); // Set the motor power
         } else {
             // Target degrees are out of bounds, handle accordingly
             System.out.println("Target degrees out of range (60-75)");
@@ -45,24 +45,24 @@ public class ArmAndIntakeFunctions {
 
     // Helper method to stop and reset the arm motor encoder
     private void stopAndResetEncoder() {
-        arm.rotateArm(0); // Stop arm rotation
-        arm.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset motor encoder
-        arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Resume normal operation
+        arm2.toPivotPoint(0); // Stop arm rotation
+        arm2.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset motor encoder
+        arm2.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Resume normal operation
     }
 
     // Check if the lift is at the target position within a tolerance
     public boolean isLiftAtTarget(double targetPosition) {
-        return Math.abs(arm.getArmEncoderValue() - targetPosition) <= LIFT_POSITION_TOLERANCE;
+        return Math.abs(arm2.getEncoderValue() - targetPosition) <= LIFT_POSITION_TOLERANCE;
     }
 
     // Check if the arm is at the target position within a tolerance
     public boolean isArmAtTarget(double targetPosition) {
-        return Math.abs(arm.getRotatedArmPosition() - targetPosition) <= ARM_POSITION_TOLERANCE;
-    }
+        return Math.abs(arm2.getPivotEncoderValue() - targetPosition) <= ARM_POSITION_TOLERANCE;
+    }}
 
     // Rotate the arm to a straight-up position and reset encoder
-    public void armTo90Degrees() {
-        arm.rotateArm(90.0 - arm.getRotatedArmPosition()); // Rotate arm directly to 90°
+    /*** public void armTo90Degrees() {
+        arm2.toPivotPoint(90.0 - arm2.toPivotPoint(300); // Rotate arm directly to 90°
         stopAndResetEncoder();
     }
 
@@ -73,17 +73,17 @@ public class ArmAndIntakeFunctions {
     }
 
     public void collectSample() {
-        if (isArmAtTarget(arm.ARM_COLLECT)) {
-            arm.rotateArm(arm.ARM_COLLECT);
+        if (isArmAtTarget(arm2.ARM_COLLECT)) {
+            arm2.toPivotPoint(arm2.ARM_COLLECT);
         } else {
-            arm.rotateArm(arm.ARM_COLLECT);
-            if (isArmAtTarget(arm.ARM_COLLECT)) {
+            arm2.toPivotPoint(arm2.ARM_COLLECT);
+            if (isArmAtTarget(arm2.ARM_COLLECT)) {
                 intake.collect();
             }
         }
     }
     public void depositGameElement() {
-        if (isArmAtTarget(arm.ARM_SCORE_SAMPLE_IN_HIGH)) {
+        if (isArmAtTarget(arm2.ARM_SCORE_SAMPLE_IN_HIGH)) {
             intake.deposit();
         } else {
             arm.rotateArm(arm.ARM_SCORE_SAMPLE_IN_HIGH); // Move arm to scoring position
@@ -97,13 +97,9 @@ public class ArmAndIntakeFunctions {
         intake.stop(); // Stop the intake
     }
 
-    public void resetArm() {
-        arm.resetArm(); // Reset arm to the initial position
-    }
-
     public void scoreHighBasket() {
-        arm.toPoint(-3750); // Move arm to the highest position
-        if (arm.getArmEncoderValue() == -3750) {
+        arm2.toPoint(-3750); // Move arm to the highest position
+        if (arm2.getEncoderValue() == -3750) {
             rotateArmToTargetAngle(ROTATE_60); // Lower arm
             if (isArmAtTarget(ROTATE_60)) {
                 // Wait for the right trigger press to start the outtake
@@ -121,8 +117,8 @@ public class ArmAndIntakeFunctions {
     }
 
     public void scoreLowBasket() {
-        arm.toPoint(-1000); // Move to scoring height
-        arm.rotateArm(60); // Fine adjustment
+        arm2.toPoint(-1000); // Move to scoring height
+        arm2.toPivotPoint(60); // Fine adjustment
         intake.setIntakePower(-1.0); // Outtake
     }
 
@@ -132,15 +128,15 @@ public class ArmAndIntakeFunctions {
     // }
 
     public void levelTwoAscent() {
-        arm.rotateArm(60); // Fine adjustment
-        arm.toPoint(-1250); // Ascend to level two
-        arm.toPoint(0); // Reset position
+        arm2.toPivotPoint(60); // Fine adjustment
+        arm2.toPoint(-1250); // Ascend to level two
+        arm2.toPoint(0); // Reset position
     }
 
     // Check if scoring in the high basket is finished
     public boolean isFinished() {
         double targetPosition = -5000; // High basket scoring position
-        double currentArmPosition = arm.getRotatedArmPosition();
+        double currentArmPosition = arm2.getPivotEncoderValue();
         boolean isArmAtPosition = Math.abs(currentArmPosition - targetPosition) < 15; // Adjust tolerance
 
         boolean isIntakeClosed = Math.abs(intake.getIntakePosition() - 0.0) < 0.1; // Check intake closed
@@ -148,4 +144,4 @@ public class ArmAndIntakeFunctions {
         return isArmAtPosition && isIntakeClosed;
     }
 }
-
+     ***/

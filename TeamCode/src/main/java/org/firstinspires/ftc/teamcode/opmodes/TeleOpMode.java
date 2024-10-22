@@ -32,11 +32,10 @@ public class TeleOpMode extends OpMode {
     public void init() {
         // Initialize arm and intake systems first
         arm2 = new Arm2(hardwareMap);  // Initialize arm system
-        arm = new Arm(hardwareMap);  // Initialize arm system
         intake = new Intake(hardwareMap);  // Initialize intake system
 
         // Initialize functions
-        functions = new ArmAndIntakeFunctions(arm, intake, gamepad2);
+        functions = new ArmAndIntakeFunctions(arm2, intake, gamepad2);
         collection = new CollectSample(arm, intake, functions);
         scorehighbasket = new ScoreHighBasket(arm, intake, gamepad2, functions);
         ascent = new LevelTwoAscent(arm, intake, functions);
@@ -84,31 +83,22 @@ public class TeleOpMode extends OpMode {
         ***/
         // Arm control using gamepad2
         if (gamepad2.dpad_down) {
-            arm2.toPoint(0);  // target position
+            arm2.toPoint(-10);  // target position
         }
+
         if (gamepad2.dpad_up) {
-            arm2.toPoint(-1000); // Use arm position constant for scoring
+            arm2.toPoint(-4250); // Use arm position constant for scoring
         }
         arm2.setPower();
 
         // Control for the pivot motor using gamepad2
         if (gamepad2.dpad_left) {
             arm2.toPivotPoint(300);  // Set target position for pivot left
-            arm2.setPivotPower();  // Set power for the pivot motor
-
         }
         if (gamepad2.dpad_right) {
             arm2.toPivotPoint(-300); // Set target position for pivot right
-            arm2.setPivotPower();  // Set power for the pivot motor
         }
-
-        // Rotation control using gamepad2
-        if (gamepad2.a) {
-            arm.rotateArm(60);  // Rotate arm clockwise
-        }
-        if (gamepad2.right_bumper) {
-            arm.rotateArm(-60);  // Rotate arm counterclockwise
-        }
+        arm2.setPivotPower();  // Set power for the pivot motor
 
 
         // Intake control using gamepad2
@@ -127,10 +117,10 @@ public class TeleOpMode extends OpMode {
         telemetry.addData("Left stick x", gamepad1.left_stick_x);
         telemetry.addData("Right stick x", gamepad1.right_stick_x);
         telemetry.addData("Servo Position", gamepad2.a ? "Open" : gamepad2.b ? "Closed" : "Neutral");
-        telemetry.addData("Arm Set Point", arm.getSetPoint());
-        telemetry.addData("Lift Encoder Value", arm.getArmEncoderValue());
-        telemetry.addData("Rotated Arm Encoder Value", arm.getRotationEncoderValue());
-        telemetry.addData("Ticks", arm.rotationMotor.getCurrentPosition());
+        telemetry.addData("Arm Set Point", arm2.getSetPoint());
+        telemetry.addData("Lift Encoder Value", arm2.getEncoderValue());
+        telemetry.addData("Rotated Arm Encoder Value", arm2.getPivotEncoderValue());
+        telemetry.addData("Ticks", arm2.pivotMotor.getCurrentPosition());
         telemetry.update();
     }
 

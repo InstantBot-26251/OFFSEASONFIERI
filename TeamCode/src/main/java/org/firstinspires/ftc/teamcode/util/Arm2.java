@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.PIDFController;
 @Config
 public class Arm2 {
     DcMotorEx armMotor;
-    DcMotorEx pivotMotor;
+    public DcMotorEx pivotMotor;
 
     public static double armKp = 1.0;
     public static double armKi = 0.0;

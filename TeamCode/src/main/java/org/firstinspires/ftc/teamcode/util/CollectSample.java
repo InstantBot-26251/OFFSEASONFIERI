@@ -13,6 +13,6 @@ public class CollectSample {
     }
 
     public void drive()  {
-        functions.collectSample();
+        // functions.collectSample();
     }
 }

@@ -5,6 +5,7 @@ import org.firstinspires.ftc.teamcode.opmodes.util.AutoState;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.util.Arm2;
 import org.firstinspires.ftc.teamcode.util.ArmAndIntakeFunctions;
 import org.firstinspires.ftc.teamcode.util.Arm;
 import org.firstinspires.ftc.teamcode.util.Intake;
@@ -22,7 +23,7 @@ public class RedForwardAutoTile3IN extends OpMode {
     private ScoreHighBasket score;
     private Follower follower;
     private ArmAndIntakeFunctions functions;
-    private Arm arm;
+    private Arm2 arm2;
     private Intake intake;
     private BezierCurve scoringCurve;
     private PathChain scoringPath;
@@ -59,14 +60,14 @@ public class RedForwardAutoTile3IN extends OpMode {
 
 
         // Initialize hardware components
-        arm = new Arm(hardwareMap);
+        arm2 = new Arm2(hardwareMap);
         intake = new Intake(hardwareMap);
         // Initialize Follower and ArmAndIntakeFunctions with hardware components
         follower = new Follower(hardwareMap);
-        functions = new ArmAndIntakeFunctions(arm, intake, gamepad2);
+        functions = new ArmAndIntakeFunctions(arm2, intake, gamepad2);
 
         //Initialize score
-        score = new ScoreHighBasket(arm, intake, gamepad2, functions);
+        // score = new ScoreHighBasket(arm, intake, gamepad2, functions);
 
         telemetry.addData("Status", "Initialized");
     }
@@ -108,14 +109,14 @@ public class RedForwardAutoTile3IN extends OpMode {
                 break;
 
             case SCORE_HIGH_BASKET:
-                telemetry.addData("Arm Position", arm.getRotatedArmPosition());
-                telemetry.addData("Lift Position", arm.getArmEncoderValue());
+                telemetry.addData("Arm Position", arm2.getPivotEncoderValue());
+                telemetry.addData("Lift Position", arm2.getEncoderValue());
                 score.execute();
                 currentState = AutoState.CHECK_SCORING_FINISHED;
 
             case CHECK_SCORING_FINISHED:
                 // Check if the high basket scoring is finished
-                if (functions.isFinished()) {
+                if (score.isFinished()) {
                     currentState = AutoState.MOVE_TO_OBSERVATION_ZONE; // Move to the next state
                 }
                 break;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+/*** package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.util.CollectSample;
 import org.firstinspires.ftc.teamcode.util.LevelTwoAscent;
 import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
 
-@TeleOp(name = "TestingTeleOp")
+// @TeleOp(name = "Testing TeleOp")
 public class TestingTeleOp extends OpMode {
     private Follower follower;
 
@@ -58,7 +58,7 @@ public class TestingTeleOp extends OpMode {
         follower.startTeleopDrive();
     }
 
-    @Override
+  //  @Override
     public void loop() {
         follower.update();
 
@@ -139,3 +139,4 @@ public class TestingTeleOp extends OpMode {
         return Math.signum(input) * Math.pow(Math.abs(input), exponent);
     }
 }
+***/

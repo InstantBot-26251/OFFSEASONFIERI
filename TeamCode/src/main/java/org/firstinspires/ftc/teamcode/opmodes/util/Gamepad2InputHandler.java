@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.util;
+/*** package org.firstinspires.ftc.teamcode.opmodes.util;
 
 
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -49,13 +49,13 @@ public class Gamepad2InputHandler {
 
         // Arm positioning with D-pad
         if (gamepad2.dpad_down) {
-            functions.armToDownPosition();
+            // functions.armToDownPosition();
         }
 
         if (gamepad2.dpad_up) {
-            functions.armTo90Degrees();
+            // functions.armTo90Degrees();
         }
 
     }
 
-}
+} ***/

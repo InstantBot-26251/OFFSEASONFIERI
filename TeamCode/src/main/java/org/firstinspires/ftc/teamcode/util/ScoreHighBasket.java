@@ -19,7 +19,7 @@ public class ScoreHighBasket {
 
     // Method to score in the high basket
     public void execute() {
-        functions.depositGameElement();
+        // functions.depositGameElement();
     }
 
     // Method to check if scoring in the high basket is finished
