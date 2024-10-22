@@ -38,7 +38,9 @@ public class Arm2 {
 
         // Initialize rotation motor
         pivotMotor = hardwareMap.get(DcMotorEx.class, "rotationMotor");
-        pivotMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        pivotMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        pivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Initialize PIDF coefficients
         armCoefficients = new CustomPIDFCoefficients(armKp, armKi, armKd, armKf);
