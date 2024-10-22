@@ -73,7 +73,7 @@ public class TeleOpMode extends OpMode {
             ascent.drive();
         }
 
-        // if (gamepad2.dpad_down) {
+        // if (gamepad2.dpad_down) { /
             // functions.armToDownPosition();
         // }
 
