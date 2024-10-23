@@ -25,7 +25,7 @@ public class Arm2 {
     public double output;
 
     public PIDFController armPidf;
-    public PIDFController rotationPidf;
+    public PIDFController pivotPidf;
     public CustomPIDFCoefficients armCoefficients;
     public CustomPIDFCoefficients rotationCoefficients;
 
@@ -48,8 +48,9 @@ public class Arm2 {
 
         // Initialize PIDF controller with the coefficients
         armPidf = new PIDFController(armCoefficients);
-        rotationPidf = new PIDFController(rotationCoefficients);
+        pivotPidf = new PIDFController(rotationCoefficients);
 
+        pivotPidf.setTargetPosition(0);
     }
 
     public void setPower() {
@@ -65,8 +66,8 @@ public class Arm2 {
     public void setPivotPower() {
         // Set power for pivot motor
         double pivotEncoderValue = getPivotEncoderValue();
-        rotationPidf.updatePosition(pivotEncoderValue);
-        output = rotationPidf.runPIDF();
+        pivotPidf.updatePosition(pivotEncoderValue);
+        output = pivotPidf.runPIDF();
         pivotMotor.setVelocity(output);
     }
 
@@ -76,7 +77,7 @@ public class Arm2 {
     }
 
     public void toPivotPoint(double position) {
-        rotationPidf.setTargetPosition(position);
+        pivotPidf.setTargetPosition(position);
     }
 
     public double getSetPoint() {
@@ -84,7 +85,7 @@ public class Arm2 {
     }
 
     public double getPivotSetPoint() {
-        return rotationPidf.getTargetPosition();
+        return pivotPidf.getTargetPosition();
     }
 
     public double getEncoderValue() {

@@ -3,14 +3,14 @@ package org.firstinspires.ftc.teamcode.util;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class ScoreHighBasket {
-    private final Arm arm;
+    private final Arm2 arm;
     private final Intake intake;
     private final Gamepad gamepad;
     private final ArmAndIntakeFunctions functions;
     private boolean isScoringHighBasket = false;
 
     // Constructor to initialize arm, intake, and gamepad
-    public ScoreHighBasket(Arm arm, Intake intake, Gamepad gamepad, ArmAndIntakeFunctions functions) {
+    public ScoreHighBasket(Arm2 arm, Intake intake, Gamepad gamepad, ArmAndIntakeFunctions functions) {
         this.arm = arm;
         this.intake = intake;
         this.gamepad = gamepad;
@@ -25,7 +25,7 @@ public class ScoreHighBasket {
     // Method to check if scoring in the high basket is finished
     public boolean isFinished() {
         // Check if the arm is at the target position and intake is stopped
-        boolean armAtPosition = arm.getRotatedArmPosition() == Arm.ROTATE_60; // Check if at lowered position
+        boolean armAtPosition = arm.getPivotEncoderValue() == Arm.ROTATE_60; // Check if at lowered position
         boolean intakeStopped = intake.getIntakePosition() == 0.0; // Ensure intake is stopped
 
         if (armAtPosition && intakeStopped) {

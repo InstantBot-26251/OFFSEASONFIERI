@@ -71,7 +71,7 @@ public class BlueForwardAutoTile3AWAY extends OpMode {
 
 
         //Initialize score
-        // score = new ScoreHighBasket(arm2, intake, gamepad2, functions);
+        score = new ScoreHighBasket(arm2, intake, gamepad2, functions);
 
         telemetry.addData("Status", "Initialized");
     }

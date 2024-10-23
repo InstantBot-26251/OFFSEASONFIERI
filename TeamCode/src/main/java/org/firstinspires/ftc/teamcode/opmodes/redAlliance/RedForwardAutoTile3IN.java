@@ -67,7 +67,7 @@ public class RedForwardAutoTile3IN extends OpMode {
         functions = new ArmAndIntakeFunctions(arm2, intake, gamepad2);
 
         //Initialize score
-        // score = new ScoreHighBasket(arm, intake, gamepad2, functions);
+        score = new ScoreHighBasket(arm2, intake, gamepad2, functions);
 
         telemetry.addData("Status", "Initialized");
     }
