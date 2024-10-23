@@ -26,6 +26,7 @@ public class BlueForwardAutoTile3IN extends OpMode {
     private ScoreHighBasket score;
     private Follower follower;
     private ArmAndIntakeFunctions functions;
+    private Arm arm;
     private Arm2 arm2;
     private Intake intake;
     private BezierCurve scoringCurve;
@@ -66,7 +67,7 @@ public class BlueForwardAutoTile3IN extends OpMode {
 
         // Initialize Follower and ArmAndIntakeFunctions with hardware components
         follower = new Follower(hardwareMap);
-        functions = new ArmAndIntakeFunctions(arm2, intake, gamepad2);
+        functions = new ArmAndIntakeFunctions(arm2, intake, gamepad2, arm);
 
         //Initialize score
         score = new ScoreHighBasket(arm2, intake, gamepad2, functions);
