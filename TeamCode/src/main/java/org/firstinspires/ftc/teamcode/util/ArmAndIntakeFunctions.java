@@ -9,8 +9,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 public class ArmAndIntakeFunctions {
 
     private final Gamepad gamepad2;
-    private final Arm arm;
-    private final Arm2 arm2;
+    private final Arm2 arm;
     private final Intake intake;
 
     // Encoder counts corresponding to the rotation angles (60 and 75 degrees)
@@ -22,20 +21,19 @@ public class ArmAndIntakeFunctions {
     private static final double ARM_TICKS_PER_DEGREE = 7.7778;
 
 
-    public ArmAndIntakeFunctions(Arm2 arm2, Intake intake, Gamepad gamepad2, Arm arm) {
-        this.arm2 = arm2;
+    public ArmAndIntakeFunctions(Arm2 arm, Intake intake, Gamepad gamepad2) {
+        this.arm = arm;
         this.intake = intake;
         this.gamepad2 = gamepad2;
-        this.arm = arm;
     }
     // Check if the lift is at the target position within a tolerance
     public boolean isLiftAtTarget(double targetPosition) {
-        return Math.abs(arm2.getEncoderValue() - targetPosition) <= LIFT_POSITION_TOLERANCE;
+        return Math.abs(arm.getEncoderValue() - targetPosition) <= LIFT_POSITION_TOLERANCE;
     }
 
     // Check if the arm is at the target position within a tolerance
     public boolean isArmAtTarget(double targetPosition) {
-        return Math.abs(arm2.getPivotEncoderValue() - targetPosition) <= ARM_POSITION_TOLERANCE;
+        return Math.abs(arm.getPivotEncoderValue() - targetPosition) <= ARM_POSITION_TOLERANCE;
     }
 
     // Rotate the arm to a straight-up position and reset encoder
@@ -50,13 +48,26 @@ public class ArmAndIntakeFunctions {
         stopAndResetEncoder();
     }
     ***/
+
     public void collectSample() {
-        if (isArmAtTarget(arm.ARM_COLLECT)) {
-            arm2.toPivotPoint(arm.ARM_COLLECT);
-        } else {
-            arm2.toPivotPoint(arm.ARM_COLLECT);
+        if (!isArmAtTarget(arm.ARM_COLLECT)) {
+            arm.toPivotPoint(arm.ARM_COLLECT);
             if (isArmAtTarget(arm.ARM_COLLECT)) {
-                intake.collect();
+                telemetry.addData("EXTEND VIPER SLIDE", "PRESS RIGHT BUMPER");
+                if (gamepad2.right_bumper) {
+                    arm.toPoint(arm.getEncoderValue() + 10);
+                }
+            }
+        } else {
+            arm.toPivotPoint(arm.ARM_COLLECT);
+            if (isArmAtTarget(arm.ARM_COLLECT)) {
+                telemetry.addData("EXTEND VIPER SLIDE", "PRESS RIGHT BUMPER");
+                if (gamepad2.right_bumper) {
+                    telemetry.addData("Intake", "PRESS RIGHT TRIGGER");
+                    if (gamepad2.right_trigger > 0) {
+                        intake.collect();
+                    }
+                }
             }
         }
     }
@@ -65,7 +76,7 @@ public class ArmAndIntakeFunctions {
         if (isArmAtTarget(arm.ARM_SCORE_SAMPLE_IN_HIGH)) {
             intake.deposit();
         } else {
-            arm2.toPivotPoint(arm.ARM_SCORE_SAMPLE_IN_HIGH); // Move arm to scoring position
+            arm.toPivotPoint(arm.ARM_SCORE_SAMPLE_IN_HIGH); // Move arm to scoring position
             if (isArmAtTarget(arm.ARM_SCORE_SAMPLE_IN_HIGH)) {
                 intake.deposit(); // Activate deposit
             }
@@ -77,9 +88,9 @@ public class ArmAndIntakeFunctions {
     }
 
     public void scoreHighBasket() {
-        arm2.toPoint(-3750); // Move arm to the highest position
-        if (arm2.getEncoderValue() == -3750) {
-            arm2.toPivotPoint(ROTATE_60); // Lower arm
+        arm.toPoint(-3750); // Move arm to the highest position
+        if (arm.getEncoderValue() == -3750) {
+            arm.toPivotPoint(ROTATE_60); // Lower arm
             if (isArmAtTarget(ROTATE_60)) {
                 // Wait for the right trigger press to start the outtake
                 telemetry.addData("Status", "Press right trigger to start outtake");
@@ -96,8 +107,8 @@ public class ArmAndIntakeFunctions {
     }
 
     public void scoreLowBasket() {
-        arm2.toPoint(-1000); // Move to scoring height
-        arm2.toPivotPoint(60); // Fine adjustment
+        arm.toPoint(-1000); // Move to scoring height
+        arm.toPivotPoint(60); // Fine adjustment
         intake.setIntakePower(-1.0); // Outtake
     }
 
@@ -107,15 +118,15 @@ public class ArmAndIntakeFunctions {
     // }
 
     public void levelTwoAscent() {
-        arm2.toPivotPoint(60); // Fine adjustment
-        arm2.toPoint(-1250); // Ascend to level two
-        arm2.toPoint(0); // Reset position
+        arm.toPivotPoint(60); // Fine adjustment
+        arm.toPoint(-1250); // Ascend to level two
+        arm.toPoint(0); // Reset position
     }
 
     // Check if scoring in the high basket is finished
     public boolean isFinished() {
         double targetPosition = -5000; // High basket scoring position
-        double currentArmPosition = arm2.getPivotEncoderValue();
+        double currentArmPosition = arm.getPivotEncoderValue();
         boolean isArmAtPosition = Math.abs(currentArmPosition - targetPosition) < 15; // Adjust tolerance
 
         boolean isIntakeClosed = Math.abs(intake.getIntakePosition() - 0.0) < 0.1; // Check intake closed

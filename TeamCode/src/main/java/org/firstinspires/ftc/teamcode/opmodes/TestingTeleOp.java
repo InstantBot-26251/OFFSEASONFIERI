@@ -1,12 +1,12 @@
-/*** package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.opmodes.util.AutoState;
 import org.firstinspires.ftc.teamcode.util.Arm;
+import org.firstinspires.ftc.teamcode.util.Arm2;
 import org.firstinspires.ftc.teamcode.util.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
@@ -16,10 +16,10 @@ import org.firstinspires.ftc.teamcode.util.CollectSample;
 import org.firstinspires.ftc.teamcode.util.LevelTwoAscent;
 import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
 
-// @TeleOp(name = "Testing TeleOp")
+@TeleOp(name = "Testing TeleOp")
 public class TestingTeleOp extends OpMode {
     private Follower follower;
-
+    private Arm2 arm2;
     private Arm arm;
     private Intake intake;
     private ArmAndIntakeFunctions functions;
@@ -35,12 +35,13 @@ public class TestingTeleOp extends OpMode {
         // Initialize arm and intake systems first
         arm = new Arm(hardwareMap);  // Initialize arm system
         intake = new Intake(hardwareMap);  // Initialize intake system
+        arm2 = new Arm2(hardwareMap); // Initialize arm system
 
         // Initialize functions
-        functions = new ArmAndIntakeFunctions(arm, intake, gamepad2);
-        collection = new CollectSample(arm, intake, functions);
-        scorehighbasket = new ScoreHighBasket(arm, intake, gamepad2, functions);
-        ascent = new LevelTwoAscent(arm, intake, functions);
+        functions = new ArmAndIntakeFunctions(arm2, intake, gamepad2);
+        collection = new CollectSample(arm2, intake, functions);
+        scorehighbasket = new ScoreHighBasket(arm2, intake, gamepad2, functions);
+        ascent = new LevelTwoAscent(arm2, intake, functions);
 
         follower = new Follower(hardwareMap);
         follower.setPose(new Pose());
@@ -88,11 +89,11 @@ public class TestingTeleOp extends OpMode {
 
         // Arm positioning with D-pad
         if (gamepad2.dpad_down) {
-            functions.armToDownPosition();
+            arm2.toPivotPoint(0);
         }
 
         if (gamepad2.dpad_up) {
-            functions.armTo90Degrees();
+            arm2.toPivotPoint(90);
         }
 
         // Rotation control using gamepad2
@@ -139,4 +140,3 @@ public class TestingTeleOp extends OpMode {
         return Math.signum(input) * Math.pow(Math.abs(input), exponent);
     }
 }
-***/

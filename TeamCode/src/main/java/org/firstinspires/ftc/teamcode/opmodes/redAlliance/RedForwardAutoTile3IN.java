@@ -65,7 +65,7 @@ public class RedForwardAutoTile3IN extends OpMode {
         intake = new Intake(hardwareMap);
         // Initialize Follower and ArmAndIntakeFunctions with hardware components
         follower = new Follower(hardwareMap);
-        functions = new ArmAndIntakeFunctions(arm2, intake, gamepad2, arm);
+        functions = new ArmAndIntakeFunctions(arm2, intake, gamepad2);
 
         //Initialize score
         score = new ScoreHighBasket(arm2, intake, gamepad2, functions);

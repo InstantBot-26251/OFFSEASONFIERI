@@ -40,7 +40,7 @@ public class Arm {
     final double ARM_SCORE_SPECIMEN = 160 * ARM_TICKS_PER_DEGREE;
 
     // Encoder ticks per revolution
-    public static final int TICKS_PER_REVOLUTION = 28 * 60;  // 28 ticks * 20:1 gear ratio = 560 ticks per revolution
+    public static final int TICKS_PER_REVOLUTION = 28 * 60;  // 28 ticks * 60:1 gear ratio = 1680 ticks per revolution
 
     private static final double MAX_POWER = 1.0; // Maximum power to apply
 

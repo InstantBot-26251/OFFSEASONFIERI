@@ -24,6 +24,19 @@ public class Arm2 {
     public static double PivotKf = 1.0;
     public double output;
 
+
+    final double ARM_TICKS_PER_DEGREE = 4.67;
+
+    // Arm positions
+    final double ARM_COLLAPSED_INTO_ROBOT = 0;
+    final double ARM_COLLECT = 250 * ARM_TICKS_PER_DEGREE;
+    final double ARM_CLEAR_BARRIER = 230 * ARM_TICKS_PER_DEGREE;
+    public final double ARM_SCORE_SAMPLE_IN_HIGH = 170 * ARM_TICKS_PER_DEGREE;
+    final double ARM_SCORE_SPECIMEN = 160 * ARM_TICKS_PER_DEGREE;
+
+    public static final int TICKS_PER_REVOLUTION = 28 * 60;  // 28 ticks * 60:1 gear ratio = 1680 ticks per revolution
+
+
     public PIDFController armPidf;
     public PIDFController pivotPidf;
     public CustomPIDFCoefficients armCoefficients;
@@ -87,6 +100,7 @@ public class Arm2 {
     public double getPivotSetPoint() {
         return pivotPidf.getTargetPosition();
     }
+
 
     public double getEncoderValue() {
         return armMotor.getCurrentPosition();
