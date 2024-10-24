@@ -90,7 +90,7 @@ public class TeleOpMode extends OpMode {
         arm.setPower();
 
         // Control for the pivot motor using gamepad2
-        if (gamepad2.right_trigger > 0) {
+        if (gamepad2.dpad_left) {
             arm.pivotMotor.setPower(300);  // Set target position for pivot left
         }
         if (gamepad2.dpad_right) {
