@@ -2,28 +2,32 @@ package org.firstinspires.ftc.teamcode.util;
 
 
 import com.acmerobotics.dashboard.config.Config;
+
+import org.firstinspires.ftc.teamcode.pedroPathing.util.CustomPIDFCoefficients;
+import org.firstinspires.ftc.teamcode.pedroPathing.util.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.util.CustomPIDFCoefficients;
-import org.firstinspires.ftc.teamcode.pedroPathing.util.PIDFController;
-
 @Config
 public class Arm2 {
-    DcMotorEx armMotor;
+    public DcMotorEx armMotor;
     public DcMotorEx pivotMotor;
 
-    public static double armKp = 1.0;
-    public static double armKi = 0.0;
-    public static double armKd = 0.02;
-    public static double armKf = 1.0;
+    public PIDFController armPidf;
+    public PIDFController pivotPidf;
+
+    public CustomPIDFCoefficients armCoefficients;
+    public CustomPIDFCoefficients pivotCoefficients;
+    public static double armKp = 1, armKi = 0, armKd = 0, armKf = 1;
+
+    private final double ticks_in_degree = (double) 168 / 360;
+
     public static double PivotKp = 1.0;
     public static double PivotKi = 0.0;
     public static double PivotKd = 0.02;
     public static double PivotKf = 1.0;
     public double output;
-
 
     final double ARM_TICKS_PER_DEGREE = 4.67;
 
@@ -36,11 +40,6 @@ public class Arm2 {
 
     public static final int TICKS_PER_REVOLUTION = 28 * 60;  // 28 ticks * 60:1 gear ratio = 1680 ticks per revolution
 
-
-    public PIDFController armPidf;
-    public PIDFController pivotPidf;
-    public CustomPIDFCoefficients armCoefficients;
-    public CustomPIDFCoefficients rotationCoefficients;
 
 
     public Arm2(HardwareMap hardwareMap) {
@@ -55,15 +54,10 @@ public class Arm2 {
         pivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // Initialize PIDF coefficients
-        armCoefficients = new CustomPIDFCoefficients(armKp, armKi, armKd, armKf);
-        rotationCoefficients = new CustomPIDFCoefficients(PivotKp, PivotKi, PivotKd, PivotKf);
-
-        // Initialize PIDF controller with the coefficients
+        armCoefficients = new CustomPIDFCoefficients(armKp, armKi, armKi, armKf);
+        pivotCoefficients = new CustomPIDFCoefficients(PivotKp, PivotKi, PivotKd, PivotKf);
         armPidf = new PIDFController(armCoefficients);
-        pivotPidf = new PIDFController(rotationCoefficients);
-
-        pivotPidf.setTargetPosition(0);
+        pivotPidf = new PIDFController(pivotCoefficients);
     }
 
     public void setPower() {
@@ -100,7 +94,6 @@ public class Arm2 {
     public double getPivotSetPoint() {
         return pivotPidf.getTargetPosition();
     }
-
 
     public double getEncoderValue() {
         return armMotor.getCurrentPosition();

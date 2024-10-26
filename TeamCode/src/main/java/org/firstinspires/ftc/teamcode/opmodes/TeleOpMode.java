@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.util.Arm;
 import org.firstinspires.ftc.teamcode.util.Arm2;
 import org.firstinspires.ftc.teamcode.util.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.util.CollectSample;
 import org.firstinspires.ftc.teamcode.util.LevelTwoAscent;
 import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
 
+@Config
 @TeleOp(name = "TeleOp Mode")
 public class TeleOpMode extends OpMode {
     public LevelTwoAscent ascent;
@@ -70,44 +71,32 @@ public class TeleOpMode extends OpMode {
         if (gamepad2.y) {
             ascent.drive();
         }
-
         ***/
-
-        // Arm control using gamepad2
-        if (gamepad2.dpad_right) {
-            if (arm.getEncoderValue() <= -10) {
-                arm.stopExtending();
-            }
-            arm.toPoint(arm.getEncoderValue() + 10);
-        }
-
         if (gamepad2.dpad_left) {
-            if (arm.getEncoderValue() >= -1810) {
+            if (arm.getEncoderValue() >= -3250  || arm.getEncoderValue() <= 0) {
                 arm.stopExtending();
+            } else {
+                arm.setPower();
             }
-            arm.toPoint(arm.getEncoderValue() + 10); // Use arm position constant for scoring
-        }
-        arm.setPower();
-
-        // Control for the pivot motor using gamepad2
-        if (gamepad2.dpad_left) {
-            arm.pivotMotor.setPower(300);  // Set target position for pivot left
         }
         if (gamepad2.dpad_right) {
-            arm.toPivotPoint(-300); // Set target position for pivot right
-        }
-        arm.setPivotPower();  // Set power for the pivot motor
+                arm.toPoint(-10);
+            }
 
+        if (gamepad2.dpad_down) {
+            arm.toPivotPoint(-300);
+        }
+
+        if (gamepad2.dpad_down) {
+            arm.toPivotPoint(300);
+        }
 
         // Intake control using gamepad2
         if (gamepad2.right_trigger > 0.1) {
             intake.setIntakePower(1.0);  // Activate intake
         } else if (gamepad2.left_trigger > 0.1) {
             intake.setIntakePower(-1.0);  // Reverse intake
-        } else {
-            intake.setIntakePower(0);  // Stop intake
         }
-
 
         // Telemetry for diagnostics
         telemetry.addData("Left stick y", gamepad1.left_stick_y);
