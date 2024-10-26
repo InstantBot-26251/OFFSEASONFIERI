@@ -75,7 +75,7 @@ public class Arm2 {
         double pivotEncoderValue = getPivotEncoderValue();
         pivotPidf.updatePosition(pivotEncoderValue);
         output = pivotPidf.runPIDF();
-        pivotMotor.setVelocity(output);
+        pivotMotor.setPower(output);
     }
 
 
