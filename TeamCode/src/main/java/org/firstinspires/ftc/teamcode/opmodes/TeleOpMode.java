@@ -61,7 +61,7 @@ public class TeleOpMode extends OpMode {
 //        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //
 //
-//        follower.startTeleopDrive();
+//        follower.st   `108artTeleopDrive();
 
     }
 
@@ -74,13 +74,14 @@ public class TeleOpMode extends OpMode {
 //                applyResponseCurve(gamepad1.right_stick_x),
 //                true
 //        );
-        double y = applyResponseCurve(gamepad1.left_stick_y);
-        double x = applyResponseCurve(gamepad1.left_stick_x);
+        double y = -applyResponseCurve(gamepad1.left_stick_y);
+        double x = -applyResponseCurve(gamepad1.left_stick_x);
         double rot = applyResponseCurve(gamepad1.right_stick_x);
         double y2 = applyArmResponseCurve(gamepad2.left_stick_y);
         double y3 = applyArmResponseCurve(gamepad2.right_stick_y);
 
 
+        chassis.drive(x, y, rot);
         if (gamepad1.options) {
             chassis.resetYaw();
         }
