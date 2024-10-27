@@ -27,7 +27,7 @@ public class TeleOpMode extends OpMode {
     public LevelTwoAscent ascent;
     public ScoreHighBasket scorehighbasket;
     public ArmAndIntakeFunctions functions;
-    private Follower follower;
+//    private Follower follower;
     private Chassis2 chassis;
     Arm2 arm;
     Intake intake;
@@ -50,27 +50,43 @@ public class TeleOpMode extends OpMode {
 //        follower = new Follower(hardwareMap);
 //        follower.setPose(new Pose());
 
-
+//`       DcMotorEx leftFront = hardwareMap.get(DcMotorEx.class, FollowerConstants.leftFrontMotorName);
+//        DcMotorEx leftRear = hardwareMap.get(DcMotorEx.class, FollowerConstants.leftRearMotorName);
+//        DcMotorEx rightRear = hardwareMap.get(DcMotorEx.class, FollowerConstants.rightRearMotorName);
+//        DcMotorEx rightFront = hardwareMap.get(DcMotorEx.class, FollowerConstants.rightFrontMotorName);
+//
+//        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//
+//
 //        follower.startTeleopDrive();
+
     }
 
     @Override
     public void loop() {
+//        // TeleOp movement with response curves
+//        follower.setTeleOpMovementVectors(
+//                -applyResponseCurve(gamepad1.left_stick_y),
+//                applyResponseCurve(gamepad1.left_stick_x),
+//                applyResponseCurve(gamepad1.right_stick_x),
+//                true
+//        );
         double y = applyResponseCurve(gamepad1.left_stick_y);
-        double x = -applyResponseCurve(gamepad1.left_stick_x);
-        double rot = -applyResponseCurve(gamepad1.right_stick_x);
+        double x = applyResponseCurve(gamepad1.left_stick_x);
+        double rot = applyResponseCurve(gamepad1.right_stick_x);
         double y2 = applyArmResponseCurve(gamepad2.left_stick_y);
         double y3 = applyArmResponseCurve(gamepad2.right_stick_y);
 
-
-        chassis.drive(x, y, rot);
 
         if (gamepad1.options) {
             chassis.resetYaw();
         }
 
-//        follower.update();
-//        follower.setTeleOpMovementVectors(-applyResponseCurve(gamepad1.left_stick_y), applyResponseCurve(gamepad1.left_stick_x), applyResponseCurve(gamepad1.right_stick_x), true);
+//          follower.update();
+//           follower.setTeleOpMovementVectors(-applyResponseCurve(gamepad1.left_stick_y), applyResponseCurve(gamepad1.left_stick_x), applyResponseCurve(gamepad1.right_stick_x), true);
         /***
          if (gamepad2.a) {
          collection.drive();
@@ -88,11 +104,12 @@ public class TeleOpMode extends OpMode {
 
 
         // Arm control with an upper limit check
-        if (arm.getEncoderValue() <= -3250 && y2 > 0) {
-            arm.stopExtending();  // Stop extending if limit is reached and y2 requests upward movement
+        if (arm.getEncoderValue() <= -2200 && y2 < 0) {
+            arm.setPower(0);  // Stop extending if limit is reached and y2 requests upward movement
         } else {
             arm.setPower(y2);  // Allow normal operation, including downward movement
         }
+
 
         // Intake control using gamepad2
         if (gamepad2.right_trigger > 0.1) {
@@ -112,6 +129,7 @@ public class TeleOpMode extends OpMode {
         telemetry.addData("Lift Encoder Value", arm.getEncoderValue());
         telemetry.addData("Rotated Arm Encoder Value", arm.getPivotEncoderValue());
         telemetry.addData("Ticks", arm.pivotMotor.getCurrentPosition());
+        telemetry.addData("Y2", y2);
         telemetry.update();
     }
 
