@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode.util;
 
 import com.acmerobotics.dashboard.config.Config;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.util.CustomPIDFCoefficients;
-import org.firstinspires.ftc.teamcode.pedroPathing.util.PIDFController;
+import com.arcrobotics.ftclib.controller.PIDController;
+
+
+import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -14,19 +16,20 @@ public class Arm2 {
     public DcMotorEx armMotor;
     public DcMotorEx pivotMotor;
 
-    public PIDFController armPidf;
-    public PIDFController pivotPidf;
+    public PIDFController armPid;
+    public PIDFController pivotPid;
 
-    public CustomPIDFCoefficients armCoefficients;
-    public CustomPIDFCoefficients pivotCoefficients;
-    public static double armKp = 1, armKi = 0, armKd = 0, armKf = 1;
+    public static double armKp = 1;
+    public static double armKi = 0;
+    public static double armKd = 0.2;
+    public static double armKf = 1;
+    public static double pivotKp = 1.15;
+    public static double pivotKi = 0;
+    public static double pivotKd = 0.25;
+    public static double pivotKf = 1.1;
 
-    private final double ticks_in_degree = (double) 168 / 360;
+    private final double ticks_in_degrees = (double) 168 / 360;
 
-    public static double PivotKp = 1.0;
-    public static double PivotKi = 0.0;
-    public static double PivotKd = 0.02;
-    public static double PivotKf = 1.0;
     public double output;
 
     final double ARM_TICKS_PER_DEGREE = 4.67;
@@ -41,58 +44,48 @@ public class Arm2 {
     public static final int TICKS_PER_REVOLUTION = 28 * 60;  // 28 ticks * 60:1 gear ratio = 1680 ticks per revolution
 
 
-
     public Arm2(HardwareMap hardwareMap) {
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
         armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        armMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Initialize rotation motor
         pivotMotor = hardwareMap.get(DcMotorEx.class, "rotationMotor");
         pivotMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        pivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pivotMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        armCoefficients = new CustomPIDFCoefficients(armKp, armKi, armKi, armKf);
-        pivotCoefficients = new CustomPIDFCoefficients(PivotKp, PivotKi, PivotKd, PivotKf);
-        armPidf = new PIDFController(armCoefficients);
-        pivotPidf = new PIDFController(pivotCoefficients);
+        armPid = new PIDFController(armKp, armKi, armKd, armKf);
+        pivotPid = new PIDFController(pivotKp, pivotKi, pivotKd, pivotKf);
+
     }
 
-    public void setPower() {
-        double encoderValue = getEncoderValue();
-
-        armPidf.updatePosition(encoderValue);
-
-        output = armPidf.runPIDF();
-
-        armMotor.setVelocity(output);
+    public void setPower(double input) {
+//        double output = armPid.calculate(getEncoderValue());
+        armMotor.setPower(input);
     }
 
-    public void setPivotPower() {
-        // Set power for pivot motor
-        double pivotEncoderValue = getPivotEncoderValue();
-        pivotPidf.updatePosition(pivotEncoderValue);
-        output = pivotPidf.runPIDF();
-        pivotMotor.setPower(output);
+    public void setPivotPower(double input) {
+        double output = pivotPid.calculate(getEncoderValue());
+        pivotMotor.setPower(input);
     }
 
 
     public void toPoint(double position) {
-        armPidf.setTargetPosition(position);
+        armPid.setSetPoint(position);
     }
 
     public void toPivotPoint(double position) {
-        pivotPidf.setTargetPosition(position);
+        pivotPid.setSetPoint(position);
     }
 
     public double getSetPoint() {
-        return armPidf.getTargetPosition();
+        return armPid.getSetPoint();
     }
 
     public double getPivotSetPoint() {
-        return pivotPidf.getTargetPosition();
+        return pivotPid.getSetPoint();
     }
 
     public double getEncoderValue() {
@@ -106,6 +99,7 @@ public class Arm2 {
     public void stopRotating() {
         pivotMotor.setPower(0);
     }
+
     // Method to get the encoder value for the rotation motor
     public double getPivotEncoderValue() {
         return pivotMotor.getCurrentPosition();

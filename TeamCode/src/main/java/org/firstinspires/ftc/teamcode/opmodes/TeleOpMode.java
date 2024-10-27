@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.chassis.Chassis2;
 import org.firstinspires.ftc.teamcode.util.Arm2;
 import org.firstinspires.ftc.teamcode.util.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
@@ -23,13 +28,14 @@ public class TeleOpMode extends OpMode {
     public ScoreHighBasket scorehighbasket;
     public ArmAndIntakeFunctions functions;
     private Follower follower;
+    private Chassis2 chassis;
     Arm2 arm;
     Intake intake;
     CollectSample collection;
 
-
     @Override
     public void init() {
+
         // Initialize arm and intake systems first
         arm = new Arm2(hardwareMap);  // Initialize arm system
         intake = new Intake(hardwareMap);  // Initialize intake system
@@ -39,56 +45,53 @@ public class TeleOpMode extends OpMode {
         collection = new CollectSample(arm, intake, functions);
         scorehighbasket = new ScoreHighBasket(arm, intake, gamepad2, functions);
         ascent = new LevelTwoAscent(arm, intake, functions);
+        chassis = new Chassis2(hardwareMap);
 
-        follower = new Follower(hardwareMap);
-        follower.setPose(new Pose());
+//        follower = new Follower(hardwareMap);
+//        follower.setPose(new Pose());
 
-        DcMotorEx leftFront = hardwareMap.get(DcMotorEx.class, FollowerConstants.leftFrontMotorName);
-        DcMotorEx leftRear = hardwareMap.get(DcMotorEx.class, FollowerConstants.leftRearMotorName);
-        DcMotorEx rightRear = hardwareMap.get(DcMotorEx.class, FollowerConstants.rightRearMotorName);
-        DcMotorEx rightFront = hardwareMap.get(DcMotorEx.class, FollowerConstants.rightFrontMotorName);
 
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        follower.startTeleopDrive();
+//        follower.startTeleopDrive();
     }
 
     @Override
     public void loop() {
-        follower.update();
-        follower.setTeleOpMovementVectors(-applyResponseCurve(gamepad1.left_stick_y), applyResponseCurve(gamepad1.left_stick_x), applyResponseCurve(gamepad1.right_stick_x), true);
+        double y = applyResponseCurve(gamepad1.left_stick_y);
+        double x = -applyResponseCurve(gamepad1.left_stick_x);
+        double rot = -applyResponseCurve(gamepad1.right_stick_x);
+        double y2 = applyArmResponseCurve(gamepad2.left_stick_y);
+        double y3 = applyArmResponseCurve(gamepad2.right_stick_y);
+
+
+        chassis.drive(x, y, rot);
+
+        if (gamepad1.options) {
+            chassis.resetYaw();
+        }
+
+//        follower.update();
+//        follower.setTeleOpMovementVectors(-applyResponseCurve(gamepad1.left_stick_y), applyResponseCurve(gamepad1.left_stick_x), applyResponseCurve(gamepad1.right_stick_x), true);
         /***
          if (gamepad2.a) {
-            collection.drive();
-        }
-        if (gamepad2.b) {
-            scorehighbasket.execute();
-        }
+         collection.drive();
+         }
+         if (gamepad2.b) {
+         scorehighbasket.execute();
+         }
 
-        if (gamepad2.y) {
-            ascent.drive();
-        }
-        ***/
-        if (gamepad2.dpad_left) {
-            if (arm.getEncoderValue() >= -3250  || arm.getEncoderValue() <= 0) {
-                arm.stopExtending();
-            } else {
-                arm.setPower();
-            }
-        }
-        if (gamepad2.dpad_right) {
-                arm.toPoint(-10);
-            }
+         if (gamepad2.y) {
+         ascent.drive();
+         }
+         ***/
 
-        if (gamepad2.dpad_down) {
-            arm.toPivotPoint(-300);
-        }
+        arm.setPivotPower(y3);
 
-        if (gamepad2.dpad_down) {
-            arm.toPivotPoint(300);
+
+        // Arm control with an upper limit check
+        if (arm.getEncoderValue() <= -3250 && y2 > 0) {
+            arm.stopExtending();  // Stop extending if limit is reached and y2 requests upward movement
+        } else {
+            arm.setPower(y2);  // Allow normal operation, including downward movement
         }
 
         // Intake control using gamepad2
@@ -96,8 +99,9 @@ public class TeleOpMode extends OpMode {
             intake.setIntakePower(1.0);  // Activate intake
         } else if (gamepad2.left_trigger > 0.1) {
             intake.setIntakePower(-1.0);  // Reverse intake
+        } else {
+            intake.setIntakePower(0);
         }
-
         // Telemetry for diagnostics
         telemetry.addData("Left stick y", gamepad1.left_stick_y);
         telemetry.addData("Right stick y", gamepad1.right_stick_y);
@@ -113,7 +117,14 @@ public class TeleOpMode extends OpMode {
 
     // Response curve function for finer joystick control
     public double applyResponseCurve(double input) {
-        double exponent = 2;
+        double exponent = 1.275;
         return Math.signum(input) * Math.pow(Math.abs(input), exponent);
     }
+
+    // Response curve function for finer arm joystick control
+    public double applyArmResponseCurve(double input) {
+        double exponent = 1.275;
+        return Math.signum(input) * Math.pow(Math.abs(input), exponent);
+    }
+
 }

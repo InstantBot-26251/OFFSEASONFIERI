@@ -26,7 +26,7 @@ public class TestingTeleOp extends OpMode {
     private CollectSample collection;
     private LevelTwoAscent ascent;
     private ScoreHighBasket scorehighbasket;
-    
+
     // Flag to track if scoreHighBasket has been initiated
     private final boolean scoreHighBasketInitiated = false;
 
@@ -59,7 +59,7 @@ public class TestingTeleOp extends OpMode {
         follower.startTeleopDrive();
     }
 
-  //  @Override
+    //  @Override
     public void loop() {
         follower.update();
 
@@ -80,7 +80,7 @@ public class TestingTeleOp extends OpMode {
         if (gamepad2.b && !scorehighbasket.isScoringInProgress()) {
             scorehighbasket.execute(); // Initiate scoring high basket
 
-    }
+        }
 
         // Handle level two ascent with 'y' button
         if (gamepad2.y) {
@@ -117,7 +117,7 @@ public class TestingTeleOp extends OpMode {
 
         // Pivot control for intake
         // if (gamepad2.dpad_left) {
-            // intake.setPivotPosition(0.0);  // Pivot intake to a certain position
+        // intake.setPivotPosition(0.0);  // Pivot intake to a certain position
         // } else if (gamepad2.dpad_right) {
         //    intake.setPivotPosition(1.0);  // Pivot intake to another position
         // }
