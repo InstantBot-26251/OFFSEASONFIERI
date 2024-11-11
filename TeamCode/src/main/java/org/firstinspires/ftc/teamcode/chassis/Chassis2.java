@@ -38,7 +38,6 @@ public class Chassis2 {
         ));
         imu.initialize(parameters);
     }
-
     public void resetYaw() {
         imu.resetYaw();
     }

@@ -24,14 +24,13 @@ import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
 @Config
 @TeleOp(name = "TeleOp Mode")
 public class TeleOpMode extends OpMode {
-    public LevelTwoAscent ascent;
-    public ScoreHighBasket scorehighbasket;
     public ArmAndIntakeFunctions functions;
 //    private Follower follower;
     private Chassis2 chassis;
     Arm2 arm;
     Intake intake;
     CollectSample collection;
+    double x, y, rx;
 
     @Override
     public void init() {
@@ -43,8 +42,6 @@ public class TeleOpMode extends OpMode {
         // Initialize functions
         functions = new ArmAndIntakeFunctions(arm, intake, gamepad2);
         collection = new CollectSample(arm, intake, functions);
-        scorehighbasket = new ScoreHighBasket(arm, intake, gamepad2, functions);
-        ascent = new LevelTwoAscent(arm, intake, functions);
         chassis = new Chassis2(hardwareMap);
 
 //        follower = new Follower(hardwareMap);
@@ -74,14 +71,14 @@ public class TeleOpMode extends OpMode {
 //                applyResponseCurve(gamepad1.right_stick_x),
 //                true
 //        );
-        double y = -applyResponseCurve(gamepad1.left_stick_y);
-        double x = -applyResponseCurve(gamepad1.left_stick_x);
-        double rot = applyResponseCurve(gamepad1.right_stick_x);
+        y = applyResponseCurve(gamepad1.left_stick_y);
+        x = -applyResponseCurve(gamepad1.left_stick_x);
+        rx = -applyResponseCurve(gamepad1.right_stick_x);
         double y2 = applyArmResponseCurve(gamepad2.left_stick_y);
         double y3 = applyArmResponseCurve(gamepad2.right_stick_y);
 
 
-        chassis.drive(x, y, rot);
+        chassis.drive(x, y, rx);
         if (gamepad1.options) {
             chassis.resetYaw();
         }
@@ -110,7 +107,11 @@ public class TeleOpMode extends OpMode {
         } else {
             arm.setPower(y2);  // Allow normal operation, including downward movement
         }
-
+        if (arm.getEncoderValue() > 0 && y2 > 0) {
+            arm.setPower(0);
+        } else {
+            arm.setPower(y2);
+        }
 
         // Intake control using gamepad2
         if (gamepad2.right_trigger > 0.1) {
