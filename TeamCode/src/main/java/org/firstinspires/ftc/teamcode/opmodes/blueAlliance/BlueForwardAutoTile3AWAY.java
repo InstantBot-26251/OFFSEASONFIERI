@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.opmodes.util.AutoState;
+import org.firstinspires.ftc.teamcode.auto.*;
 import org.firstinspires.ftc.teamcode.util.Arm2;
 import org.firstinspires.ftc.teamcode.util.ArmAndIntakeFunctions;
 import org.firstinspires.ftc.teamcode.util.Arm;

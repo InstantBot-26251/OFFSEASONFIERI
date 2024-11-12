@@ -71,11 +71,11 @@ public class TeleOpMode extends OpMode {
 //                applyResponseCurve(gamepad1.right_stick_x),
 //                true
 //        );
-        y = applyResponseCurve(gamepad1.left_stick_y);
-        x = -applyResponseCurve(gamepad1.left_stick_x);
-        rx = -applyResponseCurve(gamepad1.right_stick_x);
-        double y2 = applyArmResponseCurve(gamepad2.left_stick_y);
-        double y3 = applyArmResponseCurve(gamepad2.right_stick_y);
+        double y = AvyuktResponseCurve(gamepad1.left_stick_y);
+        double x = -AvyuktResponseCurve(gamepad1.left_stick_x);
+        double rx = -AvyuktResponseCurve(gamepad1.right_stick_x);
+        double y2 = IshaanResponseCurve(gamepad2.left_stick_y);
+        double y3 = IshaanResponseCurve(gamepad2.right_stick_y);
 
 
         chassis.drive(x, y, rx);
@@ -102,15 +102,10 @@ public class TeleOpMode extends OpMode {
 
 
         // Arm control with an upper limit check
-        if (arm.getEncoderValue() <= -2200 && y2 < 0) {
+        if ((arm.getEncoderValue() <= -2764 && y2 < 0) || (arm.getEncoderValue() == 0 && y2 > 0)) {
             arm.setPower(0);  // Stop extending if limit is reached and y2 requests upward movement
         } else {
             arm.setPower(y2);  // Allow normal operation, including downward movement
-        }
-        if (arm.getEncoderValue() > 0 && y2 > 0) {
-            arm.setPower(0);
-        } else {
-            arm.setPower(y2);
         }
 
         // Intake control using gamepad2
@@ -136,14 +131,14 @@ public class TeleOpMode extends OpMode {
     }
 
     // Response curve function for finer joystick control
-    public double applyResponseCurve(double input) {
-        double exponent = 1.275;
+    public double AvyuktResponseCurve(double input) {
+        double exponent = 2;
         return Math.signum(input) * Math.pow(Math.abs(input), exponent);
     }
 
     // Response curve function for finer arm joystick control
-    public double applyArmResponseCurve(double input) {
-        double exponent = 1.275;
+    public double IshaanResponseCurve(double input) {
+        double exponent = 1.2;
         return Math.signum(input) * Math.pow(Math.abs(input), exponent);
     }
 

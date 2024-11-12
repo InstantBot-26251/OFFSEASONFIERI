@@ -71,10 +71,10 @@ public class DriveEncoderLocalizer extends Localizer {
         rightFront = new Encoder(hardwareMap.get(DcMotorEx.class, rightFrontMotorName));
 
         // TODO: reverse any encoders necessary
-        leftFront.setDirection(Encoder.REVERSE);
-        rightFront.setDirection(Encoder.FORWARD);
-        rightRear.setDirection(Encoder.FORWARD);
-        leftRear.setDirection(Encoder.REVERSE);
+        leftFront.setDirection(Encoder.FORWARD);
+        rightFront.setDirection(Encoder.REVERSE);
+        rightRear.setDirection(Encoder.REVERSE);
+        leftRear.setDirection(Encoder.FORWARD);
 
         setStartPose(setStartPose);
         timer = new NanoTimer();
