@@ -4,20 +4,20 @@ package org.firstinspires.ftc.teamcode.util;
 import com.acmerobotics.dashboard.config.Config;
 
 import com.arcrobotics.ftclib.controller.PIDController;
-
-
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.arm.*;
+
 @Config
-public class Arm2 {
+public class Arm2 extends ArmConstants {
     public DcMotorEx armMotor;
-    public DcMotorEx pivotMotor;
+    public static DcMotorEx pivotMotor;
 
     public PIDFController armPid;
-    public PIDFController pivotPid;
+    public static PIDController pivotPid;
 
     public static double armKp = 1;
     public static double armKi = 0;
@@ -28,7 +28,8 @@ public class Arm2 {
     public static double pivotKd = 0.25;
     public static double pivotKf = 1.1;
 
-    private final double ticks_in_degrees = (double) 168 / 360;
+
+
 
     public double output;
 
@@ -57,7 +58,7 @@ public class Arm2 {
         pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         armPid = new PIDFController(armKp, armKi, armKd, armKf);
-        pivotPid = new PIDFController(pivotKp, pivotKi, pivotKd, pivotKf);
+        pivotPid = new PIDController(pivotKp, pivotKi, pivotKd);
 
     }
 

@@ -1,9 +1,11 @@
-/*** package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.command.Robot;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.arm.Arm;
 import org.firstinspires.ftc.teamcode.util.*;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.chassis.Chassis;
@@ -11,7 +13,7 @@ import org.firstinspires.ftc.teamcode.chassis.commands.*;
 
 public class RobotCore extends Robot {
     static Telemetry telemetry;
-
+    Arm arm;
     GamepadEx driveController;
     GamepadEx manipController;
     Chassis chassis;
@@ -41,8 +43,16 @@ public class RobotCore extends Robot {
     }
 
     public void initSubsystems() {
-        chassis = Chassis.getInstance();
-        register(chassis);
+        chassis = new Chassis();
+        arm = new Arm();
+        claw = new Claw();
+        llVision = new LLVision();
+        register(chassis, arm, claw, llVision);
+
+        telemetry.addData("Status", "Robot initialized, ready to enable");
+        telemetry.update();
+
+        INSTANCE = this;
     }
 
 
@@ -70,4 +80,3 @@ public class RobotCore extends Robot {
         }
     }
 }
-***/
