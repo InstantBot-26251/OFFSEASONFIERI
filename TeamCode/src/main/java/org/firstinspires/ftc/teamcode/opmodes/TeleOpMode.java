@@ -102,7 +102,7 @@ public class TeleOpMode extends OpMode {
 
 
         // Arm control with an upper limit check
-        if ((arm.getEncoderValue() <= -2764 && y2 < 0) || (arm.getEncoderValue() == 0 && y2 > 0)) {
+        if ((arm.getEncoderValue() <= -2764 && y2 > 0) || (arm.getEncoderValue() == 0 && y2 > 0)) {
             arm.setPower(0);  // Stop extending if limit is reached and y2 requests upward movement or stop retracting if limit is reached and y2 requests downward movement
         } else {
             arm.setPower(y2);  // Allow normal operation, including downward movement
