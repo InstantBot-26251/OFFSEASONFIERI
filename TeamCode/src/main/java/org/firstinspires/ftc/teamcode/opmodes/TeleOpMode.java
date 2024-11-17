@@ -74,7 +74,7 @@ public class TeleOpMode extends OpMode {
     @Override
     public void loop() {
         // Set the pivot angle target based on gamepad2 right stick y
-        double joystickInput = gamepad2.right_stick_y;
+        double joystickInput = IshaanResponseCurve(gamepad2.right_stick_y);
         double targetAngleChange = joystickInput * 5.0; // scale factor for fine control, adjust as needed
         target += targetAngleChange;
 
@@ -144,7 +144,7 @@ public class TeleOpMode extends OpMode {
         telemetry.addData("Arm Set Point", arm.getSetPoint());
         telemetry.addData("Lift Encoder Value", arm.getEncoderValue());
         telemetry.addData("Rotated Arm Encoder Value", arm.getPivotEncoderValue());
-        telemetry.addData("Ticks", arm.pivotMotor.getCurrentPosition());
+        telemetry.addData("Ticks", Arm2.pivotMotor.getCurrentPosition());
         telemetry.addData("Y2", y2);
         telemetry.addData("Pivot Target (ticks)", target);
         telemetry.addData("Pivot Power", power);

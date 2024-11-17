@@ -22,12 +22,9 @@ public class AutoConstants {
 
     // Scoring poses
     public static final Pose BASKET_SCORE_POSE = new Pose(16, 128, Math.toRadians(135));
-    public static final Pose OBV_PRELOAD_SCORE_POSE = new Pose(38, 60, Math.toRadians(0));
-    public static final Pose CENTER_PRELOAD_SCORE_POSE = new Pose(38, 84, Math.toRadians(0));
 
     // Parking poses
     public static final Pose OBVZONE_PARKING_POSE = new Pose(14, 14, Math.toRadians(90));
-    public static final Pose ASCENT_PARKING_POSE = new Pose(60, 98, Math.toRadians(270));
 
     // Alliance alliance poses
     public static final Pose LEFT_ALLIANCE_SAMPLE = new Pose(46, 22.75);

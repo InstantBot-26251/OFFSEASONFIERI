@@ -1,4 +1,4 @@
-/*** package org.firstinspires.ftc.teamcode.opmodes.util;
+package org.firstinspires.ftc.teamcode.opmodes.util;
 
 
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -58,4 +58,4 @@ public class Gamepad2InputHandler {
 
     }
 
-} ***/
+}

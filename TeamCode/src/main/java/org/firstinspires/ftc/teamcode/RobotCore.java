@@ -8,17 +8,17 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.arm.Arm;
 import org.firstinspires.ftc.teamcode.util.*;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.chassis.Chassis;
-import org.firstinspires.ftc.teamcode.chassis.commands.*;
+// import org.firstinspires.ftc.teamcode.chassis.Chassis;
+// import org.firstinspires.ftc.teamcode.chassis.commands.*;
 
 public class RobotCore extends Robot {
     static Telemetry telemetry;
     Arm arm;
     GamepadEx driveController;
     GamepadEx manipController;
-    Chassis chassis;
+    // Chassis chassis;
 
-    TeleopDriveCommand driveCommand;
+    // TeleopDriveCommand driveCommand;
 
     public enum OpModeType {
         TELEOP,
