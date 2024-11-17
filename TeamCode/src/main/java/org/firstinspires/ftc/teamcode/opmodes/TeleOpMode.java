@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.arm.ArmConstants;
 import org.firstinspires.ftc.teamcode.chassis.Chassis2;
 import org.firstinspires.ftc.teamcode.util.Arm2;
 import org.firstinspires.ftc.teamcode.util.Intake;
@@ -25,24 +24,16 @@ import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
 @Config
 @TeleOp(name = "TeleOp Mode")
 public class TeleOpMode extends OpMode {
-    public DcMotorEx pivotMotor;
     public ArmAndIntakeFunctions functions;
-//    private Follower follower;
+    //    private Follower follower;
     private Chassis2 chassis;
     Arm2 arm;
-    ArmConstants armC;
     Intake intake;
     CollectSample collection;
-    private final double ticks_in_degrees = 3360 / 360;
-    public static double target;
-
+    double x, y, rx;
 
     @Override
     public void init() {
-        pivotMotor = hardwareMap.get(DcMotorEx.class, "rotationMotor");
-        pivotMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        pivotMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Initialize arm and intake systems first
         arm = new Arm2(hardwareMap);  // Initialize arm system
@@ -67,31 +58,12 @@ public class TeleOpMode extends OpMode {
 //        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //
 //
-//        follower.startTeleopDrive();
+//        follower.st   `108artTeleopDrive();
 
     }
 
     @Override
     public void loop() {
-        // Set the pivot angle target based on gamepad2 right stick y
-        double joystickInput = IshaanResponseCurve(gamepad2.right_stick_y);
-        double targetAngleChange = joystickInput * 5.0; // scale factor for fine control, adjust as needed
-        target += targetAngleChange;
-
-        // Limit the target angle to avoid over-rotation if necessary
-        target = Math.max(60 * ticks_in_degrees, Math.min(75 * ticks_in_degrees, target)); // 60-75 degree range
-
-        // PID calculation for pivot control
-        Arm2.pivotPid.setPID(ArmConstants.pivotP, ArmConstants.pivotI, ArmConstants.pivotD);
-        int armPos = pivotMotor.getCurrentPosition();
-        double pidOutput = Arm2.pivotPid.calculate(armPos, target);
-        double feedforward = Math.cos(Math.toRadians(target / ticks_in_degrees)) * ArmConstants.pivotF;
-        double power = pidOutput + feedforward;
-
-        // Apply the calculated power to the pivot motor
-        pivotMotor.setPower(power);
-
-//        pivotMotor.setPower(power);
 //        // TeleOp movement with response curves
 //        follower.setTeleOpMovementVectors(
 //                -applyResponseCurve(gamepad1.left_stick_y),
@@ -126,6 +98,15 @@ public class TeleOpMode extends OpMode {
          }
          ***/
 
+        arm.setPivotPower(y3);
+
+
+        // Arm control with an upper limit check
+        if ((arm.getEncoderValue() <= -2764 && y2 < 0) || (arm.getEncoderValue() == 0 && y2 > 0)) {
+            arm.setPower(0);  // Stop extending if limit is reached and y2 requests upward movement or stop retracting if limit is reached and y2 requests downward movement
+        } else {
+            arm.setPower(y2);  // Allow normal operation, including downward movement
+        }
 
         // Intake control using gamepad2
         if (gamepad2.right_trigger > 0.1) {
@@ -144,23 +125,20 @@ public class TeleOpMode extends OpMode {
         telemetry.addData("Arm Set Point", arm.getSetPoint());
         telemetry.addData("Lift Encoder Value", arm.getEncoderValue());
         telemetry.addData("Rotated Arm Encoder Value", arm.getPivotEncoderValue());
-        telemetry.addData("Ticks", Arm2.pivotMotor.getCurrentPosition());
+        telemetry.addData("Ticks", arm.pivotMotor.getCurrentPosition());
         telemetry.addData("Y2", y2);
-        telemetry.addData("Pivot Target (ticks)", target);
-        telemetry.addData("Pivot Power", power);
-        telemetry.addData("Pivot Encoder Position", pivotMotor.getCurrentPosition());
         telemetry.update();
     }
 
     // Response curve function for finer joystick control
     public double AvyuktResponseCurve(double input) {
-        double exponent = 2;
+        double exponent = 1.5;
         return Math.signum(input) * Math.pow(Math.abs(input), exponent);
     }
 
     // Response curve function for finer arm joystick control
     public double IshaanResponseCurve(double input) {
-        double exponent = 1.2;
+        double exponent = 1.111111;
         return Math.signum(input) * Math.pow(Math.abs(input), exponent);
     }
 

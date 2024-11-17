@@ -39,15 +39,13 @@ public class RobotCore extends Robot {
         this.manipController = new GamepadEx(gamepad2);
 
         initSubsystems();
-        setupOpMode(type);
+        // setupOpMode(type);
     }
 
     public void initSubsystems() {
-        chassis = new Chassis();
-        arm = new Arm();
-        claw = new Claw();
-        llVision = new LLVision();
-        register(chassis, arm, claw, llVision);
+        // chassis = new Chassis();
+        // arm = new Arm();
+        // register(chassis, arm);
 
         telemetry.addData("Status", "Robot initialized, ready to enable");
         telemetry.update();
@@ -56,27 +54,27 @@ public class RobotCore extends Robot {
     }
 
 
-    public void setDriveControls() {
-        driveCommand = new TeleopDriveCommand(
-                chassis,
-                () -> driveController.getLeftX(),
-                () -> driveController.getLeftX(),
-                () -> driveController.getRightX()
-        );
-        chassis.setDefaultCommand(driveCommand);
-    }
+//    public void setDriveControls() {
+//        driveCommand = new TeleopDriveCommand(
+//                chassis,
+//                () -> driveController.getLeftX(),
+//                () -> driveController.getLeftX(),
+//                () -> driveController.getRightX()
+//        );
+//        chassis.setDefaultCommand(driveCommand);
+//    }
 
-    public void setupOpmode(OpModeType type) {
-        switch (type) {
-            case TELEOP:
-                chassis.setPosition(RobotGlobal.robotPose);
-                chassis.startTeleopDrive();
-                setDriveControls();
-                Commands.runOnce(() -> setControllerColors(1, 1, 0)).andThen(new InstantCommand(llVision::setYellow));
-                break;
-            case EMPTY:
-                schedule(Commands.none());
-                break;
-        }
-    }
+//    public void setupOpmode(OpModeType type) {
+//        switch (type) {
+//            case TELEOP:
+//                chassis.setPosition(RobotGlobal.robotPose);
+//                chassis.startTeleopDrive();
+//                setDriveControls();
+//                Commands.runOnce(() -> setControllerColors(1, 1, 0)).andThen(new InstantCommand(llVision::setYellow));
+//                break;
+//            case EMPTY:
+//                schedule(Commands.none());
+//                break;
+//        }
+//    }
 }
