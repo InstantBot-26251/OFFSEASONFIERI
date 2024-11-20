@@ -30,7 +30,6 @@ public class TeleOpMode extends OpMode {
     Arm2 arm;
     Intake intake;
     CollectSample collection;
-    double x, y, rx;
 
     @Override
     public void init() {
@@ -98,14 +97,24 @@ public class TeleOpMode extends OpMode {
          }
          ***/
 
-        arm.setPivotPower(y3);
+        // Pivot motion profiling control
+        if (Math.abs(y3) > 0.1) {
+            double currentPivotPosition = arm.getPivotEncoderValue();
+            double targetPivotPosition = currentPivotPosition + (y3 * 10); // Scale joystick input to small incremental position changes
+            arm.toPivotPoint(targetPivotPosition);
+        }
 
+        // Arm motion profiling control
+        if (Math.abs(y2) > 0.1) {
+            double currentArmPosition = arm.getEncoderValue();
+            double targetArmPosition = currentArmPosition + (y2 * 10); // Scale joystick input to small incremental position changes
 
-        // Arm control with an upper limit check
-        if ((arm.getEncoderValue() <= -2764 && y2 > 0) || (arm.getEncoderValue() == 0 && y2 > 0)) {
-            arm.setPower(0);  // Stop extending if limit is reached and y2 requests upward movement or stop retracting if limit is reached and y2 requests downward movement
-        } else {
-            arm.setPower(y2);  // Allow normal operation, including downward movement
+            // Check limits
+            if ((currentArmPosition <= -2764 && y2 < 0) || (currentArmPosition >= 0 && y2 > 0)) {
+                arm.toPoint(currentArmPosition); // Maintain current position if limits are reached
+            } else {
+                arm.toPoint(targetArmPosition);
+            }
         }
 
         // Intake control using gamepad2
@@ -116,6 +125,8 @@ public class TeleOpMode extends OpMode {
         } else {
             intake.setIntakePower(0);
         }
+
+        arm.update();
         // Telemetry for diagnostics
         telemetry.addData("Left stick y", gamepad1.left_stick_y);
         telemetry.addData("Right stick y", gamepad1.right_stick_y);
