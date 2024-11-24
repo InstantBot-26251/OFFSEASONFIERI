@@ -41,7 +41,7 @@ public class AutoConstants {
         else return pose;
     }
 
-    private static Pose toRed(Pose pose) {
+    public static Pose toRed(Pose pose) {
         return new Pose(144 - pose.getX(), 144 - pose.getY(), pose.getHeading() + Math.toRadians(180));
     }
 }

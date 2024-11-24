@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Intake {
-    public final CRServo intakeServo; // Servo to control in the intake(for blocks)
-    // Servo pivotServo;  // Servo to control the pivot(for specimens)
+    public final CRServo intakeServo; // Servo to control in the intake (for samples)
+    // Servo pivotServo;  // Servo to control the pivot (for specimens)
 
     // Intake power settings
     final double INTAKE_COLLECT = -1.0;

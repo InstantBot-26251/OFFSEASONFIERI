@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.util;
 
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile.State;
@@ -10,13 +12,16 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.arm.*;
 
 @Config
 public class Arm2 extends ArmConstants {
+    static Telemetry telemetry;
     public DcMotorEx armMotor;
     public static DcMotorEx pivotMotor;
 
+    public Intake intake;
     public PIDFController armPid;
     public static PIDFController pivotPid;
 
@@ -52,11 +57,14 @@ public class Arm2 extends ArmConstants {
     private State goalState;
     private State currentState;
 
-    public Arm2(HardwareMap hardwareMap) {
+    public Arm2(HardwareMap hardwareMap, Intake intake) {
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
         armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //Initialize Intake
+        intake = new Intake(hardwareMap);
 
         // Initialize rotation motor
         pivotMotor = hardwareMap.get(DcMotorEx.class, "rotationMotor");
@@ -128,6 +136,43 @@ public class Arm2 extends ArmConstants {
     public double getSetPoint() {
         return armPid.getSetPoint();
     }
+
+    public void scoreHighBasket() {
+        toPivotPoint(90);
+        if (getPivotSetPoint() == 90) {
+            toPoint(-2440);
+            if (getEncoderValue() == -2440){
+            intake.deposit();
+        }}
+    }
+
+    public void scoreHighChamber() {
+        if (getPivotSetPoint() == 90) {
+        toPivotPoint(45);
+    } else {
+            toPivotPoint(90);
+        }
+    }
+    public void collectSampleObv() {
+        toPivotPoint(45);
+        if (getPivotEncoderValue() == 45) {
+            intake.collect();
+        }
+    }
+    public void collectSampleSub() {
+        toPivotPoint(0);
+        if (getPivotEncoderValue() == 0) {
+            toPoint(-2000);
+            if (getEncoderValue() == -2000) {
+                if (gamepad2.right_trigger > 0.01) {
+                    intake.collect();
+                }
+                telemetry.addData("Intake", "Press right trigger to start intake");
+            }
+        }
+
+    }
+
 
     public double getPivotSetPoint() {
         return pivotPid.getSetPoint();

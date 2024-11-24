@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.chassis.Chassis2;
 import org.firstinspires.ftc.teamcode.util.Arm2;
@@ -24,7 +25,6 @@ import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
 @Config
 @TeleOp(name = "TeleOp Mode")
 public class TeleOpMode extends OpMode {
-    public ArmAndIntakeFunctions functions;
     //    private Follower follower;
     private Chassis2 chassis;
     Arm2 arm;
@@ -35,12 +35,10 @@ public class TeleOpMode extends OpMode {
     public void init() {
 
         // Initialize arm and intake systems first
-        arm = new Arm2(hardwareMap);  // Initialize arm system
+        arm = new Arm2(hardwareMap, intake);  // Initialize arm system
         intake = new Intake(hardwareMap);  // Initialize intake system
 
         // Initialize functions
-        functions = new ArmAndIntakeFunctions(arm, intake, gamepad2);
-        collection = new CollectSample(arm, intake, functions);
         chassis = new Chassis2(hardwareMap);
 
 //        follower = new Follower(hardwareMap);
@@ -57,7 +55,7 @@ public class TeleOpMode extends OpMode {
 //        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //
 //
-//        follower.st   `108artTeleopDrive();
+//        follower.startTeleopDrive();
 
     }
 
@@ -83,8 +81,7 @@ public class TeleOpMode extends OpMode {
         }
 
 //          follower.update();
-//           follower.setTeleOpMovementVectors(-applyResponseCurve(gamepad1.left_stick_y), applyResponseCurve(gamepad1.left_stick_x), applyResponseCurve(gamepad1.right_stick_x), true);
-        /***
+          /***
          if (gamepad2.a) {
          collection.drive();
          }
@@ -133,7 +130,8 @@ public class TeleOpMode extends OpMode {
         telemetry.addData("Left stick x", gamepad1.left_stick_x);
         telemetry.addData("Right stick x", gamepad1.right_stick_x);
         telemetry.addData("Servo Position", gamepad2.a ? "Open" : gamepad2.b ? "Closed" : "Neutral");
-        telemetry.addData("Arm Set Point", arm.getSetPoint());
+        telemetry.addData("Slide Set Point", arm.getSetPoint());
+        telemetry.addData("Pivot Set Point", arm.getPivotSetPoint());
         telemetry.addData("Lift Encoder Value", arm.getEncoderValue());
         telemetry.addData("Rotated Arm Encoder Value", arm.getPivotEncoderValue());
         telemetry.addData("Ticks", arm.pivotMotor.getCurrentPosition());
