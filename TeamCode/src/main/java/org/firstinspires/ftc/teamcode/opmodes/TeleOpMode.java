@@ -29,7 +29,6 @@ public class TeleOpMode extends OpMode {
     private Chassis2 chassis;
     Arm2 arm;
     Intake intake;
-    CollectSample collection;
 
     @Override
     public void init() {
@@ -93,26 +92,30 @@ public class TeleOpMode extends OpMode {
          ascent.drive();
          }
          ***/
+        // Pivot control
 
-        // Pivot motion profiling control
         if (Math.abs(y3) > 0.1) {
             double currentPivotPosition = arm.getPivotEncoderValue();
-            double targetPivotPosition = currentPivotPosition + (y3 * 10); // Scale joystick input to small incremental position changes
+            double targetPivotPosition = currentPivotPosition + (y3 * 10); // Scale joystick input
             arm.toPivotPoint(targetPivotPosition);
         }
 
-        // Arm motion profiling control
-        if (Math.abs(y2) > 0.1) {
-            double currentArmPosition = arm.getEncoderValue();
-            double targetArmPosition = currentArmPosition + (y2 * 10); // Scale joystick input to small incremental position changes
+        // Slide control with dynamic limits
 
-            // Check limits
-            if ((currentArmPosition <= -2764 && y2 < 0) || (currentArmPosition >= 0 && y2 > 0)) {
-                arm.toPoint(currentArmPosition); // Maintain current position if limits are reached
+        if (Math.abs(y2) > 0.1) {
+            double currentSlidePosition = arm.getEncoderValue();
+            double targetSlidePosition = currentSlidePosition + (y2 * 10);
+            double maxSlideExtension = arm.getMaxSlidePosition();
+
+            // Restrict slide extension
+            if ((currentSlidePosition >= maxSlideExtension && y2 > 0) ||
+                    (currentSlidePosition <= arm.getMinSlidePosition() && y2 < 0)) {
+                arm.toPoint(currentSlidePosition); // Maintain position if limits are reached
             } else {
-                arm.toPoint(targetArmPosition);
+                arm.toPoint(targetSlidePosition);
             }
         }
+
 
         // Intake control using gamepad2
         if (gamepad2.right_trigger > 0.1) {
@@ -134,9 +137,36 @@ public class TeleOpMode extends OpMode {
         telemetry.addData("Pivot Set Point", arm.getPivotSetPoint());
         telemetry.addData("Lift Encoder Value", arm.getEncoderValue());
         telemetry.addData("Rotated Arm Encoder Value", arm.getPivotEncoderValue());
-        telemetry.addData("Ticks", arm.pivotMotor.getCurrentPosition());
+        telemetry.addData("Pivot Motor Ticks", arm.pivotMotor.getCurrentPosition());
         telemetry.addData("Y2", y2);
         telemetry.update();
+    }
+
+
+    /**
+     * Calculates the maximum allowable slide extension based on the pivot position.
+     * @param pivotEncoderValue The current encoder value of the pivot.
+     * @return The maximum encoder value the slide can extend to.
+     */
+    private double calculateMaxSlideExtension(double pivotEncoderValue) {
+        final double PIVOT_DOWN_ENCODER = -2764; // Pivot down encoder value
+        final double PIVOT_UP_ENCODER = 0;       // Pivot up encoder value
+        final double MAX_EXTENSION_ENCODER = arm.getMaxSlidePosition(); // Full extension encoder value
+
+        // At pivot fully down, max extension is -2764
+        if (pivotEncoderValue <= PIVOT_DOWN_ENCODER) {
+            return -2764;
+        }
+
+        // At pivot fully up, max extension is restricted by physical max
+        if (pivotEncoderValue >= PIVOT_UP_ENCODER) {
+            return MAX_EXTENSION_ENCODER;
+        }
+
+        // Linearly interpolate max extension between pivot down and pivot up
+        return -2764 + (pivotEncoderValue - PIVOT_DOWN_ENCODER) /
+                (PIVOT_UP_ENCODER - PIVOT_DOWN_ENCODER) *
+                (MAX_EXTENSION_ENCODER - (-2764));
     }
 
     // Response curve function for finer joystick control

@@ -42,6 +42,11 @@ public class Arm2 extends ArmConstants {
     final double ARM_TICKS_PER_DEGREE = 4.67;
 
     // Arm positions
+    private static final double PIVOT_DOWN_ENCODER = -2764; // Fully pivoted down position
+    private static final double PIVOT_UP_ENCODER = 0;       // Fully pivoted up position
+    private static final double MAX_ENCODER_EXTENSION = 1000; // Example max encoder value at full extension
+    private static final double MIN_ENCODER_EXTENSION = -4000; // Minimum slide retraction
+    private static final double SLIDE_AT_42_INCHES = -2764; // Encoder value for 42 inches when pivot is fully down
     final double ARM_COLLAPSED_INTO_ROBOT = 0;
     final double ARM_COLLECT = 250 * ARM_TICKS_PER_DEGREE;
     final double ARM_CLEAR_BARRIER = 230 * ARM_TICKS_PER_DEGREE;
@@ -121,6 +126,29 @@ public class Arm2 extends ArmConstants {
         double pivotFeedback = pivotPid.calculate(getPivotEncoderValue(), pivotCurrentState.position);
         double pivotPower = pivotFeedforward + pivotFeedback;
         pivotMotor.setPower(pivotPower);
+    }
+
+    public double getMaxSlidePosition() {
+        double pivotPosition = getPivotEncoderValue();
+
+        // At fully pivoted down, max extension is -2764
+        if (pivotPosition <= PIVOT_DOWN_ENCODER) {
+            return SLIDE_AT_42_INCHES;
+        }
+
+        // At fully pivoted up, max extension is the full range
+        if (pivotPosition >= PIVOT_UP_ENCODER) {
+            return MAX_ENCODER_EXTENSION;
+        }
+
+        // Linearly interpolate between the down and up positions
+        return SLIDE_AT_42_INCHES + (pivotPosition - PIVOT_DOWN_ENCODER) /
+                (PIVOT_UP_ENCODER - PIVOT_DOWN_ENCODER) *
+                (MAX_ENCODER_EXTENSION - SLIDE_AT_42_INCHES);
+    }
+
+    public double getMinSlidePosition() {
+        return MIN_ENCODER_EXTENSION;
     }
 
     public void toPivotPoint(double position) {
