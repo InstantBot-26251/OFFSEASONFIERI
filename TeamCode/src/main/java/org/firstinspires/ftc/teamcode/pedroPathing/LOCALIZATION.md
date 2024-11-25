@@ -40,7 +40,7 @@ that applies to you and follow the directions there.
   this multiplier, then replace `TURN_TICKS_TO_RADIANS` in the localizer with your multiplier. Make sure
   you replace the number, not add on or multiply it to the previous number. The tuner takes into
   account your current multiplier.
-* Next, go on to `Forward Localizer Tuner`. You'll want to position a ruler alongside your robot.
+* Next, go on to `Forward Localizer Tuner`.  You'll want to position a ruler alongside your robot.
   By default, you'll want to push the robot 30 inches forward. Once you've pushed that far, or whatever
   you set that value to, then the forward multiplier will be shown as the second number shown. The
   first number is how far the robot thinks you've gone, and the second number is the multiplier you

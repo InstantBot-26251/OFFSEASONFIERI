@@ -7,7 +7,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.auto.AutoConstants;
 import org.firstinspires.ftc.teamcode.opmodes.util.AutoState;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
+import org.firstinspires.ftc.teamcode.util.Arm2;
 import org.firstinspires.ftc.teamcode.util.ArmAndIntakeFunctions;
 import org.firstinspires.ftc.teamcode.util.Arm;
 import org.firstinspires.ftc.teamcode.util.Intake;
@@ -19,59 +23,57 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
 
-@Autonomous(name = "Blue Alliance Auto Position 1")
+@Autonomous(name = "Blue Alliance Auto Tile 3 In")
 public class BlueForwardAutoTile3IN extends OpMode {
 
-    private ScoreHighBasket score;
-    private Follower follower;
-    private ArmAndIntakeFunctions functions;
-    private Arm arm;
-    private Intake intake;
-    private BezierCurve scoringCurve;
-    private PathChain scoringPath;
-    private BezierCurve observationCurve;
-    private PathChain observationPath;
+    Pose startingPose = new Pose(0,85,Math.toRadians(0));
+    Pose sampleOnePose = new Pose(65, 120, Math.toRadians(0));
+    Pose scoreOnePose = new Pose(12, 120, Math.toRadians(0));
+    Pose sampleTwoPose = new Pose(62, 130, Math.toRadians(0));
+    Pose scoreTwoPose = new Pose(18, 130, Math.toRadians(0));
+    Pose sampleThreePose = new Pose(62, 134, Math.toRadians(0));
+    Pose scoreThreePose = new Pose(22, 134, Math.toRadians(0));
+    Pose parkPosition = AutoConstants.OBVZONE_PARKING_POSE;
 
-    private AutoState currentState = AutoState.MOVE_TO_SCORING_ZONE;
+    Path toFirstSample;
+    Path scoreOnePath;
+    Path sampleTwoPath;
+    Path scoreTwoPath;
+    Path sampleThreePath;
+    Path scoreThreePath;
+    Path scoreToParkPath;
+
+    private Follower follower;
+    private AutoState currentState = AutoState.MOVE_TO_FIRST_NEUTRAL_SAMPLE;
     private long startTime;
 
     @Override
     public void init() {
-        // Create a path to the observation zone using the BezierCurve
-        observationPath = new PathBuilder()
-                .addPath(observationCurve) // Add BezierCurve as a path
-                .build();
+        toFirstSample = new Path(new BezierCurve(new Point(startingPose), new Point(sampleOnePose)));
+        toFirstSample.setConstantHeadingInterpolation(startingPose.getHeading());
 
-        // Create a BezierCurve for the path to the observation zone
-        observationCurve = new BezierCurve(
-                new Point(19, 125.5, Point.CARTESIAN),     // Start from scoring position
-                new Point(14, 60, Point.CARTESIAN),   // Control point
-                new Point(7.6, 16.13, Point.CARTESIAN)     // End point
-        );
+        scoreOnePath = new Path(new BezierLine(new Point(sampleOnePose), new Point(scoreOnePose)));
+        scoreOnePath.setConstantHeadingInterpolation(sampleOnePose.getHeading());
 
-        // Create a path to the scoring zone using the BezierCurve
-        scoringPath = new PathBuilder()
-                .addPath(scoringCurve) // Add BezierCurve as a path
-                .build();
+        sampleTwoPath = new Path(new BezierCurve(new Point(scoreOnePose), new Point(sampleTwoPose)));
+        sampleTwoPath.setConstantHeadingInterpolation(scoreOnePose.getHeading());
 
-        scoringCurve = new BezierCurve(
-                new Point(0, 85, Point.CARTESIAN),      // Starting point
-                new Point(10, 110, Point.CARTESIAN),     // Control point
-                new Point(19, 125.5, Point.CARTESIAN)       // End point
-        );
+        scoreTwoPath = new Path(new BezierLine(new Point(sampleTwoPose), new Point(scoreTwoPose)));
+        scoreTwoPath.setConstantHeadingInterpolation(sampleTwoPose.getHeading());
 
-        arm = new Arm(hardwareMap, 1, 0, 0, 1);
-        intake = new Intake(hardwareMap);
+        sampleThreePath = new Path(new BezierCurve(new Point(scoreTwoPose), new Point(sampleThreePose)));
+        sampleThreePath.setConstantHeadingInterpolation(scoreTwoPose.getHeading());
 
-        // Initialize Follower and ArmAndIntakeFunctions with hardware components
+        scoreThreePath = new Path(new BezierLine(new Point(sampleThreePose), new Point(scoreThreePose)));
+        scoreThreePath.setConstantHeadingInterpolation(sampleThreePose.getHeading());
+
+        scoreToParkPath = new Path(new BezierCurve(new Point(scoreThreePose), new Point(parkPosition)));
+        scoreToParkPath.setConstantHeadingInterpolation(scoreThreePose.getHeading());
+
         follower = new Follower(hardwareMap);
-        functions = new ArmAndIntakeFunctions(arm, intake, gamepad2);
-
-        //Initialize score
-        score = new ScoreHighBasket(arm, intake, gamepad2, functions);
-
         telemetry.addData("Status", "Initialized");
     }
+
 
     @Override
     public void init_loop() {
@@ -80,7 +82,7 @@ public class BlueForwardAutoTile3IN extends OpMode {
 
     @Override
     public void start() {
-        currentState = AutoState.MOVE_TO_SCORING_ZONE;
+        currentState = AutoState.MOVE_TO_FIRST_NEUTRAL_SAMPLE;
         startTime = System.currentTimeMillis(); // Record the start time
 
         // Set the initial position of the robot
@@ -88,56 +90,71 @@ public class BlueForwardAutoTile3IN extends OpMode {
 
 
         // Follow the path to the scoring zone
-        follower.followPath(scoringPath);
+        follower.followPath(toFirstSample);
     }
 
-    @Override
-    public void loop() {
-        // Continuously update the follower to execute the path
-        follower.update();
+        @Override
+        public void loop() {
+            follower.update();
+            switch (currentState) {
+                case MOVE_TO_FIRST_NEUTRAL_SAMPLE:
+                    if (!follower.isBusy()) {
+                        currentState = AutoState.PUSH_FIRST_NEUTRAL_SAMPLE;
+                        follower.followPath(toFirstSample);
+                    }
+                    break;
 
-        // Check if 30 seconds have passed
-        if (System.currentTimeMillis() - startTime >= 30000) {
-            currentState = AutoState.COMPLETE; // Transition to COMPLETE state
+                case PUSH_FIRST_NEUTRAL_SAMPLE:
+                    follower.followPath(scoreOnePath);
+                    if (!follower.isBusy()) {
+                        currentState = AutoState.MOVE_TO_SECOND_NEUTRAL_SAMPLE;
+                    }
+                    break;
+
+                case MOVE_TO_SECOND_NEUTRAL_SAMPLE:
+                    follower.followPath(sampleTwoPath);
+                    if (!follower.isBusy()) {
+                        currentState = AutoState.PUSH_SECOND_NEUTRAL_SAMPLE;
+                    }
+                    break;
+
+                case PUSH_SECOND_NEUTRAL_SAMPLE:
+                    follower.followPath(scoreTwoPath);
+                    if (!follower.isBusy()) {
+                        currentState = AutoState.MOVE_TO_THIRD_NEUTRAL_SAMPLE;
+                    }
+                    break;
+
+                case MOVE_TO_THIRD_NEUTRAL_SAMPLE:
+                    follower.followPath(sampleThreePath);
+                    if (!follower.isBusy()) {
+                        currentState = AutoState.PUSH_THIRD_NEUTRAL_SAMPLE;
+                    }
+                    break;
+
+                case PUSH_THIRD_NEUTRAL_SAMPLE:
+                    follower.followPath(scoreThreePath);
+                    if (!follower.isBusy()) {
+                        currentState = AutoState.MOVE_TO_OBSERVATION_ZONE;
+                    }
+                    break;
+
+
+                case MOVE_TO_OBSERVATION_ZONE:
+                    follower.followPath(scoreToParkPath);
+                    if (!follower.isBusy()) {
+                        currentState = AutoState.COMPLETE;
+                    }
+                    break;
+
+                case COMPLETE:
+                    follower.breakFollowing();
+                    break;
+            }
+
+            telemetry.addData("State", currentState);
+            telemetry.update();
         }
-
-        switch (currentState) {
-            case MOVE_TO_SCORING_ZONE:
-                // Check if the robot has reached the scoring zone
-                if (!follower.isBusy()) {
-                    currentState = AutoState.SCORE_HIGH_BASKET;
-                }
-                break;
-
-            case SCORE_HIGH_BASKET:
-                telemetry.addData("Arm Position", arm.getRotatedArmPosition());
-                telemetry.addData("Lift Position", arm.getEncoderValue());
-                score.execute();
-                currentState = AutoState.CHECK_SCORING_FINISHED;
-
-            case CHECK_SCORING_FINISHED:
-                // Check if the high basket scoring is finished
-                if (functions.isFinished()) {
-                    currentState = AutoState.MOVE_TO_OBSERVATION_ZONE; // Move to the next state
-                }
-                break;
-
-            case MOVE_TO_OBSERVATION_ZONE:
-                // Follow the path to the observation zone
-                follower.followPath(observationPath);
-                currentState = AutoState.COMPLETE; // Move to complete after following the path
-                break;
-
-
-            case COMPLETE:
-                telemetry.addData("Path", "Complete");
-                follower.breakFollowing(); // Stop following the path
-                break;
-        }
-
-        telemetry.addData("State", currentState);
-        telemetry.update();
-    }
 
     @Override
     public void stop() {

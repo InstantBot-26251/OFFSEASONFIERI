@@ -11,9 +11,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathBuilder;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
-@Autonomous(name = "Blue Observation Zone Auto", group = "Blue Alliance Autos")
+@Autonomous(name = "Red Observation Zone Auto")
 public class RedToObservationAuto extends OpMode {
-
+//for all our next seasons we should have nicholas as part of all our repos...:)))))
     private Follower follower;
     private BezierCurve observationCurve;
     private PathChain observationPath;
