@@ -1,26 +1,12 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.chassis.Chassis2;
+import org.firstinspires.ftc.teamcode.subsystems.arm.chassis.Chassis2;
 import org.firstinspires.ftc.teamcode.util.Arm2;
 import org.firstinspires.ftc.teamcode.util.Intake;
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
-import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
-import org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants;
-import org.firstinspires.ftc.teamcode.util.ArmAndIntakeFunctions;
-import org.firstinspires.ftc.teamcode.util.CollectSample;
-import org.firstinspires.ftc.teamcode.util.LevelTwoAscent;
-import org.firstinspires.ftc.teamcode.util.ScoreHighBasket;
 
 @Config
 @TeleOp(name = "TeleOp Mode")
@@ -127,6 +113,7 @@ public class TeleOpMode extends OpMode {
         }
 
         arm.update();
+
         // Telemetry for diagnostics
         telemetry.addData("Left stick y", gamepad1.left_stick_y);
         telemetry.addData("Right stick y", gamepad1.right_stick_y);
@@ -143,31 +130,6 @@ public class TeleOpMode extends OpMode {
     }
 
 
-    /**
-     * Calculates the maximum allowable slide extension based on the pivot position.
-     * @param pivotEncoderValue The current encoder value of the pivot.
-     * @return The maximum encoder value the slide can extend to.
-     */
-    private double calculateMaxSlideExtension(double pivotEncoderValue) {
-        final double PIVOT_DOWN_ENCODER = -2764; // Pivot down encoder value
-        final double PIVOT_UP_ENCODER = 0;       // Pivot up encoder value
-        final double MAX_EXTENSION_ENCODER = arm.getMaxSlidePosition(); // Full extension encoder value
-
-        // At pivot fully down, max extension is -2764
-        if (pivotEncoderValue <= PIVOT_DOWN_ENCODER) {
-            return -2764;
-        }
-
-        // At pivot fully up, max extension is restricted by physical max
-        if (pivotEncoderValue >= PIVOT_UP_ENCODER) {
-            return MAX_EXTENSION_ENCODER;
-        }
-
-        // Linearly interpolate max extension between pivot down and pivot up
-        return -2764 + (pivotEncoderValue - PIVOT_DOWN_ENCODER) /
-                (PIVOT_UP_ENCODER - PIVOT_DOWN_ENCODER) *
-                (MAX_EXTENSION_ENCODER - (-2764));
-    }
 
     // Response curve function for finer joystick control
     public double AvyuktResponseCurve(double input) {

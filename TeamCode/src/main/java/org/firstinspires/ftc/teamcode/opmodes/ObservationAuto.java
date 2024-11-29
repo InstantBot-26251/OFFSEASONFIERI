@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.chassis.Chassis2;
 import org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants;
 
 @Autonomous(name = "Obv Auto")
