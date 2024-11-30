@@ -8,16 +8,18 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.subsystems.arm.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.arm.PivotSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.arm.chassis.Chassis;
-import org.firstinspires.ftc.teamcode.subsystems.arm.chassis.commands.TeleopDriveCommand;
+import org.firstinspires.ftc.teamcode.subsystems.chassis.Chassis;
+import org.firstinspires.ftc.teamcode.subsystems.chassis.commands.TeleopDriveCommand;
 import org.firstinspires.ftc.teamcode.util.RobotGlobal;
 
 public class RobotCore extends Robot {
     private static RobotCore INSTANCE;
     public Follower follower;
     // Subsystems
+    private ClawSubsystem clawSubsystem;
     private ArmSubsystem armSubsystem;
     private PivotSubsystem pivotSubsystem;
     private Chassis chassis;
@@ -74,9 +76,10 @@ public class RobotCore extends Robot {
         chassis = new Chassis(follower, telemetry);
         armSubsystem = new ArmSubsystem(hardwareMap);
         pivotSubsystem = new PivotSubsystem(hardwareMap);
+        clawSubsystem = new ClawSubsystem(hardwareMap);
 
         // Register subsystems for command scheduling (ftclib handles this automatically)
-        register(chassis, armSubsystem, pivotSubsystem);
+        register(chassis, armSubsystem, pivotSubsystem, clawSubsystem);
 
         // Set initial values for RobotGlobal (e.g., alliance color)
         RobotGlobal.setAlliance(RobotGlobal.Alliance.NONE);
@@ -140,6 +143,8 @@ public class RobotCore extends Robot {
     public PivotSubsystem getPivotSubsystem() {
         return pivotSubsystem;
     }
+
+    public ClawSubsystem getClawSubsystem(){return clawSubsystem;}
 
     public GamepadEx getDriveController() {
         return driveController;

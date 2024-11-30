@@ -54,6 +54,10 @@ public class ArmSubsystem extends SubsystemBase {
         armMotor.setPower(feedforward + feedback);
     }
 
+    public void limitCheck() {
+
+    }
+
     public void stop() {
         armMotor.setPower(0);
     }

@@ -4,17 +4,22 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.subsystems.arm.chassis.Chassis2;
+import org.firstinspires.ftc.teamcode.RobotCore;
+import org.firstinspires.ftc.teamcode.RobotMap;
+import org.firstinspires.ftc.teamcode.subsystems.chassis.Chassis2;
 import org.firstinspires.ftc.teamcode.util.Arm2;
 import org.firstinspires.ftc.teamcode.util.Intake;
+import org.firstinspires.ftc.teamcode.util.RobotGlobal;
 
 @Config
 @TeleOp(name = "TeleOp Mode")
 public class TeleOpMode extends OpMode {
+    RobotCore robot;
     //    private Follower follower;
     private Chassis2 chassis;
     Arm2 arm;
     Intake intake;
+    RobotGlobal robotGlobal;
 
     @Override
     public void init() {
@@ -46,6 +51,21 @@ public class TeleOpMode extends OpMode {
 
     @Override
     public void loop() {
+        if (robotGlobal.getAllianceColor().equals("Red")) {
+            gamepad1.setLedColor(250, 0, 0, -1);
+            gamepad2.setLedColor(250, 0, 0, -1);
+        }
+
+        else if (robotGlobal.getAllianceColor().equals("Blue")) {
+            gamepad1.setLedColor(0, 0, 250, -1);
+            gamepad2.setLedColor(0, 0, 250, -1);
+        }
+
+        else if (robotGlobal.getAllianceColor().equals("None")) {
+            gamepad1.setLedColor(255, 255, 0,-1);
+            gamepad2.setLedColor(255, 255, 0,-1);
+        }
+
 //        // TeleOp movement with response curves
 //        follower.setTeleOpMovementVectors(
 //                -applyResponseCurve(gamepad1.left_stick_y),
@@ -66,18 +86,7 @@ public class TeleOpMode extends OpMode {
         }
 
 //          follower.update();
-          /***
-         if (gamepad2.a) {
-         collection.drive();
-         }
-         if (gamepad2.b) {
-         scorehighbasket.execute();
-         }
 
-         if (gamepad2.y) {
-         ascent.drive();
-         }
-         ***/
         // Pivot control
 
         if (Math.abs(y3) > 0.1) {
