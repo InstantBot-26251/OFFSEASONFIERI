@@ -10,9 +10,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class ArmSubsystem extends SubsystemBase {
     private final DcMotorEx armMotor;
     private final PIDFController armPid;
-    private TrapezoidProfile motionProfile;
-    private State goalState;
-    private State currentState;
+    private TrapezoidProfile PivotMotionProfile;
+    private State goalPivotState;
+    private State currentPivotState;
+
+
 
     public ArmSubsystem(HardwareMap hardwareMap) {
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
@@ -27,8 +29,8 @@ public class ArmSubsystem extends SubsystemBase {
                 ArmConstants.ARM_KF
         );
 
-        goalState = new State(0, 0);
-        currentState = new State(0, 0);
+        goalPivotState = new State(0, 0);
+        currentPivotState = new State(0, 0);
     }
 
     public void setPower(double input) {
@@ -36,20 +38,20 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void toPoint(double position) {
-        goalState = new State(position, 0);
-        motionProfile = new TrapezoidProfile(
+        goalPivotState = new State(position, 0);
+        PivotMotionProfile = new TrapezoidProfile(
                 new TrapezoidProfile.Constraints(ArmConstants.MAX_VELOCITY, ArmConstants.MAX_ACCELERATION),
-                goalState,
-                currentState
+                goalPivotState,
+                currentPivotState
         );
     }
 
     public void update() {
         double dt = 0.02; // Loop time
-        currentState = motionProfile.calculate(dt);
+        currentPivotState = PivotMotionProfile.calculate(dt);
 
-        double feedforward = ArmConstants.ARM_KF * currentState.velocity;
-        double feedback = armPid.calculate(armMotor.getCurrentPosition(), currentState.position);
+        double feedforward = ArmConstants.ARM_KF * currentPivotState.velocity;
+        double feedback = armPid.calculate(armMotor.getCurrentPosition(), currentPivotState.position);
 
         armMotor.setPower(feedforward + feedback);
     }

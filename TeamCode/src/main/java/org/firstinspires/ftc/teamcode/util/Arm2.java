@@ -63,7 +63,7 @@ public class Arm2 extends ArmConstants {
     private State goalState;
     private State currentState;
 
-    public Arm2(HardwareMap hardwareMap, Intake intake) {
+    public Arm2(HardwareMap hardwareMap) {
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
         armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);

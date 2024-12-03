@@ -25,7 +25,7 @@ public class TeleOpMode extends OpMode {
     public void init() {
 
         // Initialize arm and intake systems first
-        arm = new Arm2(hardwareMap, intake);  // Initialize arm system
+        arm = new Arm2(hardwareMap);  // Initialize arm system
         intake = new Intake(hardwareMap);  // Initialize intake system
 
         // Initialize functions

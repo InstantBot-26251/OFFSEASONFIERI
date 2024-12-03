@@ -1,4 +1,4 @@
 package org.firstinspires.ftc.teamcode.subsystems.arm.commands;
 
-public class ArmCommands {
+public class MoveToPosition {
 }
