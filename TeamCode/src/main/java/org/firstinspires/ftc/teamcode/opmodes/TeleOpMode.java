@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.RobotCore;
 import org.firstinspires.ftc.teamcode.RobotMap;
@@ -10,6 +11,8 @@ import org.firstinspires.ftc.teamcode.subsystems.chassis.Chassis2;
 import org.firstinspires.ftc.teamcode.util.Arm2;
 import org.firstinspires.ftc.teamcode.util.Intake;
 import org.firstinspires.ftc.teamcode.util.RobotGlobal;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
 @TeleOp(name = "TeleOp Mode")
@@ -25,7 +28,7 @@ public class TeleOpMode extends OpMode {
     public void init() {
 
         // Initialize arm and intake systems first
-        arm = new Arm2(hardwareMap);  // Initialize arm system
+        arm = new Arm2(hardwareMap, ElapsedTime);  // Initialize arm system
         intake = new Intake(hardwareMap);  // Initialize intake system
 
         // Initialize functions

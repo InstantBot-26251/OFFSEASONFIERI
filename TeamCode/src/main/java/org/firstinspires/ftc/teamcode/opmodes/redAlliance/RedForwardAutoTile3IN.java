@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.opmodes.util.AutoState;
 
 
-@Autonomous(name = "Red Forward Autonomous Tile 3 Away")
+@Autonomous(name = "Red Forward Autonomous Tile 3 In")
 public class RedForwardAutoTile3IN extends OpMode {
     Pose startingPose= new Pose(0,85,Math.toRadians(0));
     Pose sampleOnePose = new Pose(65, 120, Math.toRadians(0));

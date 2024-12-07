@@ -11,20 +11,21 @@ import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmConstants;
 
 @Config
-public class Arm2 extends ArmConstants {
+public class Arm2  {
     static Telemetry telemetry;
     public DcMotorEx armMotor;
-    public static DcMotorEx pivotMotor;
-
+    public DcMotorEx pivotMotor;
+    private ElapsedTime elapsedTime;
     public Intake intake;
     public PIDFController armPid;
-    public static PIDFController pivotPid;
+    public PIDFController pivotPid;
 
     public static double maxVelocity = 500;  // ticks per second
     public static double maxAcceleration = 100;  // ticks per second^2
@@ -63,12 +64,12 @@ public class Arm2 extends ArmConstants {
     private State goalState;
     private State currentState;
 
-    public Arm2(HardwareMap hardwareMap) {
+    public Arm2(HardwareMap hardwareMap, ElapsedTime elapsedTime) {
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
+        this.elapsedTime = elapsedTime;
         armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
         //Initialize Intake
         intake = new Intake(hardwareMap);
 
@@ -111,8 +112,7 @@ public class Arm2 extends ArmConstants {
 
     public void update() {
         // Update the motion profile based on elapsed time
-        double dt = 0.02; // 20ms loop time
-        currentState = motionProfile.calculate(dt);
+        currentState = motionProfile.calculate(elapsedTime.seconds());
 
         // Compute feedforward + feedback control
         double feedforward = armKf * currentState.velocity;
@@ -122,11 +122,12 @@ public class Arm2 extends ArmConstants {
         armMotor.setPower(power);
 
         // Update pivot motion profile
-        pivotCurrentState = pivotMotionProfile.calculate(dt);
+        pivotCurrentState = pivotMotionProfile.calculate(elapsedTime.seconds());
         double pivotFeedforward = pivotKf * pivotCurrentState.velocity;
         double pivotFeedback = pivotPid.calculate(getPivotEncoderValue(), pivotCurrentState.position);
         double pivotPower = pivotFeedforward + pivotFeedback;
         pivotMotor.setPower(pivotPower);
+        elapsedTime.reset();
     }
 
     public double getMaxSlidePosition() {

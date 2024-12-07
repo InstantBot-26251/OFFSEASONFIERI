@@ -6,6 +6,8 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 import com.arcrobotics.ftclib.command.Robot;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ClawSubsystem;
@@ -73,8 +75,8 @@ public class RobotCore extends Robot {
      */
     private void initSubsystems() {
         // Initialize subsystems
-        chassis = new Chassis(follower, telemetry);
-        armSubsystem = new ArmSubsystem(hardwareMap);
+        chassis = new Chassis(follower, telemetry, hardwareMap);
+        // armSubsystem = new ArmSubsystem(hardwareMap, ElapsedTime);
         pivotSubsystem = new PivotSubsystem(hardwareMap);
         clawSubsystem = new ClawSubsystem(hardwareMap);
 
