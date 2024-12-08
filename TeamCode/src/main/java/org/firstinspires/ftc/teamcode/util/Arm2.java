@@ -64,9 +64,8 @@ public class Arm2  {
     private State goalState;
     private State currentState;
 
-    public Arm2(HardwareMap hardwareMap, ElapsedTime elapsedTime) {
+    public Arm2(HardwareMap hardwareMap) {
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
-        this.elapsedTime = elapsedTime;
         armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -101,13 +100,14 @@ public class Arm2  {
 
 
     public void toPoint(double position) {
-        // Set the goal state for motion profiling
-        goalState = new State(position, 0); // Position target with 0 velocity
-        motionProfile = new TrapezoidProfile(
-                new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration),
-                goalState,
-                currentState
-        );
+        armPid.setSetPoint(position);
+//        // Set the goal state for motion profiling
+//        goalState = new State(position, 0); // Position target with 0 velocity
+//        motionProfile = new TrapezoidProfile(
+//                new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration),
+//                goalState,
+//                currentState
+//        );
     }
 
     public void update() {
@@ -154,13 +154,15 @@ public class Arm2  {
     }
 
     public void toPivotPoint(double position) {
-        // Set the goal state for pivot motion profiling
-        pivotGoalState = new State(position, 0); // Position target with 0 velocity
-        pivotMotionProfile = new TrapezoidProfile(
-                new TrapezoidProfile.Constraints(pivotMaxVelocity, pivotMaxAcceleration),
-                pivotGoalState,
-                pivotCurrentState
-        );
+        pivotPid.setSetPoint(position);
+
+//        // Set the goal state for pivot motion profiling
+//        pivotGoalState = new State(position, 0); // Position target with 0 velocity
+//        pivotMotionProfile = new TrapezoidProfile(
+//                new TrapezoidProfile.Constraints(pivotMaxVelocity, pivotMaxAcceleration),
+//                pivotGoalState,
+//                pivotCurrentState
+//        );
     }
 
     public double getSetPoint() {

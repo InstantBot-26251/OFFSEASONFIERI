@@ -28,7 +28,7 @@ public class TeleOpMode extends OpMode {
     public void init() {
 
         // Initialize arm and intake systems first
-        arm = new Arm2(hardwareMap, ElapsedTime);  // Initialize arm system
+        arm = new Arm2(hardwareMap);  // Initialize arm system
         intake = new Intake(hardwareMap);  // Initialize intake system
 
         // Initialize functions
@@ -82,6 +82,8 @@ public class TeleOpMode extends OpMode {
         double y2 = IshaanResponseCurve(gamepad2.left_stick_y);
         double y3 = IshaanResponseCurve(gamepad2.right_stick_y);
 
+        arm.setPower(y2);
+        arm.setPivotPower(y3);
 
         chassis.drive(x, y, rx);
         if (gamepad1.options) {
@@ -124,7 +126,6 @@ public class TeleOpMode extends OpMode {
             intake.setIntakePower(0);
         }
 
-        arm.update();
 
         // Telemetry for diagnostics
         telemetry.addData("Left stick y", gamepad1.left_stick_y);
