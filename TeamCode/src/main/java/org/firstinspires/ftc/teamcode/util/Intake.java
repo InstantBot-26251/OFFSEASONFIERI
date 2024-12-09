@@ -3,45 +3,41 @@ package org.firstinspires.ftc.teamcode.util;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.util.*;
 
 public class Intake {
-    public final CRServo intakeServo; // Servo to control in the intake (for samples)
+    public final CRServo claw; // Servo to control in the intake (for samples)
+    public final CRServo wrist;
     // Servo pivotServo;  // Servo to control the pivot (for specimens)
-
-    // Intake power settings
-    final double INTAKE_COLLECT = -1.0;
-    final double INTAKE_OFF = 0.0;
-    final double INTAKE_DEPOSIT = 0.5;
-
+    public final ClawState state;
     // Constructor to initialize intake motor and pivot servo
-    public Intake(HardwareMap hardwareMap) {
-        intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
+    public Intake(HardwareMap hardwareMap, ClawState state) {
+        wrist = hardwareMap.get(CRServo.class, "wristServo");
+        claw = hardwareMap.get(CRServo.class, "intakeServo");
+        this.state = state;
         // pivotServo = hardwareMap.get(Servo.class, "pivotServo");  // Initialize the pivot servo
-
-        setIntakePower(INTAKE_OFF); // Ensure the intake is off initially
     }
 
     // Method to control the intake servo
     public void setIntakePower(double power) {
-        intakeServo.setPower(power);
+        claw.setPower(power);
     }
 
-    public void collect() {
-        setIntakePower(INTAKE_COLLECT);
+    public void openClaw() {
+        state.clawPos = 0;
     }
 
-
-    public void deposit() {
-        setIntakePower(INTAKE_DEPOSIT);
+    public void closeClaw() {
+        state.clawPos = 1;
     }
 
-    public void stop() {
-        setIntakePower(INTAKE_OFF);
+    public void setWrist(double pos) {
+        state.wristPos = pos;
     }
 
     // Method to get the current position of the intake servo
     public double getIntakePosition() {
-        return intakeServo.getPower(); // This returns the current power set for the intake motor
+        return claw.getPower(); // This returns the current power set for the intake motor
     }
 
     // Method to set the pivot servo position

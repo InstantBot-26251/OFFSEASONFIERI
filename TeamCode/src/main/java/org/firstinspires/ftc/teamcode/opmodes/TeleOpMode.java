@@ -9,13 +9,14 @@ import org.firstinspires.ftc.teamcode.RobotCore;
 import org.firstinspires.ftc.teamcode.RobotMap;
 import org.firstinspires.ftc.teamcode.subsystems.chassis.Chassis2;
 import org.firstinspires.ftc.teamcode.util.Arm2;
+import org.firstinspires.ftc.teamcode.util.ClawState;
 import org.firstinspires.ftc.teamcode.util.Intake;
 import org.firstinspires.ftc.teamcode.util.RobotGlobal;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
-@TeleOp(name = "TeleOp Mode")
+@TeleOp(name = "Period of Manual Control")
 public class TeleOpMode extends OpMode {
     RobotCore robot;
     //    private Follower follower;
@@ -23,13 +24,13 @@ public class TeleOpMode extends OpMode {
     Arm2 arm;
     Intake intake;
     RobotGlobal robotGlobal;
-
+    ClawState clawState;
     @Override
     public void init() {
 
         // Initialize arm and intake systems first
         arm = new Arm2(hardwareMap);  // Initialize arm system
-        intake = new Intake(hardwareMap);  // Initialize intake system
+        intake = new Intake(hardwareMap, clawState);  // Initialize intake system
 
         // Initialize functions
         chassis = new Chassis2(hardwareMap);
@@ -90,7 +91,26 @@ public class TeleOpMode extends OpMode {
             chassis.resetYaw();
         }
 
-//          follower.update();
+        if (gamepad2.x) {
+            intake.openClaw();
+        }
+
+        if (gamepad2.b) {
+            intake.closeClaw();
+        }
+
+        while (gamepad2.right_bumper) {
+            double wristPos = 0.0;
+            wristPos += 1;
+            intake.setWrist(wristPos);
+        }
+
+        while (gamepad2.left_bumper) {
+            double wristPos = 0.0;
+            wristPos += 1;
+            intake.setWrist(wristPos);
+        }
+//         follower.update();
 
         // Pivot control
 
