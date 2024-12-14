@@ -18,7 +18,8 @@ import org.firstinspires.ftc.teamcode.subsystems.*;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmConstants;
 
 @Config
-public class Arm2  {
+public class Arm2 {
+    public ClawState clawState;
     static Telemetry telemetry;
     public DcMotorEx armMotor;
     public DcMotorEx pivotMotor;
@@ -44,11 +45,9 @@ public class Arm2  {
     final double ARM_TICKS_PER_DEGREE = 4.67;
 
     // Arm positions
-    private static final double PIVOT_DOWN_ENCODER = -2764; // Fully pivoted down position
-    private static final double PIVOT_UP_ENCODER = 0;       // Fully pivoted up position
-    private static final double MAX_ENCODER_EXTENSION = 1000; // Example max encoder value at full extension
-    private static final double MIN_ENCODER_EXTENSION = -4000; // Minimum slide retraction
-    private static final double SLIDE_AT_42_INCHES = -2764; // Encoder value for 42 inches when pivot is fully down
+    public static final double MAX_ENCODER_EXTENSION = 1000; // Example max encoder value at full extension
+    public static final double MIN_ENCODER_EXTENSION = -4000; // Minimum slide retraction
+    public static final double SLIDE_AT_42_INCHES = -2191; // Encoder value for 42 inches when pivot is fully down
     final double ARM_COLLAPSED_INTO_ROBOT = 0;
     final double ARM_COLLECT = 250 * ARM_TICKS_PER_DEGREE;
     final double ARM_CLEAR_BARRIER = 230 * ARM_TICKS_PER_DEGREE;
@@ -64,13 +63,17 @@ public class Arm2  {
     private State goalState;
     private State currentState;
 
+    private static final int PIVOT_DOWN_ENCODER = 259;  // Encoder value when pivot is down
+    private static final int PIVOT_UP_ENCODER = -1053; // Encoder value when pivot is up
+    private static final int MAX_SLIDE_ENCODER = 42 * 50; // 42 inches * encoder ticks per inch (adjust accordingly)
+
     public Arm2(HardwareMap hardwareMap) {
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
         armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //Initialize Intake
-        intake = new Intake(hardwareMap);
+        intake = new Intake(hardwareMap, clawState);
 
         // Initialize rotation motor
         pivotMotor = hardwareMap.get(DcMotorEx.class, "rotationMotor");
@@ -88,143 +91,54 @@ public class Arm2  {
         pivotCurrentState = new State(0, 0);
     }
 
-    public void setPower(double input) {
-//        double output = armPid.calculate(getEncoderValue());
-        armMotor.setPower(input);
-    }
+    // Set the power for the slide motor directly (for manual control in TeleOp)
+    public void setSlidePower(double power) {
+        int pivotPosition = pivotMotor.getCurrentPosition();
 
-    public void setPivotPower(double input) {
-        double output = pivotPid.calculate(getEncoderValue());
-        pivotMotor.setPower(input);
-    }
-
-
-    public void toPoint(double position) {
-        armPid.setSetPoint(position);
-//        // Set the goal state for motion profiling
-//        goalState = new State(position, 0); // Position target with 0 velocity
-//        motionProfile = new TrapezoidProfile(
-//                new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration),
-//                goalState,
-//                currentState
-//        );
-    }
-
-    public void update() {
-        // Update the motion profile based on elapsed time
-        currentState = motionProfile.calculate(elapsedTime.seconds());
-
-        // Compute feedforward + feedback control
-        double feedforward = armKf * currentState.velocity;
-        double feedback = armPid.calculate(getEncoderValue(), currentState.position);
-
-        double power = feedforward + feedback;
-        armMotor.setPower(power);
-
-        // Update pivot motion profile
-        pivotCurrentState = pivotMotionProfile.calculate(elapsedTime.seconds());
-        double pivotFeedforward = pivotKf * pivotCurrentState.velocity;
-        double pivotFeedback = pivotPid.calculate(getPivotEncoderValue(), pivotCurrentState.position);
-        double pivotPower = pivotFeedforward + pivotFeedback;
-        pivotMotor.setPower(pivotPower);
-        elapsedTime.reset();
-    }
-
-    public double getMaxSlidePosition() {
-        double pivotPosition = getPivotEncoderValue();
-
-        // At fully pivoted down, max extension is -2764
-        if (pivotPosition <= PIVOT_DOWN_ENCODER) {
-            return SLIDE_AT_42_INCHES;
+        // Arm control with an upper limit check
+        if (getSlidePosition() <= -2200 && power < 0 && getPivotPosition() < -1053) {
+            armMotor.setVelocity(0);  // Stop extending if limit is reached and y2 requests upward movement
         }
-
-        // At fully pivoted up, max extension is the full range
-        if (pivotPosition >= PIVOT_UP_ENCODER) {
-            return MAX_ENCODER_EXTENSION;
-        }
-
-        // Linearly interpolate between the down and up positions
-        return SLIDE_AT_42_INCHES + (pivotPosition - PIVOT_DOWN_ENCODER) /
-                (PIVOT_UP_ENCODER - PIVOT_DOWN_ENCODER) *
-                (MAX_ENCODER_EXTENSION - SLIDE_AT_42_INCHES);
-    }
-
-    public double getMinSlidePosition() {
-        return MIN_ENCODER_EXTENSION;
-    }
-
-    public void toPivotPoint(double position) {
-        pivotPid.setSetPoint(position);
-
-//        // Set the goal state for pivot motion profiling
-//        pivotGoalState = new State(position, 0); // Position target with 0 velocity
-//        pivotMotionProfile = new TrapezoidProfile(
-//                new TrapezoidProfile.Constraints(pivotMaxVelocity, pivotMaxAcceleration),
-//                pivotGoalState,
-//                pivotCurrentState
-//        );
-    }
-
-    public double getSetPoint() {
-        return armPid.getSetPoint();
-    }
-
-    public void scoreHighBasket() {
-        toPivotPoint(90);
-        if (getPivotSetPoint() == 90) {
-            toPoint(-2440);
-            if (getEncoderValue() == -2440){
-            intake.deposit();
-        }}
-    }
-
-    public void scoreHighChamber() {
-        if (getPivotSetPoint() == 90) {
-        toPivotPoint(45);
-    } else {
-            toPivotPoint(90);
-        }
-    }
-    public void collectSampleObv() {
-        toPivotPoint(45);
-        if (getPivotEncoderValue() == 45) {
-            intake.collect();
-        }
-    }
-    public void collectSampleSub() {
-        toPivotPoint(0);
-        if (getPivotEncoderValue() == 0) {
-            toPoint(-2000);
-            if (getEncoderValue() == -2000) {
-                if (gamepad2.right_trigger > 0.01) {
-                    intake.collect();
-                }
-                telemetry.addData("Intake", "Press right trigger to start intake");
-            }
+        else {
+            armMotor.setVelocity(power);  // Allow normal operation, including downward movement
         }
 
     }
 
-
-    public double getPivotSetPoint() {
-        return pivotPid.getSetPoint();
+    // Set the power for the pivot motor directly (for manual control in TeleOp)
+    public void setPivotPower(double power) {
+        pivotMotor.setPower(power);  // Set the power for the pivot motor (direct control)
     }
 
-    public double getEncoderValue() {
+    // Optionally, update the slide motor power using PID control (if desired)
+    public void updateSlide() {
+        double currentPosition = armMotor.getCurrentPosition();
+        double pidOutput = armPid.calculate(currentPosition);
+        double motorPower = Math.max(-1.0, Math.min(1.0, pidOutput)); // Limit the power to [-1, 1]
+        armMotor.setPower(motorPower);
+    }
+
+    // Optionally, update the pivot motor power using PID control (if desired)
+    public void updatePivot() {
+        double currentPosition = pivotMotor.getCurrentPosition();
+        double pidOutput = pivotPid.calculate(currentPosition);
+        double motorPower = Math.max(-1.0, Math.min(1.1, pidOutput)); // Limit the power to [-1, 1]
+        pivotMotor.setPower(motorPower);
+    }
+
+    // Optionally, set new PID coefficients for fine-tuning the controllers
+    public void setPIDCoefficients(double kP, double kI, double kD, double kF) {
+        armPid.setPIDF(kP, kI, kD, kF);
+        pivotPid.setPIDF(kP, kI, kD, kF);
+    }
+
+    // Optionally, get the current position of the slide motor
+    public double getSlidePosition() {
         return armMotor.getCurrentPosition();
     }
 
-    public void stopExtending() {
-        armMotor.setPower(0);
-    }
-
-    public void stopRotating() {
-        pivotMotor.setPower(0);
-    }
-
-    // Method to get the encoder value for the rotation motor
-    public double getPivotEncoderValue() {
+    // Optionally, get the current position of the pivot motor
+    public double getPivotPosition() {
         return pivotMotor.getCurrentPosition();
     }
-
 }

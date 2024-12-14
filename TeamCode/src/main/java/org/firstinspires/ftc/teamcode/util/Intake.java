@@ -7,12 +7,12 @@ import org.firstinspires.ftc.teamcode.util.*;
 
 public class Intake {
     public final CRServo claw; // Servo to control in the intake (for samples)
-    public final CRServo wrist;
+  //  public final CRServo wrist;
     // Servo pivotServo;  // Servo to control the pivot (for specimens)
     public final ClawState state;
     // Constructor to initialize intake motor and pivot servo
     public Intake(HardwareMap hardwareMap, ClawState state) {
-        wrist = hardwareMap.get(CRServo.class, "wristServo");
+      //-+  wrist = hardwareMap.get(CRServo.class, "wristServo");
         claw = hardwareMap.get(CRServo.class, "intakeServo");
         this.state = state;
         // pivotServo = hardwareMap.get(Servo.class, "pivotServo");  // Initialize the pivot servo
@@ -29,10 +29,6 @@ public class Intake {
 
     public void closeClaw() {
         state.clawPos = 1;
-    }
-
-    public void setWrist(double pos) {
-        state.wristPos = pos;
     }
 
     // Method to get the current position of the intake servo
