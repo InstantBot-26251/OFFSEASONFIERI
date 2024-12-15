@@ -127,4 +127,4 @@ public class onepluszero extends LinearOpMode { // Change to LinearOpMode
         arm.setSlidePosition(-1507);
     }
 }
-// Slide -1507, Pivot -590
+// Slide -1507, Pivot = -590
