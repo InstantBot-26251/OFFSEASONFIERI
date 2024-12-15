@@ -23,23 +23,18 @@ public class Arm2 {
     static Telemetry telemetry;
     public DcMotorEx armMotor;
     public DcMotorEx pivotMotor;
-    private ElapsedTime elapsedTime;
     public Intake intake;
-    public PIDFController armPid;
     public PIDFController pivotPid;
+    public PIDFController slidePid;
 
-    public static double maxVelocity = 500;  // ticks per second
-    public static double maxAcceleration = 100;  // ticks per second^2
-    public static double pivotMaxVelocity = 400;  // ticks per second for pivot
-    public static double pivotMaxAcceleration = 80;  // ticks per second^2 for pivot
+    public static final double ARM_KP = 1.0;
+    public static final double ARM_KI = 0.0;
+    public static final double ARM_KD = 0.2;
+    public static final double ARM_KF = 1.0;
 
-    public static double armKp = 1;
-    public static double armKi = 0;
-    public static double armKd = 0.2;
-    public static double armKf = 1;
     public static double pivotKp = 1.15;
     public static double pivotKi = 0;
-    public static double pivotKd = 0.25;
+    public static double pivotKd = 0.23;
     public static double pivotKf = 1.1;
 
     final double ARM_TICKS_PER_DEGREE = 4.67;
@@ -55,13 +50,6 @@ public class Arm2 {
     final double ARM_SCORE_SPECIMEN = 160 * ARM_TICKS_PER_DEGREE;
 
     public static final int TICKS_PER_REVOLUTION = 28 * 60;  // 28 ticks * 60:1 gear ratio = 1680 ticks per revolution
-
-    private TrapezoidProfile motionProfile;
-    private TrapezoidProfile pivotMotionProfile;
-    private State pivotGoalState;
-    private State pivotCurrentState;
-    private State goalState;
-    private State currentState;
 
     private static final int PIVOT_DOWN_ENCODER = 259;  // Encoder value when pivot is down
     private static final int PIVOT_UP_ENCODER = -1053; // Encoder value when pivot is up
@@ -81,45 +69,30 @@ public class Arm2 {
         pivotMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        armPid = new PIDFController(armKp, armKi, armKd, armKf);
+        slidePid = new PIDFController(ARM_KP, ARM_KI, ARM_KD, ARM_KF);
         pivotPid = new PIDFController(pivotKp, pivotKi, pivotKd, pivotKf);
 
-        goalState = new State(0, 0);
-        currentState = new State(0, 0);
-
-        pivotGoalState = new State(0, 0);
-        pivotCurrentState = new State(0, 0);
     }
 
     // Set the power for the slide motor directly (for manual control in TeleOp)
     public void setSlidePower(double power) {
         armMotor.setPower(power);
     }
+
+    // Set the setpoint for the slide motor using PIDF
+    public void setSlidePosition(double targetPosition) {
+        slidePid.setSetPoint(targetPosition);  // Set the target position for the slide motor
+    }
+
     // Set the power for the pivot motor directly (for manual control in TeleOp)
     public void setPivotPower(double power) {
         pivotMotor.setPower(power);  // Set the power for the pivot motor (direct control)
     }
 
-    // Optionally, update the slide motor power using PID control (if desired)
-    public void updateSlide() {
-        double currentPosition = armMotor.getCurrentPosition();
-        double pidOutput = armPid.calculate(currentPosition);
-        double motorPower = Math.max(-1.0, Math.min(1.0, pidOutput)); // Limit the power to [-1, 1]
-        armMotor.setPower(motorPower);
-    }
-
-    // Optionally, update the pivot motor power using PID control (if desired)
-    public void updatePivot() {
-        double currentPosition = pivotMotor.getCurrentPosition();
-        double pidOutput = pivotPid.calculate(currentPosition);
-        double motorPower = Math.max(-1.0, Math.min(1.1, pidOutput)); // Limit the power to [-1, 1]
-        pivotMotor.setPower(motorPower);
-    }
-
-    // Optionally, set new PID coefficients for fine-tuning the controllers
-    public void setPIDCoefficients(double kP, double kI, double kD, double kF) {
-        armPid.setPIDF(kP, kI, kD, kF);
-        pivotPid.setPIDF(kP, kI, kD, kF);
+    // Calculate the PIDF output and set the slide motor power
+    public void updateSlidePosition() {
+        double pidOutput = slidePid.calculate(armMotor.getCurrentPosition());  // Calculate PIDF for slide motor
+        armMotor.setPower(pidOutput); // Apply the PIDF output to the slide motor
     }
 
     // Optionally, get the current position of the slide motor

@@ -10,8 +10,8 @@ public class Intake {
     public final CRServo wrist;
     public final ClawState state;
 
-    public static double OPEN_CLAW = 0;
-    public static double CLOSE_CLAW = 1;
+    public static final double OPEN_CLAW = 0;  // Adjust if needed
+    public static final double CLOSE_CLAW = 1; // Adjust if needed
     // Constructor to initialize intake motor and pivot servo
     public Intake(HardwareMap hardwareMap, ClawState state) {
       wrist = hardwareMap.get(CRServo.class, "wrist");
@@ -21,21 +21,18 @@ public class Intake {
 
 
     public void setWristPower(double power) {
-        double wristPos = state.wristPos = power;
-        wrist.setPower(wristPos);
+        wrist.setPower(power);
     }
     public void openClaw() {
-        state.clawPos = 0;
         claw.setPosition(OPEN_CLAW);
     }
 
     public void closeClaw() {
-        state.clawPos = 1;
         claw.setPosition(CLOSE_CLAW);
     }
 
     // Method to get the current position of the intake servo
-    public double getIntakePosition() {
+    public double getClawPosition() {
         return claw.getPosition(); // This returns the current power set for the intake motor
     }
 

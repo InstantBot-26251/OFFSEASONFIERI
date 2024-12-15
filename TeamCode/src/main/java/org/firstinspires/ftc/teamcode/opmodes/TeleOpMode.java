@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.RobotCore;
 import org.firstinspires.ftc.teamcode.subsystems.chassis.Chassis2;
@@ -18,6 +19,8 @@ public class TeleOpMode extends OpMode {
     Arm2 arm;
     Intake claw;
     ClawState clawState;
+
+
 
     @Override
     public void init() {
@@ -46,39 +49,40 @@ public class TeleOpMode extends OpMode {
         if (gamepad1.options) {
             chassis.resetYaw();
         }
-        // Arm control with an upper limit check
-        if (arm.getSlidePosition() <= -2200 && y2 < 0 && arm.getPivotPosition() < -1053) {
-            arm.setSlidePower(0);  // Stop extending if limit is reached and y2 requests upward movement
-        } else {
-            arm.setSlidePower(y2);  // Allow normal operation, including downward movement
+        // Arm control with limit checks
+
+        if (arm.getSlidePosition() <= -2191 && y2 < 0 || arm.getSlidePosition() == 0 && y2 > 0) {
+            arm.setSlidePower(0); // Stop downward/upward movement
         }
-
-
-    arm.updatePivot();
-    arm.updateSlide();
-    arm.setPivotPower(y3); // Set the pivot power
+        else {
+            arm.setSlidePower(y2);
+        }
+        arm.setPivotPower(y3); // Set the pivot power
 
         // Claw controls
-        if (gamepad2.x) {
+        if (gamepad2.right_trigger > 0) {
             claw.openClaw();
         }
 
-        if (gamepad2.b) {
+        if (gamepad2.left_trigger > 0) {
             claw.closeClaw();
         }
         // Wrist controls
         if (gamepad2.right_bumper) {
-            claw.setWristPower(1);
+            claw.setWristPower(-1); // Rotate right
+        } else if (gamepad2.left_bumper) {
+            claw.setWristPower(1); // Rotate left
+        } else {
+            claw.setWristPower(0); // Stop rotating when no button is pressed
         }
 
-        if (gamepad2.left_bumper) {
-            claw.setWristPower(-1);
-        }
         // Telemetry for Debugging
         telemetry.addData("Slide Input (Left Stick Y):", gamepad2.left_stick_y);
         telemetry.addData("Pivot Input (Right Stick Y):", gamepad2.right_stick_y);
         telemetry.addData("Slide Encoder:", arm.getSlidePosition());
         telemetry.addData("Pivot Encoder:", arm.getPivotPosition());
+        telemetry.addData("Claw Position:", claw.getClawPosition());
+        telemetry.addData("Claw State:", clawState);
         telemetry.update();  // This should be at the end of loop()
     }
 
