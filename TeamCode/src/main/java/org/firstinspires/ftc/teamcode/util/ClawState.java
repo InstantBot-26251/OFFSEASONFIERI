@@ -4,15 +4,16 @@ import androidx.annotation.NonNull;
 
 public class ClawState {
     public double clawPos;
+    public double wristPos;
 
 
     public ClawState() {
-        this(0);
+        this(0, 0);
     }
 
-    public ClawState(double clawPos) {
+    public ClawState(double clawPos, double wristPos) {
         this.clawPos = clawPos;
-
+        this.wristPos = wristPos;
     }
 
 

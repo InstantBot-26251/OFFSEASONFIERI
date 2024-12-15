@@ -16,14 +16,14 @@ import org.firstinspires.ftc.teamcode.util.RobotGlobal;
 public class TeleOpMode extends OpMode {
     private Chassis2 chassis;
     Arm2 arm;
-    Intake intake;
+    Intake claw;
     ClawState clawState;
 
     @Override
     public void init() {
         // Initialize arm and intake systems first
         arm = new Arm2(hardwareMap);  // Initialize arm system
-        intake = new Intake(hardwareMap, clawState);  // Initialize intake system
+        claw = new Intake(hardwareMap, clawState);  // Initialize intake system
 
         // Initialize functions
         chassis = new Chassis2(hardwareMap);
@@ -58,23 +58,22 @@ public class TeleOpMode extends OpMode {
     arm.updateSlide();
     arm.setPivotPower(y3); // Set the pivot power
 
-        // Intake controls
-        if (gamepad2.right_trigger > 0.1) {
-            arm.intake.setIntakePower(1.0);
-        } else if (gamepad2.left_trigger > 0.1) {
-            arm.intake.setIntakePower(-1.0);
-        } else {
-            arm.intake.setIntakePower(0);
-        }
-
         // Claw controls
         if (gamepad2.x) {
-            arm.intake.openClaw();
-        }
-        if (gamepad2.b) {
-            arm.intake.closeClaw();
+            claw.openClaw();
         }
 
+        if (gamepad2.b) {
+            claw.closeClaw();
+        }
+        // Wrist controls
+        if (gamepad2.right_bumper) {
+            claw.setWristPower(1);
+        }
+
+        if (gamepad2.left_bumper) {
+            claw.setWristPower(-1);
+        }
         // Telemetry for Debugging
         telemetry.addData("Slide Input (Left Stick Y):", gamepad2.left_stick_y);
         telemetry.addData("Pivot Input (Right Stick Y):", gamepad2.right_stick_y);
