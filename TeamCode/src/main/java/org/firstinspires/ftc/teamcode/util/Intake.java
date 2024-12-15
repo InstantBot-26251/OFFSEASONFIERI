@@ -15,7 +15,7 @@ public class Intake {
     // Constructor to initialize intake motor and pivot servo
     public Intake(HardwareMap hardwareMap, ClawState state) {
       wrist = hardwareMap.get(CRServo.class, "wrist");
-        claw = hardwareMap.get(Servo.class, "intake");
+        claw = hardwareMap.get(Servo.class, "claw");
         this.state = state;
     }
 
