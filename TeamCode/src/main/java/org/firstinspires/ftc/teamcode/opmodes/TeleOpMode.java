@@ -46,10 +46,17 @@ public class TeleOpMode extends OpMode {
         if (gamepad1.options) {
             chassis.resetYaw();
         }
+        // Arm control with an upper limit check
+        if (arm.getSlidePosition() <= -2200 && y2 < 0 && arm.getPivotPosition() < -1053) {
+            arm.setSlidePower(0);  // Stop extending if limit is reached and y2 requests upward movement
+        } else {
+            arm.setSlidePower(y2);  // Allow normal operation, including downward movement
+        }
 
-        // Set power for slide and pivot motors
-        arm.setSlidePower(y2); // Call the method with the new limit logic
-        arm.setPivotPower(y3); // Set the pivot power
+
+    arm.updatePivot();
+    arm.updateSlide();
+    arm.setPivotPower(y3); // Set the pivot power
 
         // Intake controls
         if (gamepad2.right_trigger > 0.1) {

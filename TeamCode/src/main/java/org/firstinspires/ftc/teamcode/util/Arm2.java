@@ -93,18 +93,8 @@ public class Arm2 {
 
     // Set the power for the slide motor directly (for manual control in TeleOp)
     public void setSlidePower(double power) {
-        int pivotPosition = pivotMotor.getCurrentPosition();
-
-        // Arm control with an upper limit check
-        if (getSlidePosition() <= -2200 && power < 0 && getPivotPosition() < -1053) {
-            armMotor.setVelocity(0);  // Stop extending if limit is reached and y2 requests upward movement
-        }
-        else {
-            armMotor.setVelocity(power);  // Allow normal operation, including downward movement
-        }
-
+        armMotor.setPower(power);
     }
-
     // Set the power for the pivot motor directly (for manual control in TeleOp)
     public void setPivotPower(double power) {
         pivotMotor.setPower(power);  // Set the power for the pivot motor (direct control)
