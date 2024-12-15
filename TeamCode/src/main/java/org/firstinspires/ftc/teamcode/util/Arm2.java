@@ -68,7 +68,7 @@ public class Arm2 {
     private static final int MAX_SLIDE_ENCODER = 42 * 50; // 42 inches * encoder ticks per inch (adjust accordingly)
 
     public Arm2(HardwareMap hardwareMap) {
-        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
+        armMotor = hardwareMap.get(DcMotorEx.class, "slide");
         armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -76,7 +76,7 @@ public class Arm2 {
         intake = new Intake(hardwareMap, clawState);
 
         // Initialize rotation motor
-        pivotMotor = hardwareMap.get(DcMotorEx.class, "rotationMotor");
+        pivotMotor = hardwareMap.get(DcMotorEx.class, "pivot");
         pivotMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         pivotMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.util.*;
 
 public class Intake {
-    public final CRServo claw; // Servo to control in the intake (for samples)
+    public final Servo claw; // Servo to control in the intake (for samples)
     public final CRServo wrist;
     public final ClawState state;
 
@@ -14,8 +14,8 @@ public class Intake {
     public static double CLOSE_CLAW = 1;
     // Constructor to initialize intake motor and pivot servo
     public Intake(HardwareMap hardwareMap, ClawState state) {
-      wrist = hardwareMap.get(CRServo.class, "wristServo");
-        claw = hardwareMap.get(CRServo.class, "intakeServo");
+      wrist = hardwareMap.get(CRServo.class, "wrist");
+        claw = hardwareMap.get(Servo.class, "intake");
         this.state = state;
     }
 
@@ -26,17 +26,17 @@ public class Intake {
     }
     public void openClaw() {
         state.clawPos = 0;
-        claw.setPower(OPEN_CLAW);
+        claw.setPosition(OPEN_CLAW);
     }
 
     public void closeClaw() {
         state.clawPos = 1;
-        claw.setPower(CLOSE_CLAW);
+        claw.setPosition(CLOSE_CLAW);
     }
 
     // Method to get the current position of the intake servo
     public double getIntakePosition() {
-        return claw.getPower(); // This returns the current power set for the intake motor
+        return claw.getPosition(); // This returns the current power set for the intake motor
     }
 
 
