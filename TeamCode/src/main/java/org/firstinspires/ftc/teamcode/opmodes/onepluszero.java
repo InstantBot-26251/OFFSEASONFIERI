@@ -1,72 +1,115 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants;
 import org.firstinspires.ftc.teamcode.util.Arm2;
 
 @Autonomous(name = "Autonomous Routines for Scoring Specimens")
-public class onepluszero extends LinearOpMode { // Change to LinearOpMode
+public class onepluszero extends OpMode {
     DcMotorEx fl;
     DcMotorEx fr;
     DcMotorEx bl;
     DcMotorEx br;
     Arm2 arm;
 
-    private static final double DRIVE_POWER = 1.0; // Full power to move forward/backward
-    private static final int FORWARD_DISTANCE = 1000; // Encoder ticks for forward movement
-    private static final int BACKWARD_DISTANCE = 1000; // Encoder ticks for backward movement
+    private static final double DRIVE_POWER = 0.5; // Full power to move forward/backward
+
+    private boolean movementComplete = false;
+    private boolean scoringComplete = false;
 
     @Override
-    public void runOpMode() {
-        fl = hardwareMap.get(DcMotorEx.class, "leftFrontMotor");
-        bl = hardwareMap.get(DcMotorEx.class, "leftRearMotor");
-        br = hardwareMap.get(DcMotorEx.class, "rightRearMotor");
-        fr = hardwareMap.get(DcMotorEx.class, "rightFrontMotor");
+    public void init() {
+        // Initialize motors
+        fl = hardwareMap.get(DcMotorEx.class, FollowerConstants.leftFrontMotorName);
+        bl = hardwareMap.get(DcMotorEx.class, FollowerConstants.leftRearMotorName);
+        br = hardwareMap.get(DcMotorEx.class, FollowerConstants.rightRearMotorName);
+        fr = hardwareMap.get(DcMotorEx.class, FollowerConstants.rightFrontMotorName);
 
+        // Motor behaviors
         fl.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         fr.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         bl.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        fr.setDirection(DcMotorSimple.Direction.REVERSE);
-        br.setDirection(DcMotorSimple.Direction.REVERSE);
+        // Reverse motors for correct directions
+        fl.setDirection(DcMotorSimple.Direction.REVERSE);
+        bl.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        arm = new Arm2(hardwareMap);
-        // Reset encoders to make sure we start from zero
+        // Reset encoders
         resetEncoders();
 
-        waitForStart(); // Wait for the start signal
+        arm = new Arm2(hardwareMap);
 
-        // Move forward to the specimen
-        moveForward(FORWARD_DISTANCE);
+        telemetry.addLine("Initialized");
+        telemetry.update();
+    }
 
-        // Add specimen scoring routine here (Example: actuate arm or claw to score)
-        scoreSpecimen();
+    @Override
+    public void loop() {
+        if (!movementComplete) {
+            // Set target positions only once
+            fl.setTargetPosition(1152);
+            fr.setTargetPosition(-1);
+            bl.setTargetPosition(-992);
+            br.setTargetPosition(443);
 
-        // Move backward
-        moveBackward(BACKWARD_DISTANCE);
+            // Enable RUN_TO_POSITION mode and start movement
+            setRunToPosition();
+            setMotorPowers(DRIVE_POWER);
+
+            movementComplete = true; // Ensure this block only runs once
+        }
+
+        // Check if all motors have finished moving
+        if (movementComplete && !fl.isBusy() && !fr.isBusy() && !bl.isBusy() && !br.isBusy()) {
+            stopMotors();
+
+            if (!scoringComplete) {
+                // scoreSpecimen();
+                scoringComplete = true;
+            }
+        }
+        // Debugging telemetry
+        telemetry.addData("FL Position", fl.getCurrentPosition());
+        telemetry.addData("FR Position", fr.getCurrentPosition());
+        telemetry.addData("BL Position", bl.getCurrentPosition());
+        telemetry.addData("BR Position", br.getCurrentPosition());
+        telemetry.addLine("Running...");
+        telemetry.update();
+
+        telemetry.update();
+
+        arm.setSlidePowerAuto();
+        arm.setPivotPowerAuto();
+
+
+        //  scoreSpecimen();
+        parkObvZone();
     }
 
     private void moveForward(int targetPosition) {
-        // Set target position for all motors
-        setTargetPosition(targetPosition);
+        fl.setTargetPosition(-722);
+        fr.setTargetPosition(1142);
+        bl.setTargetPosition(2478);
+        br.setTargetPosition(36);
 
         // Set motor power to move forward
         setMotorPowers(DRIVE_POWER);
 
-        // Wait until the robot has reached the target position
-        while (opModeIsActive() && motorsAreBusy()) {
-            // Optional: Add telemetry for debugging
-            telemetry.addData("Moving Forward", "Target: %d", targetPosition);
-            telemetry.update();
-        }
 
         // Stop the motors once the robot has reached the target position
         stopMotors();
+    }
+    private void setRunToPosition() {
+        fl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        fr.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        bl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        br.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
     }
 
     private void moveBackward(int targetPosition) {
@@ -76,12 +119,6 @@ public class onepluszero extends LinearOpMode { // Change to LinearOpMode
         // Set motor power to move backward
         setMotorPowers(-DRIVE_POWER);
 
-        // Wait until the robot has reached the target position
-        while (opModeIsActive() && motorsAreBusy()) {
-            // Optional: Add telemetry for debugging
-            telemetry.addData("Moving Backward", "Target: %d", targetPosition);
-            telemetry.update();
-        }
 
         // Stop the motors once the robot has reached the target position
         stopMotors();
@@ -101,30 +138,49 @@ public class onepluszero extends LinearOpMode { // Change to LinearOpMode
         br.setPower(power);
     }
 
-    private boolean motorsAreBusy() {
-        // Check if any motor is still moving toward its target position
-        return fl.isBusy() || fr.isBusy() || bl.isBusy() || br.isBusy();
-    }
+
 
     private void resetEncoders() {
         fl.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         bl.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         br.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-
-        // Set motors to run to target positions
-        fl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        fr.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        bl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        br.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
     }
 
     private void stopMotors() {
         setMotorPowers(0);
     }
 
+    private void parkObvZone() {
+        fl.setPower(-.5);
+        br.setPower(-.5);
+        fr.setPower(.5);
+        bl.setPower(.5);
+    }
     private void scoreSpecimen() {
-        arm.setSlidePosition(-1507);
+        // Sequence to score specimen
+        arm.setPivotPosition(-1053);
+
+        if (!arm.isPivotBusy()) {
+            arm.setSlidePosition(-1507);
+
+            if (!arm.isSlideBusy()) {
+                arm.setPivotPosition(-590);
+
+                if (!arm.isPivotBusy()) {
+                    arm.setSlidePosition(-1300);
+                }
+                if (!arm.isSlideBusy()) {
+                    fl.setTargetPosition(1152);
+                    fr.setTargetPosition(-1);
+                    bl.setTargetPosition(-992);
+                    br.setTargetPosition(443);
+                    setRunToPosition();
+                    setMotorPowers(-DRIVE_POWER);
+                }
+            }
+        }
+        telemetry.addLine("Specimen Scoring Complete");
     }
 }
 // Slide -1507, Pivot = -590

@@ -84,15 +84,29 @@ public class Arm2 {
         slidePid.setSetPoint(targetPosition);  // Set the target position for the slide motor
     }
 
+    public void setPivotPosition(double targetPosition) {
+        pivotPid.setSetPoint(targetPosition);
+    }
+
     // Set the power for the pivot motor directly (for manual control in TeleOp)
     public void setPivotPower(double power) {
         pivotMotor.setPower(power);  // Set the power for the pivot motor (direct control)
     }
 
-    // Calculate the PIDF output and set the slide motor power
-    public void updateSlidePosition() {
-        double pidOutput = slidePid.calculate(armMotor.getCurrentPosition());  // Calculate PIDF for slide motor
-        armMotor.setPower(pidOutput); // Apply the PIDF output to the slide motor
+    public void setPivotPowerAuto() {
+        double output = pivotPid.calculate(getPivotPosition());
+        pivotMotor.setVelocity(output);
+    }
+    public void setSlidePowerAuto() {
+        double output = slidePid.calculate(getSlidePosition());
+        armMotor.setVelocity(output);
+    }
+    public boolean isSlideBusy() {
+        return armMotor.isBusy();
+    }
+
+    public boolean isPivotBusy() {
+        return pivotMotor.isBusy();
     }
 
     // Optionally, get the current position of the slide motor

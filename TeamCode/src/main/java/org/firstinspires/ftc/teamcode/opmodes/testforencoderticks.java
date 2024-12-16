@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import androidx.loader.content.Loader;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -20,6 +22,7 @@ public class testforencoderticks extends OpMode {
 
     @Override
     public void init() {
+        fl = hardwareMap.get(DcMotorEx.class, FollowerConstants.leftFrontMotorName);
         bl = hardwareMap.get(DcMotorEx.class, FollowerConstants.leftRearMotorName);
         br = hardwareMap.get(DcMotorEx.class, FollowerConstants.rightRearMotorName);
         fr = hardwareMap.get(DcMotorEx.class, FollowerConstants.rightFrontMotorName);
@@ -29,12 +32,13 @@ public class testforencoderticks extends OpMode {
         bl.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        fr.setDirection(DcMotorSimple.Direction.REVERSE);
-        br.setDirection(DcMotorSimple.Direction.REVERSE);
+        fl.setDirection(DcMotorSimple.Direction.REVERSE);
+        bl.setDirection(DcMotorSimple.Direction.REVERSE);
     }
-
+    // time for driving to scoring:
     @Override
     public void loop() {
+
         telemetry.addData("Front Left Motor Encoder:", fl.getCurrentPosition());
         telemetry.addData("Front Right Motor Encoder:", fr.getCurrentPosition());
         telemetry.addData("Back Left Motor Encoder:", bl.getCurrentPosition());
@@ -46,4 +50,5 @@ public class testforencoderticks extends OpMode {
         telemetry.addData("Is Moving Backward:", isMovingBackward);
         telemetry.update();  // This should be at the end of loop()
     }
+
 }
