@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.subsystems.arm.chassis.commands;
+package org.firstinspires.ftc.teamcode.subsystems.chassis.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
-import org.firstinspires.ftc.teamcode.subsystems.arm.chassis.Chassis;
+import org.firstinspires.ftc.teamcode.subsystems.chassis.Chassis;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 
 public class FollowPathCommand extends CommandBase {

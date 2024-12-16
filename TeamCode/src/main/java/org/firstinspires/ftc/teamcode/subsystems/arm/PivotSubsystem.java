@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class PivotSubsystem extends SubsystemBase {
-    private final DcMotorEx pivotMotor;
+    public final DcMotorEx pivotMotor;
     private final PIDFController pivotPid;
     private TrapezoidProfile pivotMotionProfile;
     private State pivotGoalState;

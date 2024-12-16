@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode.subsystems.arm.chassis;
+package org.firstinspires.ftc.teamcode.subsystems.chassis;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
@@ -12,8 +14,9 @@ public class Chassis extends SubsystemBase {
     private boolean isRobotCentric = false;
     private double speedModifier = 1.0;
 
-    public Chassis(Follower follower, Telemetry telemetry) {
+    public Chassis(Follower follower, Telemetry telemetry, HardwareMap hardwareMap) {
         this.follower = follower;
+
         this.telemetry = telemetry;
     }
 
