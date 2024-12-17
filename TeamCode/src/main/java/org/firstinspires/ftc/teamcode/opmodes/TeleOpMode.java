@@ -21,7 +21,6 @@ public class TeleOpMode extends OpMode {
     ClawState clawState;
 
 
-
     @Override
     public void init() {
         // Initialize arm and intake systems first
@@ -49,9 +48,31 @@ public class TeleOpMode extends OpMode {
         if (gamepad1.options) {
             chassis.resetYaw();
         }
-        // Arm control with limit checks
 
-        if (arm.getSlidePosition() <= -2191 && y2 < 0 || arm.getSlidePosition() == 0 && y2 > 0) {
+        // AUTOMATIC ARM CONTROLS:
+        if (gamepad2.dpad_up) {
+            //SCORING POSITION FOR HIGH BASKET
+            arm.setPivotPosition(-1053);
+            if (!arm.isPivotBusy()) {
+                arm.setSlidePosition(-2191);
+            }
+            telemetry.addData("PRESS X TO SCORE", "HIGH BASKET");
+        }
+
+        if (gamepad2.dpad_down) {
+            //COLLECTING
+            if (arm.getPivotPosition() < 259) {
+                arm.setSlidePosition(0);
+                if (!arm.isSlideBusy()) {
+                    arm.setPivotPosition(259); //TODO: CHANGE WITH ACTUAL ENCODER VALUE
+                    if (!arm.isPivotBusy()) {
+                        arm.setSlidePosition(0); //TODO: CHANGE WITH ACTUAL ENCODER VALUE
+                    }
+                }
+            }
+        }
+        // Arm control with limit checks
+        if (arm.getSlidePosition() <= -2191 && y2 < 0 || arm.getSlidePosition() >= 0 && y2 > 0) {
             arm.setSlidePower(0); // Stop downward/upward movement
         }
         else {
