@@ -1,11 +1,20 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.leftFrontMotorName;
+import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.leftRearMotorName;
+import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.rightFrontMotorName;
+import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.rightRearMotorName;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RobotCore;
+import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.subsystems.chassis.Chassis2;
 import org.firstinspires.ftc.teamcode.util.Arm2;
 import org.firstinspires.ftc.teamcode.util.ClawState;
@@ -19,6 +28,11 @@ public class TeleOpMode extends OpMode {
     Arm2 arm;
     Intake claw;
     ClawState clawState;
+    Follower follower;
+    private DcMotorEx leftFront;
+    private DcMotorEx leftRear;
+    private DcMotorEx rightFront;
+    private DcMotorEx rightRear;
 
 
     @Override
@@ -27,15 +41,28 @@ public class TeleOpMode extends OpMode {
         arm = new Arm2(hardwareMap);  // Initialize arm system
         claw = new Intake(hardwareMap, clawState);  // Initialize intake system
 
-        // Initialize functions
-        chassis = new Chassis2(hardwareMap);
+//        // Initialize chassis
+//        chassis = new Chassis2(hardwareMap);
 
-        // Any setup logic or hardware initialization should go here
-        // Avoid any infinite or blocking loops inside init()
+        leftFront = hardwareMap.get(DcMotorEx.class, leftFrontMotorName);
+        leftRear = hardwareMap.get(DcMotorEx.class, leftRearMotorName);
+        rightRear = hardwareMap.get(DcMotorEx.class, rightRearMotorName);
+        rightFront = hardwareMap.get(DcMotorEx.class, rightFrontMotorName);
+
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // Initialize follower
+        follower = new Follower(hardwareMap);
+        follower.startTeleopDrive();
+
     }
 
     @Override
     public void loop() {
+        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
         arm.setPivotPowerAuto();
         arm.setSlidePowerAuto();
         // Read inputs for controlling chassis
@@ -45,33 +72,66 @@ public class TeleOpMode extends OpMode {
         double y2 = IshaanResponseCurve(gamepad2.left_stick_y);
         double y3 = IshaanResponseCurve(gamepad2.right_stick_y);
 
-        // Drive control
-        chassis.drive(x, y, rx);
-        if (gamepad1.options) {
-            chassis.resetYaw();
-        }
+//        // Drive control
+//        chassis.drive(x, y, rx);
+//        if (gamepad1.options) {
+//            chassis.resetYaw();
+//        }
 
         // AUTOMATIC ARM CONTROLS:
         if (gamepad2.dpad_up) {
-            //SCORING POSITION FOR HIGH BASKET
+            if (arm.getSlidePosition() > 0) {
+                arm.setSlidePosition(0);          //  SCORING POSITION FOR HIGH BASKET
+                if (!arm.isSlideBusy()) {
+                    arm.setPivotPosition(-1053);
+                    if (!arm.isPivotBusy()) {
+                        arm.setSlidePosition(-2191);
+                    }
+                    telemetry.addData("PRESS RIGHT TRIGGER TO SCORE", "HIGH BASKET");
+                }
+            }
+            else {
             arm.setPivotPosition(-1053);
             if (!arm.isPivotBusy()) {
                 arm.setSlidePosition(-2191);
             }
-            telemetry.addData("PRESS X TO SCORE", "HIGH BASKET");
+            telemetry.addData("PRESS RIGHT TRIGGER TO SCORE", "HIGH BASKET");
         }
-
+        }
+        if (gamepad2.dpad_left) {
+            // SPECIMEN SCORING POSITION
+            arm.setSlidePosition(0);
+            arm.setPivotPosition(0);
+        }
         if (gamepad2.dpad_down) {
             //COLLECTING
-            if (arm.getPivotPosition() < 259) {
+            if (arm.getSlidePosition() > 0) {
                 arm.setSlidePosition(0);
-                if (!arm.isSlideBusy()) {
-                    arm.setPivotPosition(259); //TODO: CHANGE WITH ACTUAL ENCODER VALUE
+                if(!arm.isSlideBusy()) {
+                if (arm.getPivotPosition() < 259) {
+                    arm.setPivotPosition(259);
                     if (!arm.isPivotBusy()) {
-                        arm.setSlidePosition(0); //TODO: CHANGE WITH ACTUAL ENCODER VALUE
+                        arm.setPivotPosition(259); //TODO: CHANGE WITH ACTUAL ENCODER VALUE
+                        if (!arm.isPivotBusy()) {
+                            arm.setSlidePosition(0); //TODO: CHANGE WITH ACTUAL ENCODER VALUE
+                            telemetry.addData("PRESS LEFT TRIGGER", "COLLECTION");
+                        }
+                    }
+                }
+                }
+
+            } else {
+                if (arm.getPivotPosition() < 259) {
+                    arm.setSlidePosition(0);
+                    if (!arm.isSlideBusy()) {
+                        arm.setPivotPosition(259); //TODO: CHANGE WITH ACTUAL ENCODER VALUE
+                        if (!arm.isPivotBusy()) {
+                            arm.setSlidePosition(0); //TODO: CHANGE WITH ACTUAL ENCODER VALUE
+                        }
                     }
                 }
             }
+
         }
         // Arm control with limit checks
         if (arm.getSlidePosition() <= -2191 && y2 < 0 || arm.getSlidePosition() >= 0 && y2 > 0) {
@@ -106,6 +166,8 @@ public class TeleOpMode extends OpMode {
         telemetry.addData("Pivot Encoder:", arm.getPivotPosition());
         telemetry.addData("Claw Position:", claw.getClawPosition());
         telemetry.addData("Claw State:", clawState);
+        telemetry.addData("Pivot Busy", arm.isPivotBusy());
+        telemetry.addData("Slide Busy", arm.isSlideBusy());
         telemetry.update();  // This should be at the end of loop()
     }
 
