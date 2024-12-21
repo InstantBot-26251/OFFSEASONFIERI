@@ -69,7 +69,7 @@ public class OTOSLocalizer extends Localizer {
           'SparkFunOTOS.class' below with 'SparkFunOTOSCorrected.class' and set the OTOS as a
           "SparkFunOTOS Corrected" in your robot config
          */
-        // TODO: replace this with your OTOS port
+
         otos = hardwareMap.get(SparkFunOTOS.class, "otos");
 
         otos.setLinearUnit(DistanceUnit.INCH);
