@@ -4,6 +4,6 @@ and accidental success 18079, we love you guys
 also this could not be brought to u without MVAC
 MAPLE VALLEY ALLIANCE OF CODERS
 members:
-Nicholas(sucks at shooting algae)
-Anthony(huge forehead)
-Lakshya(dumb idiot)
+Nicholas(smarter)
+Anthony(smarter)
+Lakshya(smart)
