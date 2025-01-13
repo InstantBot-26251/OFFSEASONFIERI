@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.claw;
 
 import androidx.annotation.NonNull;
 
+import org.firstinspires.ftc.teamcode.arm.Pivot;
+
 public class ClawState {
     public double clawPos;
     public double wristPos;
@@ -13,6 +15,7 @@ public class ClawState {
     public ClawState(double clawPos, double wristPos) {
         this.clawPos = clawPos;
         this.wristPos = wristPos;
+
     }
 
     @NonNull

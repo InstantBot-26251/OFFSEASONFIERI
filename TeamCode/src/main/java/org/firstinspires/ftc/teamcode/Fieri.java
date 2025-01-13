@@ -27,10 +27,7 @@ import org.firstinspires.ftc.teamcode.util.commands.Commands;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * This is our Robot class. It runs all subsystems and handles all functionality.
- * It functions as a singleton, so all references to it come from getInstance()
- */
+
 public class Fieri extends Robot {
     private Telemetry telemetry = FtcDashboard.getInstance().getTelemetry();
 
@@ -45,8 +42,8 @@ public class Fieri extends Robot {
     private GamepadEx driveController;
     private GamepadEx manipController;
 
-    private static final double DRIVE_SENSITIVITY = 1.1;
-    private static final double ROTATIONAL_SENSITIVITY = 2.0;
+    private static final double DRIVE_SENSITIVITY = 1.5;
+    private static final double ROTATIONAL_SENSITIVITY = 1.5;
     private static final double TRIGGER_DEADZONE = 0.1;
 
     private final ElapsedTime timer = new ElapsedTime();
@@ -140,7 +137,7 @@ public class Fieri extends Robot {
 
         // Reset chassis heading
         driveController.getGamepadButton(GamepadKeys.Button.Y)
-                .whenPressed(Commands.runOnce(() -> rumble(300, driveController)))
+                .whenPressed(Commands.runOnce(() -> rumbleInTheKamabal(300, driveController)))
                 .whenPressed(Chassis.getInstance()::resetHeading);
 
         // Toggle field centric
@@ -154,7 +151,6 @@ public class Fieri extends Robot {
 
         // Arm action
         new Trigger(() -> manipController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > TRIGGER_DEADZONE)
-                .whenActive(ArmCommands.Arm_ACTION)
                 .whenInactive(Commands.either(
                         Commands.defer(ArmCommands.BASKET_TO_STOW),
                         Commands.none(),
@@ -166,10 +162,10 @@ public class Fieri extends Robot {
 
         // Switch game pieces
         manipController.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(Commands.runOnce(() -> rumble(300, manipController)))
+                .whenPressed(Commands.runOnce(() -> rumbleInTheKamabal(300, manipController)))
                 .whenPressed(() -> Arm.getInstance().setScoreType(Arm.ScoreType.SAMPLE));
         manipController.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(Commands.runOnce(() -> rumble(300, manipController)))
+                .whenPressed(Commands.runOnce(() -> rumbleInTheKamabal(300, manipController)))
                 .whenPressed(() -> Arm.getInstance().setScoreType(Arm.ScoreType.SPECIMEN));
 
 
@@ -184,56 +180,41 @@ public class Fieri extends Robot {
         Log.i("Fieri", "============INITIALIZED TELEOP 10000+aura MISSION SUCCESSFUL============");
     }
 
-    // GAMEPAD INTERACTION
 
-    private double applyResponseCurve(double value, double power) {
-        return value * Math.pow(Math.abs(value), power - 1);
+    private double applyResponseCurve(double input, double scale) {
+        // Clamp input to the range [-1, 1]
+        input = Math.max(-1, Math.min(1, input));
+
+        // Apply exponential response curve
+        double output = Math.signum(input) * Math.pow(Math.abs(input), scale);
+
+        return output;
     }
 
-    /**
-     * Rumbles controllers for a duration
-     * @param ms how many milliseconds to rumble for
-     * @param gamepads the controllers to rumble
-     */
-    private void rumble(int ms, GamepadEx... gamepads) {
+
+    private void rumbleInTheKamabal(int ms, GamepadEx... gamepads) {
         for(GamepadEx g : gamepads) {
             g.gamepad.rumble(1, 1, ms);
         }
     }
 
-    /**
-     * Changes controller LED colors
-     * @param r the red value of the color
-     * @param g the blue value of the color
-     * @param b the green value of the color
-     */
-    private void setGamepadColors(double r, double g, double b) {
-        driveController.gamepad.setLedColor(r, g, b, -1);
-        manipController.gamepad.setLedColor(r, g, b, -1);
-    }
-
-    // GETTERS
 
     public Telemetry getTelemetry() {
         return telemetry;
     }
 
-    // PERIODIC
+
 
     public void periodic() {
-        // Update status out of init into enabled
         if (!RobotStatus.isEnabled() && RobotStatus.isTeleop()) RobotStatus.robotState = RobotStatus.RobotState.TELEOP_ENABLED;
         if (!RobotStatus.isEnabled() && !RobotStatus.isTeleop()) RobotStatus.robotState = RobotStatus.RobotState.AUTONOMOUS_ENABLED;
 
-        // Clear hardware cache
         for (LynxModule hub : RobotMap.getInstance().getLynxModules()) {
             hub.clearBulkCache();
         }
 
-        // Run the command scheduler
         run();
 
-        // Log loop times
         telemetry.addLine();
         telemetry.addData("Status", RobotStatus.robotState);
         telemetry.addData("Loop Time", timer.milliseconds());

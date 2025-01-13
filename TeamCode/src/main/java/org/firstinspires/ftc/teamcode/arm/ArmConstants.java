@@ -31,25 +31,24 @@ public class ArmConstants {
     public static final double ARM_TICKS_PER_DEGREE = 4.67;
     // Constants
     public static double SLIDE_ERROR_TOLERANCE = 15.0;
-    public static double ALIGN_ERROR_TOLERANCE = 2;
     public static double SLIDE_TIMEOUT = 1400;
     public static double ZEROING_TIMEOUT = 2000;
     public static double ZEROING_VELOCITY_ERROR = 5;
 
     // Positions
-    public static double SLIDE_REST_POSITION = 5.0;
+    public static double SLIDE_REST_POSITION = 0;
     public static double SLIDE_SAMPLE_COLLECT_POSITION = 1150.0;
-    public static double SLIDE_SPECIMEN_COLLECT_POSITION = 350;
-    public static double SLIDE_CHAMBER_POSITION = 425;
+    public static double SLIDE_SPECIMEN_COLLECT_POSITION = -458;
+    public static double SLIDE_CHAMBER_POSITION = -1507;
     public static double SLIDE_CHAMBER_SCORE_OFFSET = 350;
-    public static double SLIDE_BASKET_POSITION = 1350;
+    public static double SLIDE_BASKET_POSITION = -4000;
+
     // Constants
     public static double PIVOT_ERROR_TOLERANCE = 8.0;
-    public static double PIVOT_GEAR_RATIO = 40.0 / 26.0;
     public static double PIVOT_TIMEOUT = 1500;
 
     // Positions
-    public static double PIVOT_REST_POSITION = 24;
-    public static final double PIVOT_REST_TO_SCORE_OFFSET = 150.0;
-    public static double PIVOT_SCORE_POSITION = PIVOT_REST_POSITION + PIVOT_REST_TO_SCORE_OFFSET;
+    public static double PIVOT_REST_POSITION = 0;
+    public static double PIVOT_SCORE_SPECIMEN_POSITION = -590;
+    public static double PIVOT_SCORE_BASKET_POSITION = -590;
 }

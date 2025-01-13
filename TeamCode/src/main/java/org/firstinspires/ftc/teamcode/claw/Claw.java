@@ -16,8 +16,6 @@ public class Claw extends SubsystemIF {
 
     Servo claw;
     Servo wrist;
-    Servo jointOne;
-    Servo jointTwo;
 
     ClawState state = new ClawState();
 
@@ -39,13 +37,6 @@ public class Claw extends SubsystemIF {
         telemetry = Fieri.getInstance().getTelemetry();
         configureHardware();
         claw.setPosition(CLAW_CLOSE_POSITION);
-        jointTwo.setPosition(0.6);
-
-//        Commands.sequence(
-//                Commands.waitUntil(RobotStatus::isEnabled),
-//                Commands.runOnce(() -> jointTwo.getController().pwmEnable()),
-//                Commands.runOnce(() -> jointTwo.setPosition(1))
-//        ).schedule();
     }
 
     @Override

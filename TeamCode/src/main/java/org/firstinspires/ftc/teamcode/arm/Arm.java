@@ -10,12 +10,14 @@ import org.firstinspires.ftc.teamcode.util.SubsystemIF;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.Fieri;
 import org.firstinspires.ftc.teamcode.util.commands.Commands;
 
 public class Arm extends SubsystemIF {
     Telemetry telemetry;
+    private Gamepad gamepad;
 
     PIDController slidePid;
     PIDController pivotPid;
@@ -127,6 +129,9 @@ public class Arm extends SubsystemIF {
 
     public ArmState getState() {
         return state;
+    }
+    public Gamepad getGamepad() {
+        return gamepad;
     }
 
     public ScoreType getScoreType() {

@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.opmodes.autos.blueAlliance.miscellaneous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -182,4 +183,4 @@ public class onepluszero extends OpMode {
         telemetry.addLine("Specimen Scoring Complete");
     }
 }
-// Slide -1507, Pivot = -590
+// Slide -1507, Pivot = -590*/
