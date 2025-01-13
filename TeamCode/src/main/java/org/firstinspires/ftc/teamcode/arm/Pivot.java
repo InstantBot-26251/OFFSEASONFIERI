@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.arm;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.RobotMap;
+import org.firstinspires.ftc.teamcode.robot.RobotMap;
 import org.firstinspires.ftc.teamcode.util.hardware.InstantMotor;
 
 public class Pivot {

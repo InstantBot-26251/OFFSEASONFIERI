@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.robot;
 
 import android.util.Log;
 
@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.arm.Arm;
 import org.firstinspires.ftc.teamcode.chassis.commands.TeleOpDriveCommand;
 import org.firstinspires.ftc.teamcode.claw.Claw;
 import org.firstinspires.ftc.teamcode.claw.ClawConstants;
-import org.firstinspires.ftc.teamcode.util.SubsystemIF;
+import org.firstinspires.ftc.teamcode.util.subsystem.SubsystemIF;
 import org.firstinspires.ftc.teamcode.util.commands.Commands;
 
 import java.util.ArrayList;

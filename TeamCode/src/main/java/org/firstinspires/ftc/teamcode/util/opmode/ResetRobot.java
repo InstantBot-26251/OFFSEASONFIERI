@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 
-import org.firstinspires.ftc.teamcode.RobotMap;
-import org.firstinspires.ftc.teamcode.RobotStatus;
+import org.firstinspires.ftc.teamcode.robot.RobotMap;
+import org.firstinspires.ftc.teamcode.robot.RobotStatus;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import static org.firstinspires.ftc.teamcode.RobotStatus.Alliance.*;
+import static org.firstinspires.ftc.teamcode.robot.RobotStatus.Alliance.*;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Fieri;
-import org.firstinspires.ftc.teamcode.RobotStatus;
+import org.firstinspires.ftc.teamcode.robot.Fieri;
+import org.firstinspires.ftc.teamcode.robot.RobotStatus;
 
 @Config
 @TeleOp(name = "Period of Manual Control")

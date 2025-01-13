@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.autos.blueAlliance.util;
+package org.firstinspires.ftc.teamcode.opmodes.auto.util;
 
 // Regular
 public enum AutoState {

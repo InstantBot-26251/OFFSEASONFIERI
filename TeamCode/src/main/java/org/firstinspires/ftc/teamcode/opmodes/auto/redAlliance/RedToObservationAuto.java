@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.opmodes.autos.blueAlliance.redAlliance;
+package org.firstinspires.ftc.teamcode.opmodes.auto.redAlliance;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.opmodes.autos.blueAlliance.util.AutoStateTO;
+import org.firstinspires.ftc.teamcode.opmodes.auto.util.AutoStateTO;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;

@@ -3,12 +3,12 @@ package org.firstinspires.ftc.teamcode.chassis;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Fieri;
+import org.firstinspires.ftc.teamcode.robot.Fieri;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
-import org.firstinspires.ftc.teamcode.RobotStatus;
-import org.firstinspires.ftc.teamcode.util.SubsystemIF;
+import org.firstinspires.ftc.teamcode.robot.RobotStatus;
+import org.firstinspires.ftc.teamcode.util.subsystem.SubsystemIF;
 
 public class Chassis extends SubsystemIF {
     Follower follower;

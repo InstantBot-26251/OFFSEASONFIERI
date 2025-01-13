@@ -5,11 +5,9 @@ import static org.firstinspires.ftc.teamcode.claw.ClawConstants.*;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Fieri;
-import org.firstinspires.ftc.teamcode.RobotMap;
-import org.firstinspires.ftc.teamcode.RobotStatus;
-import org.firstinspires.ftc.teamcode.util.SubsystemIF;
-import org.firstinspires.ftc.teamcode.util.commands.Commands;
+import org.firstinspires.ftc.teamcode.robot.Fieri;
+import org.firstinspires.ftc.teamcode.robot.RobotMap;
+import org.firstinspires.ftc.teamcode.util.subsystem.SubsystemIF;
 
 public class Claw extends SubsystemIF {
     Telemetry telemetry;

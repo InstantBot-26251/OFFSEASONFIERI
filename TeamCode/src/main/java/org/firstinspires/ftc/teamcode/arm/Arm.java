@@ -2,17 +2,17 @@ package org.firstinspires.ftc.teamcode.arm;
 
 import static org.firstinspires.ftc.teamcode.arm.ArmConstants.*;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.RobotMap;
-import org.firstinspires.ftc.teamcode.RobotStatus;
+import org.firstinspires.ftc.teamcode.robot.RobotMap;
+import org.firstinspires.ftc.teamcode.robot.RobotStatus;
 import org.firstinspires.ftc.teamcode.arm.commands.MoveSlideCommand;
 import org.firstinspires.ftc.teamcode.util.hardware.InstantMotor;
-import org.firstinspires.ftc.teamcode.util.SubsystemIF;
+import org.firstinspires.ftc.teamcode.util.subsystem.SubsystemIF;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.Fieri;
+import org.firstinspires.ftc.teamcode.robot.Fieri;
 import org.firstinspires.ftc.teamcode.util.commands.Commands;
 
 public class Arm extends SubsystemIF {
