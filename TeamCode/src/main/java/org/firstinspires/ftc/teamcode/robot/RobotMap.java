@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -34,7 +35,7 @@ public class RobotMap {
 
     // Claw
     public Servo CLAW;
-    public Servo WRIST;
+    public CRServo WRIST;
 
 
     private static RobotMap instance = null;
@@ -63,7 +64,7 @@ public class RobotMap {
         PIVOT = hardwareMap.get(DcMotorEx.class, "pivot");
 
         CLAW = hardwareMap.get(Servo.class, "claw");
-        WRIST = hardwareMap.get(Servo.class, "wrist");
+        WRIST = hardwareMap.get(CRServo.class, "wrist");
         addDevices();
     }
 

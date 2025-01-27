@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.claw;
 
 import static org.firstinspires.ftc.teamcode.claw.ClawConstants.*;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -13,7 +14,7 @@ public class Claw extends SubsystemIF {
     Telemetry telemetry;
 
     Servo claw;
-    Servo wrist;
+    CRServo wrist;
 
     ClawState state = new ClawState();
 
@@ -27,8 +28,6 @@ public class Claw extends SubsystemIF {
         state.clawPos = REST_STATE.clawPos;
         state.wristPos = REST_STATE.wristPos;
     }
-
-    // INIT
 
     @Override
     public void onAutonomousInit() {
@@ -44,20 +43,16 @@ public class Claw extends SubsystemIF {
         setState(REST_STATE);
     }
 
-    // HARDWARE SETUP
-
     public void configureHardware() {
         claw = RobotMap.getInstance().CLAW;
         wrist = RobotMap.getInstance().WRIST;
     }
 
-    // GETTERS
 
     public ClawState getState() {
         return state;
     }
 
-    // SETTERS
 
     public void setState(ClawState targetState) {
         state.clawPos = targetState.clawPos;
@@ -72,15 +67,21 @@ public class Claw extends SubsystemIF {
         state.clawPos = CLAW_CLOSE_POSITION;
     }
 
-    public void setWrist(double pos) {
-        state.wristPos = pos;
+    public void setWristPower(double power) {
+        state.wristPos = power;
     }
 
-    // PERIODIC
+    public void setWristRight() {
+        setWristPower(-1);
+    }
+
+    public void setWristLeft() {
+        setWristPower(1);
+    }
 
     @Override
     public void periodic() {
         claw.setPosition(state.clawPos);
-        wrist.setPosition(state.wristPos);
+        wrist.setPower(state.wristPos);
     }
 }

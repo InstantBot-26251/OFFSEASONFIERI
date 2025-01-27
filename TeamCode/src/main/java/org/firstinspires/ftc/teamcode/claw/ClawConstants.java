@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 public class ClawConstants {
     public static long GRAB_DELAY = 225;
 
-    public static double CLAW_CLOSE_POSITION = 0.4;
+    public static double CLAW_CLOSE_POSITION = 0.0;
     public static double CLAW_OPEN_POSITION = 1.0;
 
 

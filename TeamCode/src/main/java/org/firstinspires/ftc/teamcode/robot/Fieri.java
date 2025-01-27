@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import android.transition.Slide;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -16,6 +17,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.arm.commands.ArmCommands;
+import org.firstinspires.ftc.teamcode.arm.commands.*;
 import org.firstinspires.ftc.teamcode.chassis.Chassis;
 import org.firstinspires.ftc.teamcode.arm.Arm;
 import org.firstinspires.ftc.teamcode.chassis.commands.TeleOpDriveCommand;
@@ -39,10 +41,11 @@ public class Fieri extends Robot {
         return INSTANCE;
     }
 
-    private GamepadEx driveController;
-    private GamepadEx manipController;
+    private GamepadEx avy;
+    private GamepadEx ishu;
 
-    private static final double DRIVE_SENSITIVITY = 1.5;
+    private static final double D_RESPONSE_CURVE = 1.5;
+    private static final double M_RESPONSE_CURVE = 1.111111;
     private static final double ROTATIONAL_SENSITIVITY = 1.5;
     private static final double TRIGGER_DEADZONE = 0.1;
 
@@ -118,62 +121,89 @@ public class Fieri extends Robot {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
 
-        // Update gamepad objects
-        driveController = new GamepadEx(drive);
-        manipController = new GamepadEx(manip);
+        avy = new GamepadEx(drive);
+        ishu = new GamepadEx(manip);
+        double SlidePower = applyResponseCurve(ishu.getLeftY(), M_RESPONSE_CURVE);
+        double PivotPower = applyResponseCurve(ishu.getRightY(), M_RESPONSE_CURVE);
 
-        // Run teleop init
         subsystems.forEach(SubsystemIF::onTeleopInit);
 
-        // Chassis driving
+        // Drive Controls
         Chassis.getInstance().setDefaultCommand(new TeleOpDriveCommand(
-                () -> applyResponseCurve(driveController.getLeftY(), DRIVE_SENSITIVITY),
-                () -> applyResponseCurve(driveController.getLeftX(), DRIVE_SENSITIVITY),
-                () -> applyResponseCurve(driveController.getRightX(), ROTATIONAL_SENSITIVITY)
+                () -> applyResponseCurve(avy.getLeftY(), D_RESPONSE_CURVE),
+                () -> applyResponseCurve(avy.getLeftX(), D_RESPONSE_CURVE),
+                () -> applyResponseCurve(avy.getRightX(), ROTATIONAL_SENSITIVITY)
         ));
-        new Trigger(() -> driveController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > TRIGGER_DEADZONE)
+        new Trigger(() -> avy.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > TRIGGER_DEADZONE)
                 .whenActive(Chassis.getInstance()::enableSlowMode)
                 .whenInactive(Chassis.getInstance()::disableSlowMode);
 
-        // Reset chassis heading
-        driveController.getGamepadButton(GamepadKeys.Button.Y)
-                .whenPressed(Commands.runOnce(() -> rumbleInTheKamabal(300, driveController)))
+        // Reset Heading (IMPORTANTIAL)
+        avy.getGamepadButton(GamepadKeys.Button.START)
                 .whenPressed(Chassis.getInstance()::resetHeading);
 
-        // Toggle field centric
-        driveController.getGamepadButton(GamepadKeys.Button.B)
+        // Turn Field Centric ON/OFF (IMPORTANTIAL)
+        avy.getGamepadButton(GamepadKeys.Button.BACK)
                 .whenPressed(Chassis.getInstance()::toggleRobotCentric);
 
-        // Arm to scoring position
-        manipController.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+
+        // Manip Controls
+
+        // Scoring Position
+        ishu.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                 .whenPressed(ArmCommands.TO_CHAMBER)
                 .whenPressed(ArmCommands.TO_BASKET);
 
-        // Arm action
-        new Trigger(() -> manipController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > TRIGGER_DEADZONE)
+        // TO STOW
+        new Trigger(() -> ishu.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > TRIGGER_DEADZONE)
                 .whenInactive(Commands.either(
-                        Commands.defer(ArmCommands.BASKET_TO_STOW),
+                        Commands.defer(ArmCommands.TO_STOW_S),
                         Commands.none(),
                         () -> Arm.getInstance().getState() == Arm.ArmState.SCORING_SAMPLE
                 ));
 
-        manipController.getGamepadButton(GamepadKeys.Button.START)
-                .whenPressed(Commands.runOnce(Arm.getInstance()::resetPivotEncoder));
 
-        // Switch game pieces
-        manipController.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(Commands.runOnce(() -> rumbleInTheKamabal(300, manipController)))
+        // Switch From Sample/Specimen for Software (INGENIOUS IDEA IMPORTANTIAL)
+        ishu.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(() -> Arm.getInstance().setScoreType(Arm.ScoreType.SAMPLE));
-        manipController.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(Commands.runOnce(() -> rumbleInTheKamabal(300, manipController)))
+        ishu.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(() -> Arm.getInstance().setScoreType(Arm.ScoreType.SPECIMEN));
 
 
-        // Release sample
-        manipController.getGamepadButton(GamepadKeys.Button.X)
+        // MANUAL
+
+        // Set Slide Powers to Joystick
+        new SetSlidePowerMANUAL(SlidePower);
+
+        // Release Sample/Specimen
+        ishu.getGamepadButton(GamepadKeys.Button.X)
                 .whenPressed(Commands.sequence(
                         Commands.waitMillis(300),
                         Commands.runOnce(Claw.getInstance()::openClaw),
+                        Commands.waitMillis(ClawConstants.GRAB_DELAY),
+                        Commands.runOnce(() -> Claw.getInstance().setState(ClawConstants.REST_STATE))
+                ));
+        // Collect Sample/Specimen
+        ishu.getGamepadButton(GamepadKeys.Button.B)
+                .whenPressed(Commands.sequence(
+                        Commands.waitMillis(300),
+                        Commands.runOnce(Claw.getInstance()::closeClaw),
+                        Commands.waitMillis(ClawConstants.GRAB_DELAY),
+                        Commands.runOnce(() -> Claw.getInstance().setState(ClawConstants.REST_STATE))
+                ));
+        // Rotate Wrist LEFT
+        ishu.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(Commands.sequence(
+                        Commands.waitMillis(300),
+                        Commands.runOnce(Claw.getInstance()::setWristLeft),
+                        Commands.waitMillis(ClawConstants.GRAB_DELAY),
+                        Commands.runOnce(() -> Claw.getInstance().setState(ClawConstants.REST_STATE))
+                ));
+        // Rotate Wrist RIGHT
+        ishu.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(Commands.sequence(
+                        Commands.waitMillis(300),
+                        Commands.runOnce(Claw.getInstance()::setWristRight),
                         Commands.waitMillis(ClawConstants.GRAB_DELAY),
                         Commands.runOnce(() -> Claw.getInstance().setState(ClawConstants.REST_STATE))
                 ));
@@ -189,13 +219,6 @@ public class Fieri extends Robot {
         double output = Math.signum(input) * Math.pow(Math.abs(input), scale);
 
         return output;
-    }
-
-
-    private void rumbleInTheKamabal(int ms, GamepadEx... gamepads) {
-        for(GamepadEx g : gamepads) {
-            g.gamepad.rumble(1, 1, ms);
-        }
     }
 
 

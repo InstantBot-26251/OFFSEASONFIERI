@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.arm.commands;
 
+import android.transition.Slide;
+
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -15,11 +17,9 @@ import org.firstinspires.ftc.teamcode.util.commands.Commands;
 import java.util.function.Supplier;
 
 public class ArmCommands extends CommandBase {
+
     // TO STOW
-    public static final Supplier<Command> BASKET_TO_STOW;
-    public static final Supplier<Command> CHAMBER_TO_STOW;
-    public static final Supplier<Command> SAMPLE_COLLECT_TO_STOW;
-    public static final Supplier<Command> SPECIMEN_COLLECT_TO_STOW;
+    public static final Supplier<Command> TO_STOW_S;
 
     // TO BASKET
     public static final Supplier<Command> STOW_TO_BASKET;
@@ -29,11 +29,11 @@ public class ArmCommands extends CommandBase {
     public static final Supplier<Command> SPECIMEN_COLLECT_TO_CHAMBER;
 
     // TO SAMPLE COLLECT
-    public static final Supplier<Command> STOW_TO_SAMPLE_COLLECT = null;
+    public static final Supplier<Command> STOW_TO_SAMPLE_COLLECT;
+    public static final Supplier<Command> COLLECT_SAMPLE;
 
     // TO SPECIMEN COLLECT
-    public static final Supplier<Command> STOW_TO_SPECIMEN_COLLECT = null;
-    public static final Supplier<Command> COLLECT_SAMPLE;
+    public static final Supplier<Command> STOW_TO_SPECIMEN_COLLECT;
     public static final Supplier<Command> CHAMBER_TO_SPECIMEN_COLLECT;
 
     // ACTIONS
@@ -52,61 +52,33 @@ public class ArmCommands extends CommandBase {
         Supplier<Arm> arm = Arm::getInstance;
         Supplier<Claw> claw = Claw::getInstance;
 
-        Gamepad gamepad2 = getGamepad2();
 
-        BASKET_TO_STOW = () -> Commands.sequence(
+        TO_STOW_S = () -> Commands.sequence(
                 Commands.runOnce(() -> arm.get().setState(ArmState.STOW)),
                 Commands.waitMillis(100),
-                new MoveSlideCommand(() -> ArmConstants.SLIDE_REST_POSITION),
-                Commands.runOnce(() -> {
-                    if (gamepad2.x) claw.get().closeClaw();
-                    else if (gamepad2.b) claw.get().openClaw();
-                }),
+                new SlideZeroCommand(),
+                Commands.waitMillis(300),
                 new MovePivotCommand(() -> ArmConstants.PIVOT_REST_POSITION)
         );
 
-        CHAMBER_TO_STOW = () -> Commands.sequence(
-                Commands.runOnce(() -> arm.get().setState(ArmState.STOW)),
-                Commands.runOnce(() -> {
-                    if (gamepad2.x) claw.get().closeClaw();
-                    else if (gamepad2.b) claw.get().openClaw();
-                }),
-                new MoveSlideCommand(() -> ArmConstants.SLIDE_REST_POSITION),
-                new MovePivotCommand(() -> ArmConstants.PIVOT_REST_POSITION)
+        STOW_TO_SAMPLE_COLLECT = () -> Commands.sequence(
+                Commands.runOnce(() -> arm.get().setState(ArmState.COLLECTING_SAMPLE)),
+                Commands.waitMillis(100),
+                new MoveSlideCommand(()-> ArmConstants.SLIDE_SAMPLE_COLLECT_POSITION)
         );
 
-        SAMPLE_COLLECT_TO_STOW = () -> Commands.sequence(
-                Commands.runOnce(() -> arm.get().setState(ArmState.STOW)),
-                Commands.runOnce(() -> claw.get().setState(ClawConstants.SPECIMEN_COLLECT_STATE)),
-                Commands.runOnce(() -> {
-                    if (gamepad2.x) claw.get().closeClaw();
-                }),
-                Commands.waitMillis(175),
-                new MoveSlideCommand(() -> ArmConstants.SLIDE_REST_POSITION),
-                Commands.runOnce(() -> {
-                    if (gamepad2.b) claw.get().openClaw();
-                }),
-                Commands.waitMillis(150),
-                new SlideZeroCommand()
+        STOW_TO_SPECIMEN_COLLECT = () -> Commands.sequence(
+                Commands.runOnce(() -> arm.get().setState(ArmState.COLLECTING_SPECIMEN)),
+                Commands.waitMillis(100),
+                new MoveSlideCommand(() -> ArmConstants.SLIDE_SPECIMEN_COLLECT_POSITION)
         );
 
-        SPECIMEN_COLLECT_TO_STOW = () -> Commands.sequence(
-                Commands.runOnce(() -> arm.get().setState(ArmState.STOW)),
-                Commands.runOnce(() -> {
-                    if (gamepad2.b) claw.get().openClaw();
-                }),
-                new MoveSlideCommand(() -> ArmConstants.SLIDE_REST_POSITION),
-                new SlideZeroCommand()
-        );
 
         STOW_TO_BASKET = () -> Commands.sequence(
                 Commands.runOnce(() -> arm.get().setState(ArmState.SCORING_SAMPLE)),
                 Commands.waitMillis(200),
                 new MovePivotCommand(() -> ArmConstants.PIVOT_SCORE_BASKET_POSITION),
-                Commands.runOnce(() -> {
-                    if (gamepad2.right_bumper) claw.get().setWrist(ClawConstants.SAMPLE_SCORING_STATE.wristPos + 1);
-                    else if (gamepad2.left_bumper) claw.get().setWrist(ClawConstants.SAMPLE_SCORING_STATE.wristPos - 1);
-                }),
+                Commands.waitMillis(300),
                 new MoveSlideCommand(() -> ArmConstants.SLIDE_BASKET_POSITION),
                 Commands.runOnce(() -> claw.get().setState(ClawConstants.SAMPLE_SCORING_STATE)),
                 Commands.waitMillis(200)
@@ -116,11 +88,9 @@ public class ArmCommands extends CommandBase {
                 Commands.waitMillis(100),
                 Commands.runOnce(() -> arm.get().setState(ArmState.SCORING_SPECIMEN)),
                 new MoveSlideCommand(() -> ArmConstants.SLIDE_REST_POSITION),
-                Commands.runOnce(() -> {
-                    if (gamepad2.right_bumper) claw.get().setWrist(ClawConstants.SPECIMEN_SCORING_STATE.wristPos + 1);
-                    else if (gamepad2.left_bumper) claw.get().setWrist(ClawConstants.SPECIMEN_SCORING_STATE.wristPos - 1);
-                }),
+                Commands.waitMillis(300),
                 new MovePivotCommand(() -> ArmConstants.PIVOT_SCORE_SPECIMEN_POSITION),
+                Commands.waitMillis(300),
                 new MoveSlideCommand(() -> ArmConstants.SLIDE_CHAMBER_POSITION)
         );
 
@@ -143,9 +113,7 @@ public class ArmCommands extends CommandBase {
         SCORE_SPECIMEN = () -> Commands.sequence(
                 Commands.runOnce(() -> claw.get().setState(ClawConstants.SPECIMEN_SCORE_STATE)),
                 new MoveSlideCommand(() -> ArmConstants.SLIDE_CHAMBER_POSITION - ArmConstants.SLIDE_CHAMBER_SCORE_OFFSET),
-                Commands.waitMillis(200),
-                Commands.runOnce(claw.get()::openClaw),
-                Commands.waitMillis(ClawConstants.GRAB_DELAY)
+                Commands.waitMillis(200)
         );
         CHAMBER_TO_SPECIMEN_COLLECT   = () -> Commands.sequence(
                 new MoveSlideCommand(() -> ArmConstants.SLIDE_REST_POSITION),
@@ -158,9 +126,7 @@ public class ArmCommands extends CommandBase {
         COLLECT_SAMPLE = () -> Commands.sequence(
                 Commands.runOnce(() -> arm.get().setSlidePosition(arm.get().getSlidePosition())),
                 Commands.runOnce(() -> arm.get().setState(ArmState.STOW)),
-                Commands.waitMillis(175),
-                Commands.runOnce(() -> claw.get().closeClaw()),
-                Commands.waitMillis(ClawConstants.GRAB_DELAY)
+                Commands.waitMillis(175)
         );
 
     }
@@ -171,14 +137,8 @@ public class ArmCommands extends CommandBase {
 
         TO_STOW = Commands.deferredProxy(() -> {
             switch (arm.get().getState()) {
-                case COLLECTING_SAMPLE:
-                    return Commands.defer(SAMPLE_COLLECT_TO_STOW, arm.get());
-                case SCORING_SPECIMEN:
-                    return Commands.defer(CHAMBER_TO_STOW, arm.get());
                 case SCORING_SAMPLE:
-                    return Commands.defer(BASKET_TO_STOW, arm.get());
-                case COLLECTING_SPECIMEN:
-                    return Commands.defer(SPECIMEN_COLLECT_TO_STOW, arm.get());
+                    return Commands.defer(TO_STOW_S, arm.get());
                 default:
                     return Commands.none();
             }
@@ -233,7 +193,7 @@ public class ArmCommands extends CommandBase {
                 case SCORING_SPECIMEN:
                     return Commands.sequence(
                             Commands.defer(SCORE_SPECIMEN, arm.get(), claw.get()),
-                            Commands.defer(CHAMBER_TO_STOW, arm.get())
+                            Commands.defer(TO_STOW_S, arm.get())
                     );
                 case STOW:
                     return Commands.either(
@@ -245,8 +205,5 @@ public class ArmCommands extends CommandBase {
                     return Commands.none();
             }
         });
-    }
-    private static Gamepad getGamepad2() {
-        return Arm.getInstance().getGamepad();
     }
 }

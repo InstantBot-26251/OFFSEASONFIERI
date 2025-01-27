@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.arm;
 
 import static org.firstinspires.ftc.teamcode.arm.ArmConstants.*;
+
+import android.icu.text.CaseMap;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.RobotMap;
 import org.firstinspires.ftc.teamcode.robot.RobotStatus;
@@ -17,10 +20,11 @@ import org.firstinspires.ftc.teamcode.util.commands.Commands;
 
 public class Arm extends SubsystemIF {
     Telemetry telemetry;
-    private Gamepad gamepad;
 
+    Gamepad ishu;
     PIDController slidePid;
     PIDController pivotPid;
+
 
     InstantMotor slide;
     Pivot pivot;
@@ -55,6 +59,7 @@ public class Arm extends SubsystemIF {
     @Override
     public void onAutonomousInit() {
         telemetry = Fieri.getInstance().getTelemetry();
+        setupMotors();
         configureHardware();
         resetSlideEncoder();
 
@@ -70,6 +75,7 @@ public class Arm extends SubsystemIF {
     public void onTeleopInit() {
         telemetry = Fieri.getInstance().getTelemetry();
         configureHardware();
+        setupMotors();
 
         pivotPid.setSetPoint(pivot.getPosition());
         slidePid.setSetPoint(getSlidePositon());
@@ -92,6 +98,7 @@ public class Arm extends SubsystemIF {
         slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+
     public void configureHardware() {
         slide = new InstantMotor(RobotMap.getInstance().SLIDE);
         pivot = new Pivot();
@@ -103,9 +110,6 @@ public class Arm extends SubsystemIF {
         slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void floatNeutralMode() {
-        slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-    }
 
     public double getSlideTarget() {
         return slidePid.getSetPoint();
@@ -129,9 +133,6 @@ public class Arm extends SubsystemIF {
 
     public ArmState getState() {
         return state;
-    }
-    public Gamepad getGamepad() {
-        return gamepad;
     }
 
     public ScoreType getScoreType() {
@@ -163,10 +164,11 @@ public class Arm extends SubsystemIF {
         slide.setPower(power);
     }
 
+
     public void resetSlideEncoder() {
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
-    public void resetPivotEncoder() { pivot.resetEncoder();}
+
     public void updatePid() {
         slidePid.setPID(SLIDE_KP, SLIDE_KI, SLIDE_KD);
         pivotPid.setPID(PIVOT_KP, PIVOT_KI, PIVOT_KD);
@@ -175,7 +177,6 @@ public class Arm extends SubsystemIF {
     @Override
     public void periodic() {
         updatePid();
-
         telemetry.addLine();
         telemetry.addData("Arm State", state);
         telemetry.addData("Scoring Piece", scoreType);
