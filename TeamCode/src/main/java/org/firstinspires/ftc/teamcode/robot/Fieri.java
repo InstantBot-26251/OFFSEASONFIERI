@@ -162,11 +162,14 @@ public class Fieri extends Robot {
                         () -> Arm.getInstance().getState() == Arm.ArmState.SCORING_SAMPLE
                 ));
 
+        // Collecting Position
+        ishu.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                        .whenPressed(ArmCommands.TO_COLLECT);
 
         // Switch From Sample/Specimen for Software (INGENIOUS IDEA IMPORTANTIAL)
-        ishu.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+        ishu.getGamepadButton(GamepadKeys.Button.START)
                 .whenPressed(() -> Arm.getInstance().setScoreType(Arm.ScoreType.SAMPLE));
-        ishu.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+        ishu.getGamepadButton(GamepadKeys.Button.BACK)
                 .whenPressed(() -> Arm.getInstance().setScoreType(Arm.ScoreType.SPECIMEN));
 
 
@@ -174,6 +177,9 @@ public class Fieri extends Robot {
 
         // Set Slide Powers to Joystick
         new SetSlidePowerMANUAL(SlidePower);
+
+        // Set Pivot Powers to Joystick
+        new SetPivotPowerMANUAL(PivotPower);
 
         // Release Sample/Specimen
         ishu.getGamepadButton(GamepadKeys.Button.X)

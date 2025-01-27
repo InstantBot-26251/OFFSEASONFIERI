@@ -1,16 +1,19 @@
 package org.firstinspires.ftc.teamcode.arm.commands;
 
 import org.firstinspires.ftc.teamcode.arm.Arm;
+import org.firstinspires.ftc.teamcode.arm.Pivot;
 import com.arcrobotics.ftclib.command.CommandBase;
 import android.util.Log;
 
-public class SetSlidePowerMANUAL extends CommandBase {
+public class SetPivotPowerMANUAL extends CommandBase {
+    private final Pivot pivot;
     private final Arm arm;
     public final double power;
 
-    public SetSlidePowerMANUAL(double power) {
+    public SetPivotPowerMANUAL(double power) {
+        this.arm = Arm.getInstance()    ;
         this.power = power;
-        this.arm = Arm.getInstance();
+        this.pivot = new Pivot();
         addRequirements(arm);
     }
     @Override
@@ -20,7 +23,7 @@ public class SetSlidePowerMANUAL extends CommandBase {
 
     @Override
     public void execute() {
-        arm.setSlidePower(power);
+        arm.setPivotPower(power);
         Log.i("SetSlidePowerCommand", "Slide power set to: " + power);
     }
 

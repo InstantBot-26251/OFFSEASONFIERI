@@ -29,7 +29,10 @@ public class ArmConstants {
     public static final double PIVOT_MAX_ACCELERATION = 80;
 
     public static final double ARM_TICKS_PER_DEGREE = 4.67;
-    // Constants
+
+    // Slide Constants
+    public static final double SLIDE_MIN_POSITION = -4;
+    public static final double SLIDE_MAX_POSITION = -2200;
     public static double SLIDE_ERROR_TOLERANCE = 15.0;
     public static double SLIDE_TIMEOUT = 1400;
     public static double ZEROING_TIMEOUT = 2000;
@@ -41,10 +44,10 @@ public class ArmConstants {
     public static double SLIDE_SPECIMEN_COLLECT_POSITION = -800;
     public static double SLIDE_CHAMBER_POSITION = -1507;
     public static double SLIDE_CHAMBER_SCORE_OFFSET = 350;
-    public static double SLIDE_BASKET_POSITION = -4000;
+    public static double SLIDE_BASKET_POSITION = -2000;
 
     // Constants
-    public static double PIVOT_ERROR_TOLERANCE = 8.0;
+    public static double PIVOT_ERROR_TOLERANCE = 5;
     public static double PIVOT_TIMEOUT = 1500;
 
     // Positions

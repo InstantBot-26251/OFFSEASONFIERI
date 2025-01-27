@@ -21,10 +21,8 @@ import org.firstinspires.ftc.teamcode.util.commands.Commands;
 public class Arm extends SubsystemIF {
     Telemetry telemetry;
 
-    Gamepad ishu;
     PIDController slidePid;
     PIDController pivotPid;
-
 
     InstantMotor slide;
     Pivot pivot;
@@ -161,7 +159,17 @@ public class Arm extends SubsystemIF {
     }
 
     public void setSlidePower(double power) {
-        slide.setPower(power);
+
+        double currentPosition = slide.getCurrentPosition();
+
+        // Prevent moving beyond limits
+        if (currentPosition <= SLIDE_MIN_POSITION && power < 0) {
+            setSlidePower(0); // Block downward movement
+        } else if (currentPosition >= SLIDE_MAX_POSITION && power > 0) {
+            setSlidePower(0);// Block upward movement
+        } else {
+            slide.setPower(power);
+        }
     }
 
 

@@ -16,7 +16,6 @@ public class Pivot {
     public void resetEncoder() {
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
-    // Optionally, get the current position of the pivot motor
     public double getPosition() {
         return pivot.getCurrentPosition();
     }
