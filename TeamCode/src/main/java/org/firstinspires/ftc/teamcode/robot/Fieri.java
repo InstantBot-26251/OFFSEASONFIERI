@@ -154,7 +154,7 @@ public class Fieri extends Robot {
                 .whenPressed(ArmCommands.TO_CHAMBER)
                 .whenPressed(ArmCommands.TO_BASKET);
 
-        // TO STOW
+        // Stowed Position
         new Trigger(() -> ishu.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > TRIGGER_DEADZONE)
                 .whenInactive(Commands.either(
                         Commands.defer(ArmCommands.TO_STOW_S),
@@ -166,19 +166,15 @@ public class Fieri extends Robot {
         ishu.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
                         .whenPressed(ArmCommands.TO_COLLECT);
 
-        // Switch From Sample/Specimen for Software (INGENIOUS IDEA IMPORTANTIAL)
+        // Switch From Sample/Specimen for Software (IMPORTANTIAL)
         ishu.getGamepadButton(GamepadKeys.Button.START)
                 .whenPressed(() -> Arm.getInstance().setScoreType(Arm.ScoreType.SAMPLE));
         ishu.getGamepadButton(GamepadKeys.Button.BACK)
                 .whenPressed(() -> Arm.getInstance().setScoreType(Arm.ScoreType.SPECIMEN));
 
 
-        // MANUAL
-
-        // Set Slide Powers to Joystick
+        // MANUAL CONTROLS
         new SetSlidePowerMANUAL(SlidePower);
-
-        // Set Pivot Powers to Joystick
         new SetPivotPowerMANUAL(PivotPower);
 
         // Release Sample/Specimen
@@ -188,7 +184,7 @@ public class Fieri extends Robot {
                         Commands.runOnce(Claw.getInstance()::openClaw),
                         Commands.waitMillis(ClawConstants.GRAB_DELAY),
                         Commands.runOnce(() -> Claw.getInstance().setState(ClawConstants.REST_STATE))
-                ));
+                     ));
         // Collect Sample/Specimen
         ishu.getGamepadButton(GamepadKeys.Button.B)
                 .whenPressed(Commands.sequence(
@@ -218,10 +214,10 @@ public class Fieri extends Robot {
 
 
     private double applyResponseCurve(double input, double scale) {
-        // Clamp input to the range [-1, 1]
+        // Clamp input to -1, 1
         input = Math.max(-1, Math.min(1, input));
 
-        // Apply exponential response curve
+        // Apply response curve
         double output = Math.signum(input) * Math.pow(Math.abs(input), scale);
 
         return output;
@@ -238,6 +234,7 @@ public class Fieri extends Robot {
         if (!RobotStatus.isEnabled() && RobotStatus.isTeleop()) RobotStatus.robotState = RobotStatus.RobotState.TELEOP_ENABLED;
         if (!RobotStatus.isEnabled() && !RobotStatus.isTeleop()) RobotStatus.robotState = RobotStatus.RobotState.AUTONOMOUS_ENABLED;
 
+        // Random stuff i learned from FTC 18079's code
         for (LynxModule hub : RobotMap.getInstance().getLynxModules()) {
             hub.clearBulkCache();
         }
@@ -245,8 +242,8 @@ public class Fieri extends Robot {
         run();
 
         telemetry.addLine();
-        telemetry.addData("Status", RobotStatus.robotState);
         telemetry.addData("Loop Time", timer.milliseconds());
+        telemetry.addData("Status", RobotStatus.robotState);
         telemetry.update();
         timer.reset();
     }
