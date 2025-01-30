@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.robot.RobotMap;
 import org.firstinspires.ftc.teamcode.robot.RobotStatus;
 import org.firstinspires.ftc.teamcode.arm.commands.MoveSlideCommand;
 import org.firstinspires.ftc.teamcode.util.hardware.InstantMotor;
-import org.firstinspires.ftc.teamcode.util.subsystem.SubsystemIF;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -17,8 +16,9 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.robot.Fieri;
 import org.firstinspires.ftc.teamcode.util.commands.Commands;
+import org.firstinspires.ftc.teamcode.util.subsystem.SubsystemTemplate;
 
-public class Arm extends SubsystemIF {
+public class Arm extends SubsystemTemplate {
     Telemetry telemetry;
 
     PIDController slidePid;

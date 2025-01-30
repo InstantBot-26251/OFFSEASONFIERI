@@ -8,9 +8,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.robot.RobotStatus;
-import org.firstinspires.ftc.teamcode.util.subsystem.SubsystemIF;
+import org.firstinspires.ftc.teamcode.util.subsystem.SubsystemTemplate;
 
-public class Chassis extends SubsystemIF {
+public class Chassis extends SubsystemTemplate {
     Follower follower;
     Telemetry telemetry;
     boolean isRobotCentric;
@@ -99,7 +99,7 @@ public class Chassis extends SubsystemIF {
         follower.update();
         RobotStatus.robotPose = follower.getPose();
 
-        telemetry.addData("Robot Centric", isRobotCentric);
+        telemetry.addData("Robot Centric", isRobotCentric());
         telemetry.addData("Path exists", follower.getCurrentPath() != null);
     }
 

@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.arm.Arm;
 import org.firstinspires.ftc.teamcode.chassis.commands.TeleOpDriveCommand;
 import org.firstinspires.ftc.teamcode.claw.Claw;
 import org.firstinspires.ftc.teamcode.claw.ClawConstants;
-import org.firstinspires.ftc.teamcode.util.subsystem.SubsystemIF;
+import org.firstinspires.ftc.teamcode.util.subsystem.SubsystemTemplate;
 import org.firstinspires.ftc.teamcode.util.commands.Commands;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ import java.util.List;
 public class Fieri extends Robot {
     private Telemetry telemetry = FtcDashboard.getInstance().getTelemetry();
 
-    private final List<SubsystemIF> subsystems = new ArrayList<>();
+    private final List<SubsystemTemplate> subsystems = new ArrayList<>();
 
     private static final Fieri INSTANCE = new Fieri();
 
@@ -69,7 +69,7 @@ public class Fieri extends Robot {
 
     // Registers all subsystems to the command scheduler
     private void registerSubsystems() {
-        for (SubsystemIF s : subsystems) {
+        for (SubsystemTemplate s : subsystems) {
             register(s);
         }
     }
@@ -103,12 +103,12 @@ public class Fieri extends Robot {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
 
-        // Run autonomous init
-        subsystems.forEach(SubsystemIF::onAutonomousInit);
+        // Auto INIT
+        subsystems.forEach(SubsystemTemplate::onAutonomousInit);
         Log.i("Fieri", "============INITIALIZED AUTONOMOUS============");
     }
 
-    // Runs teleop initialization sequence and binds controls
+    // TeleOp INIT
     public void teleopInit(Telemetry telemetry, HardwareMap hardwareMap, Gamepad drive, Gamepad manip) {
         reset();
         registerSubsystems();
@@ -126,7 +126,7 @@ public class Fieri extends Robot {
         double SlidePower = applyResponseCurve(ishu.getLeftY(), M_RESPONSE_CURVE);
         double PivotPower = applyResponseCurve(ishu.getRightY(), M_RESPONSE_CURVE);
 
-        subsystems.forEach(SubsystemIF::onTeleopInit);
+        subsystems.forEach(SubsystemTemplate::onTeleopInit);
 
         // Drive Controls
         Chassis.getInstance().setDefaultCommand(new TeleOpDriveCommand(

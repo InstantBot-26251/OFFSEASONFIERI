@@ -15,7 +15,6 @@ public class ClawState {
     public ClawState(double clawPos, double wristPos) {
         this.clawPos = clawPos;
         this.wristPos = wristPos;
-
     }
 
     @NonNull

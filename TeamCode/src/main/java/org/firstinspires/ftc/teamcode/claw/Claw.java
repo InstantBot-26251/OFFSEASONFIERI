@@ -9,8 +9,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Fieri;
 import org.firstinspires.ftc.teamcode.robot.RobotMap;
 import org.firstinspires.ftc.teamcode.util.subsystem.SubsystemIF;
+import org.firstinspires.ftc.teamcode.util.subsystem.SubsystemTemplate;
 
-public class Claw extends SubsystemIF {
+public class Claw extends SubsystemTemplate {
     Telemetry telemetry;
 
     Servo claw;
