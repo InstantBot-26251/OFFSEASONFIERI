@@ -26,8 +26,6 @@ public class Chassis extends SubsystemIF {
         isRobotCentric = false;
     }
 
-    // INITIALIZE
-
     @Override
     public void onAutonomousInit() {
         telemetry = Fieri.getInstance().getTelemetry();
@@ -44,7 +42,6 @@ public class Chassis extends SubsystemIF {
         setMaxPower(1.0);
     }
 
-    // GETTERS
 
     public Pose getPoseEstimate() {
         return follower.getPose();
@@ -57,8 +54,6 @@ public class Chassis extends SubsystemIF {
     public boolean isRobotCentric() {
         return isRobotCentric;
     }
-
-    // SETTERS
 
     public void setMaxPower(double power) {
         follower.setMaxPower(power);
@@ -85,7 +80,6 @@ public class Chassis extends SubsystemIF {
         m = 1.0;
     }
 
-    // PATHING
 
     public void followPath(Path path) {
         follower.followPath(path);
@@ -99,7 +93,6 @@ public class Chassis extends SubsystemIF {
         isRobotCentric = !isRobotCentric;
     }
 
-    // PERIODIC
 
     @Override
     public void periodic() {
