@@ -45,7 +45,7 @@ public class Fieri extends Robot {
     private GamepadEx ishu;
 
     private static final double D_RESPONSE_CURVE = 1.5;
-    private static final double M_RESPONSE_CURVE = 1.111111;
+    private static final double M_RESPONSE_CURVE = 1.4;
     private static final double ROTATIONAL_SENSITIVITY = 1.5;
     private static final double TRIGGER_DEADZONE = 0.1;
 
@@ -114,7 +114,6 @@ public class Fieri extends Robot {
         registerSubsystems();
         RobotStatus.robotState = RobotStatus.RobotState.TELEOP_INIT;
 
-        // Update telemetry and hardwareMap objects
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         RobotMap.getInstance().init(hardwareMap);
         for (LynxModule hub : RobotMap.getInstance().getLynxModules()) {
@@ -123,6 +122,7 @@ public class Fieri extends Robot {
 
         avy = new GamepadEx(drive);
         ishu = new GamepadEx(manip);
+
         double SlidePower = applyResponseCurve(ishu.getLeftY(), M_RESPONSE_CURVE);
         double PivotPower = applyResponseCurve(ishu.getRightY(), M_RESPONSE_CURVE);
 

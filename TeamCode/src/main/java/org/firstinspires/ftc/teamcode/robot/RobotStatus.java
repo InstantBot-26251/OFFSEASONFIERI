@@ -19,7 +19,6 @@ public class RobotStatus {
 
     public static void resetValues() {
         delayMs = 0;
-        alliance = Alliance.NONE;
         robotState = RobotState.DISABLED;
         robotPose = new Pose();
     }
