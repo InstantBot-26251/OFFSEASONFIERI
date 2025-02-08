@@ -57,7 +57,6 @@ public class Fieri extends Robot {
         Log.i("Fieri", "===============FIERI CREATED SKIBDI RIZZ MISSION PASSED===============");
     }
 
-    // Resets the robot and command scheduler
     @Override
     public void reset() {
         RobotStatus.robotState = RobotStatus.RobotState.DISABLED;
@@ -67,14 +66,12 @@ public class Fieri extends Robot {
         Log.i("Fieri", "===============COMMAND SCHEDULER CLEARED 10000+Aura ===============");
     }
 
-    // Registers all subsystems to the command scheduler
     private void registerSubsystems() {
         for (SubsystemTemplate s : subsystems) {
             register(s);
         }
     }
 
-    // Initializes all subsystems and adds them to the list. New subsystems should be added here.
     private void robotInit() {
         subsystems.clear();
         subsystems.add(Chassis.getInstance().initialize());
@@ -83,29 +80,26 @@ public class Fieri extends Robot {
         registerSubsystems();
     }
 
-    // Runs the process of disabling the robot
     public void disabledInit() {
         RobotStatus.robotState = RobotStatus.RobotState.DISABLED;
         telemetry = FtcDashboard.getInstance().getTelemetry();
         Log.i("Fieri", "===============ROBOT DISABLED===============");
     }
 
-    // Runs autonomous initialization sequence
+    // Auto INIT
     public void autonomousInit(Telemetry telemetry, HardwareMap hardwareMap) {
         reset();
         registerSubsystems();
         RobotStatus.robotState = RobotStatus.RobotState.AUTONOMOUS_INIT;
 
-        // Update telemetry and hardwareMap objects
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         RobotMap.getInstance().init(hardwareMap);
         for (LynxModule hub : RobotMap.getInstance().getLynxModules()) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
 
-        // Auto INIT
         subsystems.forEach(SubsystemTemplate::onAutonomousInit);
-        Log.i("Fieri", "============INITIALIZED AUTONOMOUS============");
+        Log.i("Fieri", "============INITIALIZED AUTONOMOUSgood boy============");
     }
 
     // TeleOp INIT
@@ -128,7 +122,7 @@ public class Fieri extends Robot {
 
         subsystems.forEach(SubsystemTemplate::onTeleopInit);
 
-        // Drive Controls
+        // Driver Controls
         Chassis.getInstance().setDefaultCommand(new TeleOpDriveCommand(
                 () -> applyResponseCurve(avy.getLeftY(), D_RESPONSE_CURVE),
                 () -> applyResponseCurve(avy.getLeftX(), D_RESPONSE_CURVE),
@@ -214,10 +208,10 @@ public class Fieri extends Robot {
 
 
     private double applyResponseCurve(double input, double scale) {
-        // Clamp input to -1, 1
+        // Limit Input to 1 (MAX) and -1 (MIN)
         input = Math.max(-1, Math.min(1, input));
 
-        // Apply response curve
+        // Apply Response Curve OH YEAAA GOOD BOY
         double output = Math.signum(input) * Math.pow(Math.abs(input), scale);
 
         return output;
@@ -234,7 +228,6 @@ public class Fieri extends Robot {
         if (!RobotStatus.isEnabled() && RobotStatus.isTeleop()) RobotStatus.robotState = RobotStatus.RobotState.TELEOP_ENABLED;
         if (!RobotStatus.isEnabled() && !RobotStatus.isTeleop()) RobotStatus.robotState = RobotStatus.RobotState.AUTONOMOUS_ENABLED;
 
-        // Random stuff i learned from FTC 18079's code
         for (LynxModule hub : RobotMap.getInstance().getLynxModules()) {
             hub.clearBulkCache();
         }
@@ -242,6 +235,7 @@ public class Fieri extends Robot {
         run();
 
         telemetry.addLine();
+        telemetry.addData("Alliance", RobotStatus.alliance);
         telemetry.addData("Loop Time", timer.milliseconds());
         telemetry.addData("Status", RobotStatus.robotState);
         telemetry.update();
