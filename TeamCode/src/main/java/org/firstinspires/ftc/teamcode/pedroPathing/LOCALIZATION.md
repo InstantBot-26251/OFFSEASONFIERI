@@ -183,14 +183,14 @@ that applies to you and follow the directions there.
   Feel free to run a few more tests and average the results. Once you have this multiplier, then
   replace `FORWARD_TICKS_TO_INCHES` in the localizer with your multiplier. Make sure you replace the number,
   not add on or multiply it to the previous number. The tuner takes into account your current multiplier.
-* Finally, go to `Lateral Localizer Tuner`. `useIMU` should be enabled for this step. You'll want to position a ruler alongside your robot.
-  By default, you'll want to push the robot 30 inches to the right. Once you've pushed that far, or whatever
-  you set that value to, then the lateral multiplier will be shown as the second number shown. The
-  first number is how far the robot thinks you've gone, and the second number is the multiplier you
-  need to have to scale your current readings to your goal of 30 inches, or the custom set distance.
-  Feel free to run a few more tests and average the results. Once you have this multiplier, then
-  replace `STRAFE_TICKS_TO_INCHES` in the localizer with your multiplier. Make sure you replace the number,
-  not add on or multiply it to the previous number. The tuner takes into account your current multiplier.
+  * Finally, go to `Lateral Localizer Tuner`. `useIMU` should be enabled for this step. You'll want to position a ruler alongside your robot.
+    By default, you'll want to push the robot 30 inches to the right. Once you've pushed that far, or whatever
+    you set that value to, then the lateral multiplier will be shown as the second number shown. The
+    first number is how far the robot thinks you've gone, and the second number is the multiplier you
+    need to have to scale your current readings to your goal of 30 inches, or the custom set distance.
+    Feel free to run a few more tests and average the results. Once you have this multiplier, then
+    replace `STRAFE_TICKS_TO_INCHES` in the localizer with your multiplier. Make sure you replace the number,
+    not add on or multiply it to the previous number. The tuner takes into account your current multiplier.
 * Once you're done with all this, your localizer should be tuned. Make sure that `useIMU` is turned back on. To test it out, you can go to
   `Localization Test` and push around or drive around your robot. Go to [FTC Dashboard](http://192.168.43.1:8080/dash)
   and on the top right, switch the drop down from the default view to the field view. Then, on the bottom

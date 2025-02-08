@@ -1,0 +1,31 @@
+package org.firstinspires.ftc.teamcode.util.opmode;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.robot.RobotMap;
+import org.firstinspires.ftc.teamcode.arm.Pivot;
+
+@Disabled
+@TeleOp(name = "PivotTest", group = "test")
+public class PivotTest extends OpMode {
+    private Pivot pivot;
+
+    @Override
+    public void init() {
+        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
+        RobotMap.getInstance().init(hardwareMap);
+        pivot = new Pivot();
+    }
+
+    @Override
+    public void loop() {
+        pivot.setPower(-gamepad1.left_stick_y);
+        telemetry.addData("Joystick", -gamepad1.left_stick_y);
+        telemetry.addData("Encoder pos", pivot.getPosition());
+        telemetry.update();
+    }
+}
