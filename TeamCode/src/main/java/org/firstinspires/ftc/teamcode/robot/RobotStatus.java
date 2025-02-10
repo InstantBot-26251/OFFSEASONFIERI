@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
+import com.pedropathing.localization.Pose;
+
+import com.pedropathing.localization.Pose;
 
 public class RobotStatus {
     public enum Alliance {

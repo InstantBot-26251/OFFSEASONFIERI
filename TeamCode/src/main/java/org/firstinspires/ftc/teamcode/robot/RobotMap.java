@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.pedropathing.follower.FollowerConstants;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -8,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,10 +56,10 @@ public class RobotMap {
 
         OTOS = hardwareMap.get(SparkFunOTOS.class, "otos");
 
-        MOTOR_FL = hardwareMap.get(DcMotorEx.class, FollowerConstants.leftFrontMotorName);
-        MOTOR_FR = hardwareMap.get(DcMotorEx.class, FollowerConstants.rightFrontMotorName);
-        MOTOR_BL = hardwareMap.get(DcMotorEx.class, FollowerConstants.leftRearMotorName);
-        MOTOR_BR = hardwareMap.get(DcMotorEx.class, FollowerConstants.rightRearMotorName);
+        MOTOR_FL = hardwareMap.get(DcMotorEx.class, FConstants.MOTOR_FL_NAME);
+        MOTOR_FR = hardwareMap.get(DcMotorEx.class, FConstants.MOTOR_FR_NAME);
+        MOTOR_BL = hardwareMap.get(DcMotorEx.class, FConstants.MOTOR_BL_NAME);
+        MOTOR_BR = hardwareMap.get(DcMotorEx.class, FConstants.MOTOR_BR_NAME);
 
         SLIDE = hardwareMap.get(DcMotorEx.class, "slide");
         PIVOT = hardwareMap.get(DcMotorEx.class, "pivot");

@@ -4,7 +4,7 @@ import com.arcrobotics.ftclib.command.Command;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.chassis.Chassis;
-import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
+import com.pedropathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.robot.Fieri;
 import org.firstinspires.ftc.teamcode.robot.RobotStatus;
 import org.firstinspires.ftc.teamcode.util.commands.Commands;

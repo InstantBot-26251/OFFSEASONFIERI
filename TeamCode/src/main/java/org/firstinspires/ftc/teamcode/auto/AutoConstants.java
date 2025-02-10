@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.localization.Pose;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.robot.RobotStatus;
 
 // Class for storing poses

@@ -4,9 +4,9 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.har
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Fieri;
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
-import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
+import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.Path;
+import com.pedropathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.robot.RobotStatus;
 import org.firstinspires.ftc.teamcode.util.subsystem.SubsystemTemplate;
 
