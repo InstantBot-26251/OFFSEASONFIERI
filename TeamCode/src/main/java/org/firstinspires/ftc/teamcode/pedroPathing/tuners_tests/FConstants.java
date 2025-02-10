@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.constants;
+package org.firstinspires.ftc.teamcode.pedroPathing.tuners_tests;
 
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.localization.Localizers;
@@ -6,12 +6,12 @@ import com.pedropathing.util.CustomFilteredPIDFCoefficients;
 import com.pedropathing.util.CustomPIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-
+// Follower constants for Pedro Pathing
 public class FConstants {
-    public static String MOTOR_FL_NAME = "frontLeft";
-    public static String MOTOR_BL_NAME = "backLeft";
-    public static String MOTOR_FR_NAME = "frontRight";
-    public static String MOTOR_BR_NAME = "backRight";
+    public static final String MOTOR_FL_NAME = "leftFront";
+    public static final String MOTOR_FR_NAME = "rightFront";
+    public static final String MOTOR_BL_NAME = "leftBack";
+    public static final String MOTOR_BR_NAME = "rightBack";
 
     static {
         // General
@@ -35,11 +35,11 @@ public class FConstants {
         // Robot mass in kg
         FollowerConstants.mass = 9.253;
         // Max velocities
-        FollowerConstants.xMovement = 55.78209160367868;
-        FollowerConstants.yMovement = 44.222013984179235;
+        FollowerConstants.xMovement = 72.13802788201278;
+        FollowerConstants.yMovement = 52.29679618294783;
         // Robot deceleration
-        FollowerConstants.forwardZeroPowerAcceleration = ((-48.911757201461356 + -47.22430720104032)/2);
-        FollowerConstants.lateralZeroPowerAcceleration = ((-81.52315809473562 + -73.50785739800882 + -93.53992554135772 + -95.47662023928717)/4);
+        FollowerConstants.forwardZeroPowerAcceleration = -59.57815433783589;
+        FollowerConstants.lateralZeroPowerAcceleration = -114.94083656134548;
         // Zero power multiplier
         FollowerConstants.zeroPowerAccelerationMultiplier = 4;
         // Whether or not to use dual PID
@@ -57,5 +57,4 @@ public class FConstants {
         // Centripetal force correction
         FollowerConstants.centripetalScaling = 0.0007;
     }
-
 }

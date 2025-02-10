@@ -21,11 +21,8 @@ apply plugin: 'com.android.application'
 
 android {
 
-<<<<<<< HEAD
     compileSdkVersion 34
-=======
     compileSdkVersion 30
->>>>>>> upstream/master
 
     signingConfigs {
         release {
