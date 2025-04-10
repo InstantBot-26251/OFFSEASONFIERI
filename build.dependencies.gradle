@@ -19,5 +19,5 @@ dependencies {
 
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.16' // FTC Dashboard
 
-    implementation 'com.pedropathing:pedro:1.0.7' // Pedro Pathing
+    implementation 'com.pedropathing:pedro:1.0.9' // Pedro Pathing
 }

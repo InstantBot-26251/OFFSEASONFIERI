@@ -3,10 +3,14 @@ package org.firstinspires.ftc.teamcode.chassis;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.pedroPathing.tuners_tests.FConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.tuners_tests.LConstants;
 import org.firstinspires.ftc.teamcode.robot.Fieri;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.Path;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.util.Constants;
+
 import org.firstinspires.ftc.teamcode.robot.RobotStatus;
 import org.firstinspires.ftc.teamcode.util.subsystem.SubsystemTemplate;
 
@@ -29,14 +33,14 @@ public class Chassis extends SubsystemTemplate {
     @Override
     public void onAutonomousInit() {
         telemetry = Fieri.getInstance().getTelemetry();
-        follower = new Follower(hardwareMap);
+        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setPose(RobotStatus.robotPose);
     }
 
     @Override
     public void onTeleopInit() {
         telemetry = Fieri.getInstance().getTelemetry();
-        follower = new Follower(hardwareMap);
+        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setPose(RobotStatus.robotPose);
         follower.startTeleopDrive();
         setMaxPower(1.0);

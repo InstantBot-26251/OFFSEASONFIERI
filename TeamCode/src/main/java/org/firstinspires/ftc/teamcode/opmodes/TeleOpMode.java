@@ -14,16 +14,19 @@ import org.firstinspires.ftc.teamcode.robot.RobotStatus;
 @TeleOp(name = "Period of Manual Control")
 public class TeleOpMode extends LinearOpMode {
     private final Fieri fieri = Fieri.getInstance();
-    private boolean lastStart = false;
+    private boolean lastToggle = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // INIT
-        fieri.teleopInit(telemetry, hardwareMap, gamepad1, gamepad2);
 
         // INIT_LOOP
         while (opModeInInit()) {
-            if (gamepad1.square != lastStart && gamepad1.start) {
+            // INIT
+            fieri.teleopInit(telemetry, hardwareMap, gamepad1, gamepad2);
+
+            boolean togglePressed = gamepad1.start;
+
+            if (togglePressed && !lastToggle) {
                 switch (RobotStatus.alliance) {
                     case NONE:
                     case RED:
@@ -34,13 +37,14 @@ public class TeleOpMode extends LinearOpMode {
                         break;
                 }
             }
-            lastStart = gamepad1.start;
+            lastToggle = togglePressed;
 
             telemetry.addData("Alliance", RobotStatus.alliance);
             telemetry.addData("Status", RobotStatus.robotState);
             telemetry.update();
 
         }
+
 
         // LOOP
         while (opModeIsActive()) {

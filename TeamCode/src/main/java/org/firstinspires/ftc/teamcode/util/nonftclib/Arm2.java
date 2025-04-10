@@ -1,4 +1,3 @@
-/*
 package org.firstinspires.ftc.teamcode.util.nonftclib;
 
 
@@ -21,7 +20,7 @@ public class Arm2 {
     public PIDFController pivotPid;
     public PIDFController slidePid;
 
-    public static final double ARM_KP = 1.2; // TODO: TUNE PIDS
+    public static final double ARM_KP = 1.2;
     public static final double ARM_KI = 0.0;
     public static final double ARM_KD = 0.2;
     public static final double ARM_KF = 1.0;
@@ -54,8 +53,7 @@ public class Arm2 {
         armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //Initialize Intake
-        intake = new Intake(hardwareMap, clawState);
+
 
         // Initialize rotation motor
         pivotMotor = hardwareMap.get(DcMotorEx.class, "pivot");
@@ -113,4 +111,4 @@ public class Arm2 {
         return pivotMotor.getCurrentPosition();
     }
 }
-*/
+

@@ -1,9 +1,10 @@
-/*
 package org.firstinspires.ftc.teamcode.util.nonftclib;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.claw.ClawState;
 
 public class Intake {
     public final Servo claw; // Servo to control in the intake (for samples)
@@ -41,4 +42,4 @@ public class Intake {
      public void setPivotPosition(double position) {
         // pivotServo.setPosition(position);
     }
-}*/
+}
