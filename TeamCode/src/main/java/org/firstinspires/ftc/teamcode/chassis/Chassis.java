@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.robot.Fieri;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.Path;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.util.Constants;
 
 import org.firstinspires.ftc.teamcode.robot.RobotMap;
 import org.firstinspires.ftc.teamcode.robot.RobotStatus;
@@ -41,6 +40,7 @@ public class Chassis extends SubsystemTemplate {
     @Override
     public void onTeleopInit() {
         telemetry = Fieri.getInstance().getTelemetry();
+
         follower = new Follower(RobotMap.getInstance().getHardwareMap(), FConstants.class, LConstants.class);
         follower.setPose(RobotStatus.robotPose);
         follower.startTeleopDrive();

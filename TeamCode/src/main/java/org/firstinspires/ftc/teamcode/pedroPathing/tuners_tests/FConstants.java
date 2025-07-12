@@ -48,10 +48,13 @@ public class FConstants {
         FollowerConstants.useSecondaryTranslationalPID = false;
         FollowerConstants.useSecondaryHeadingPID = false;
         // Primary PID coefficients
-        FollowerConstants.drivePIDFCoefficients.setCoefficients(0.05, 0, 0.00006, 0.6, 0);
+        FollowerConstants.drivePIDFCoefficients.setCoefficients(0.035, 0, 0.000001, 0.6, 0);
         FollowerConstants.translationalPIDFCoefficients.setCoefficients(0.7, 0, 0.05, 0);
         FollowerConstants.headingPIDFCoefficients.setCoefficients(3, 0, 0.15, 0);
         // Centripetal force correction-
         FollowerConstants.centripetalScaling = 0.0007;
+
+        FollowerConstants.pathEndTimeoutConstraint = 100;
+
     }
 }

@@ -17,8 +17,7 @@ import org.firstinspires.ftc.teamcode.util.nonftclib.Arm2;
 import org.firstinspires.ftc.teamcode.claw.ClawState;
 import org.firstinspires.ftc.teamcode.util.nonftclib.Intake;
 
-@Config
-@TeleOp(name = "Period of Manual Control without pedrox")
+@TeleOp(name = "Period of Manual Control without pedro")
 public class NonPedroTeleTele extends OpMode {
     private Chassis2 chassis;
     Arm2 arm;

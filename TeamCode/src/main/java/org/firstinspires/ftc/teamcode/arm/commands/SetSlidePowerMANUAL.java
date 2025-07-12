@@ -13,6 +13,7 @@ public class SetSlidePowerMANUAL extends CommandBase {
         this.arm = Arm.getInstance();
         addRequirements(arm);
     }
+
     @Override
     public void initialize() {
         Log.i("SetSlidePowerCommand", "===============COMMAND INITIALIZED===============" );

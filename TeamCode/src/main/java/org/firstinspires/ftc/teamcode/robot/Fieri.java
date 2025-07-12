@@ -202,7 +202,7 @@
                             Commands.waitMillis(ClawConstants.GRAB_DELAY),
                             Commands.runOnce(() -> Claw.getInstance().setState(ClawConstants.REST_STATE))
                     ));
-            Log.i("Fieri", "============INITIALIZED TELEOP 10000+aura MISSION SUCCESSFUL============");
+            Log.i("Fieri", "============INITIALIZED TELEOP 10000+aura MISSION SUCCESSFULpromax  ultra premium plus elite first-classbusiness XPerienbce===========");
         }
 
 
